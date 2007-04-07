@@ -3,6 +3,9 @@ package com.gravitext.xml.producer;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import junit.framework.TestCase;
 
 public class XMLProducerTest extends TestCase
@@ -190,7 +193,7 @@ public class XMLProducerTest extends TestCase
             fail();
         }
         catch( IllegalStateException e ) {
-            System.out.println( "Expected Error: " + e );
+            _log.debug( "Expected:", e );
         }
     }
     
@@ -206,7 +209,9 @@ public class XMLProducerTest extends TestCase
             fail();
         }
         catch( IllegalStateException e ) {
-            System.out.println( "Expected Error: " + e );
+            _log.debug( "Expected:", e );
         }
     }
+    
+    private Logger _log = LoggerFactory.getLogger( getClass() );
 }

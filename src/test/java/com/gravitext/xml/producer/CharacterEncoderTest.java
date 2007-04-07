@@ -3,6 +3,9 @@ package com.gravitext.xml.producer;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import junit.framework.TestCase;
 
@@ -66,7 +69,7 @@ public class CharacterEncoderTest extends TestCase
             fail();
         }
         catch( CharacterEncodeException e ) {
-            System.out.println( "Expected Error: " + e );
+            _log.debug( "Expected:", e );
         }
     }
     
@@ -79,7 +82,7 @@ public class CharacterEncoderTest extends TestCase
             fail();
         }
         catch( CharacterEncodeException e ) {
-            System.out.println( "Expected Error: " + e );
+            _log.debug( "Expected:", e );
         }
     }
     
@@ -92,7 +95,7 @@ public class CharacterEncoderTest extends TestCase
             fail();
         }
         catch( CharacterEncodeException e ) {
-            System.out.println( "Expected Error: " + e );
+            _log.debug( "Expected:", e );
         }
     }
     
@@ -116,5 +119,5 @@ public class CharacterEncoderTest extends TestCase
         assertEquals( "XX&lt;&quot;X", out.toString() );
     }
    
-    
+    private Logger _log = LoggerFactory.getLogger( getClass() );
 }
