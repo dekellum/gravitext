@@ -36,7 +36,7 @@ public class CharacterEncoder
 
     public CharacterEncoder( Appendable out )
     {
-        this( out, Version.V1_0 );
+        this( out, Version.XML_1_0 );
     }
     
     /**
@@ -45,7 +45,7 @@ public class CharacterEncoder
      */
     public CharacterEncoder( Appendable out, Version version )
     {
-        if( version == Version.V1_1 ) _modeC0 = Mode.ENCODE;
+        if( version == Version.XML_1_1 ) _modeC0 = Mode.ENCODE;
         _version = version;
         
         _outW = (out instanceof Writer) ? (Writer) out : null;

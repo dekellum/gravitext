@@ -143,7 +143,7 @@ public class XMLProducerTest extends TestCase
     {
         StringBuilder out = new StringBuilder();
         XMLProducer p = new XMLProducer
-            ( new CharacterEncoder( out, Version.V1_1 ) );
+            ( new CharacterEncoder( out, Version.XML_1_1 ) );
         p.setIndent( Indentor.LINE_BREAK );
         p.putXMLDeclaration( "UTF-8" );
         p.startTag( DOC ).putChars( "\b" ).endTag();
