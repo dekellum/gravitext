@@ -10,7 +10,7 @@ import javax.xml.stream.XMLStreamWriter;
 public final class StaxPerfTest 
     extends SerializePerfTest
 {
-    protected void serializeGraph( List<GraphItem> graph ) 
+    protected void serializeGraph( List<GraphItem> graph, TestOutput out ) 
         throws XMLStreamException, UnsupportedEncodingException
     {
         XMLOutputFactory of = XMLOutputFactory.newInstance();
@@ -20,8 +20,8 @@ public final class StaxPerfTest
         boolean lb = !(getIndent().isCompressed());
         
         XMLStreamWriter w;
-        if( useWriter() ) w = of.createXMLStreamWriter( getWriter() );
-        else w = of.createXMLStreamWriter( getStream(), getEncoding() );
+        if( useWriter() ) w = of.createXMLStreamWriter( out.getWriter() );
+        else w = of.createXMLStreamWriter( out.getStream(), getEncoding() );
         
         w.writeStartDocument( getEncoding(), "1.0" );
         if( lb ) w.writeCharacters( "\n" );

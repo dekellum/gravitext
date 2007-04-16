@@ -24,10 +24,10 @@ public final class ProducerPerfTest
     private static final Tag list     = new Tag( "list" );
     private static final Tag listItem = new Tag( "listItem" );
 
-    protected void serializeGraph( List<GraphItem> graph ) 
+    protected void serializeGraph( List<GraphItem> graph, TestOutput out ) 
         throws IOException
     {
-        XMLProducer p = new XMLProducer( getWriter() );
+        XMLProducer p = new XMLProducer( out.getWriter() );
         p.setIndent( getIndent() );
                 
         p.putXMLDeclaration( "ISO-8859-1" );

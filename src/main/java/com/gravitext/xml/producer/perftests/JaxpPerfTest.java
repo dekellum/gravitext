@@ -17,13 +17,13 @@ import org.xml.sax.helpers.AttributesImpl;
 public final class JaxpPerfTest 
     extends SerializePerfTest
 {
-    protected void serializeGraph( List<GraphItem> graph ) 
+    protected void serializeGraph( List<GraphItem> graph, TestOutput out ) 
         throws IOException, TransformerConfigurationException, 
                TransformerFactoryConfigurationError, SAXException
     {
         StreamResult sr;
-        if( useWriter() ) sr = new StreamResult( getWriter() );
-        else sr = new StreamResult( getStream() );
+        if( useWriter() ) sr = new StreamResult( out.getWriter() );
+        else sr = new StreamResult( out.getStream() );
         
         SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory
                 .newInstance();

@@ -3,6 +3,7 @@ package com.gravitext.xml.producer.perftests;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.CharArrayWriter;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
@@ -10,37 +11,29 @@ import java.io.Writer;
 import java.util.List;
 
 import com.gravitext.util.perftest.FastRandom;
-import com.gravitext.util.perftest.PerformanceTest;
+import com.gravitext.util.perftest.ConcurrentTest;
 import com.gravitext.xml.producer.Indentor;
 
-public abstract class SerializePerfTest implements PerformanceTest
+public abstract class SerializePerfTest implements ConcurrentTest
 {
-    public int runTest( FastRandom random ) throws Exception
-    {
-        GraphGenerator generator = new GraphGenerator( random );
+    public int runTest( int run, int seed ) throws Exception
+    {   
+        FastRandom random = new FastRandom( seed + run );
         
-        _writer = null;
-        _stream = null;
+        GraphGenerator generator = new GraphGenerator( random );
         
         List<GraphItem> g = generator.nextGraph();
         
-        if( _doSerialize ) serializeGraph( g );
+        TestOutput out = new TestOutput();
+        
+        if( _doSerialize ) serializeGraph( g, out );
 
-        if( _writer != null ) _writer.flush();
+        out.flush();
 
-        if( _doVerbose ) {
-            if( _doEncode ) {
-                System.out.print
-                    ( new String( _stream.toByteArray(), _encoding ) );
-            }
-            else {
-                System.out.print( ((CharArrayWriter)_writer).toString() );
-            }
-        }
-        if( _doSerialize ) {
-            return ( _doEncode ? _stream.size() : 
-                                 ((CharArrayWriter)_writer).size() );
-        }
+        if( _doVerbose ) out.print();
+        
+        if( _doSerialize ) return out.size();
+        
         return ( ( random.nextInt() & 0x7fffffff ) % 3 );
     }
 
@@ -85,42 +78,68 @@ public abstract class SerializePerfTest implements PerformanceTest
         return _indentor;
     }
     
-    
-    protected final OutputStream getStream() 
+    protected final class TestOutput
     {
-        if( !_doEncode ) throw new IllegalStateException
+        public OutputStream getStream() 
+        {
+            if( !_doEncode ) throw new IllegalStateException
             ( "If not doEncode, shouldn't use stream." );
-        
-        if( _stream == null ) {
-            _stream = new ByteArrayOutputStream( 1024 * 24 );
+
+            if( _stream == null ) {
+                _stream = new ByteArrayOutputStream( 1024 * 24 );
+            }
+            return _stream;
         }
-        return _stream;
-    }
-    
-    protected final Writer getWriter() throws UnsupportedEncodingException
-    {
-        if( _writer == null  ) {
-            if( _doEncode ) {   
-                Writer t = new OutputStreamWriter( getStream(), _encoding );
-                _writer = new BufferedWriter( t, 1024 );
+
+        public void print() throws UnsupportedEncodingException
+        {
+            if( _doEncode ) {
+                System.out.print( new String( _stream.toByteArray(), 
+                                              _encoding ) );
             }
             else {
-                _writer = new CharArrayWriter( 1024 * 24 );
+                System.out.print( ((CharArrayWriter)_writer).toString() );
             }
         }
-        return _writer;
+
+        public int size()
+        {
+            return ( _doEncode ? _stream.size() : 
+                                 ((CharArrayWriter)_writer).size() );
+        }
+
+        public void flush() throws IOException
+        {
+            if( _writer != null ) _writer.flush();
+        }
+
+        public Writer getWriter() throws UnsupportedEncodingException
+        {
+            if( _writer == null  ) {
+                if( _doEncode ) {   
+                    Writer t = new OutputStreamWriter( getStream(), _encoding );
+                    _writer = new BufferedWriter( t, 1024 );
+                }
+                else {
+                    _writer = new CharArrayWriter( 1024 * 24 );
+                }
+            }
+            return _writer;
+        }
+        
+        private ByteArrayOutputStream _stream = null;
+        private Writer _writer                = null;
     }
 
-    protected abstract void serializeGraph( List<GraphItem> graph )
+    protected abstract void serializeGraph( List<GraphItem> graph, 
+                                            TestOutput out )
         throws Exception;
 
     private boolean _doVerbose   = false;
-    private String _encoding     = "ISO-8859-1";
+    private String  _encoding    = "ISO-8859-1";
     private boolean _doEncode    = false;
-    private boolean _doSerialize = true; // Test generation time exclusively 
+    private boolean _doSerialize = true; // vs. test generation time exclusively 
     
-    private ByteArrayOutputStream _stream = null;
-    private Writer _writer                = null;
     private boolean _useWriter            = true;
 
     private Indentor _indentor   = Indentor.LINE_BREAK;
