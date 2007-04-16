@@ -1,18 +1,12 @@
 package com.gravitext.util.perftest.perftests;
 
-import com.gravitext.util.perftest.FastRandom;
-import com.gravitext.util.perftest.PerformanceTest;
+import com.gravitext.util.perftest.ConcurrentTest;
 
-public class EmptyPerfTest implements PerformanceTest
+public class EmptyPerfTest implements ConcurrentTest
 {
 
-    public int runTest( FastRandom random ) throws Exception
+    public int runTest( int run, int seed ) throws Exception
     {
         return 1;
     }
-
-    public void setVerbose( boolean doVerbose )
-    {
-    }
-
 }

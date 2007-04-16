@@ -1,200 +1,205 @@
 package com.gravitext.util.perftest;
 
 import java.util.ArrayList;
-import java.util.concurrent.BrokenBarrierException;
 
 public class Harness
 {
     public static void main( String[] args ) throws Exception
     {
-        // TODO Auto-generated method stub
         new Harness().run( args );
     }
-
     
-    private class WarmupState
-    {
-
-        public WarmupState(Class<? extends PerformanceTest> prclass)
-        {
-            _prclass = prclass;
-        }
-        
-        Class<? extends PerformanceTest> _prclass;
-        int _runCount = 1;
-        TestRun _prior = null;
-        double _warmTime = 0d;
-        private double _tchange = Double.NaN;
-        
-        public boolean run() 
-            throws InterruptedException, BrokenBarrierException
-        {
-            if( ( _warmTime < _warmTarget ) 
-                || ( _tchange < -_warmDeltaTarget ) 
-                || ( _tchange > _warmDeltaTarget ) ) {
-
-                TestRun tr = new TestRun( _prclass, _runCount, _threadCount );
-
-                System.out.print( tr.formatStartLine() );
-                tr.run();
-                System.out.print( tr.formatResults( _prior ) );
-
-                _warmTime += tr.duration().seconds();
-                
-                _tchange = tr.throughputChange( _prior );
-
-                _runCount = (int) ( ( _warmTarget * _warmInterval ) * _runCount
-                            * 1.1d
-                            / tr.duration().seconds() );
-                _prior = tr;
-
-                return true;
-            }
-            return false;
-        }
-
-        public int lastRunCount()
-        {
-            return _runCount;
-        }
-    }
-    
-    private class RunState
-    {
-
-        public RunState( Class<? extends PerformanceTest> prclass,
-                         int runCount, int iterations )
-        {
-            _prclass = prclass;
-            _runCount = runCount;
-            _iterations = iterations;
-        }
-        
-        Class<? extends PerformanceTest> _prclass;
-        int _runCount;
-        int _iterations;
-        TestRun _prior = null;
-        
-        public boolean run() 
-            throws InterruptedException, BrokenBarrierException
-        {
-            if( _iterations-- > 0 ) {
-
-                TestRun tr = new TestRun( _prclass, _runCount, _threadCount );
-
-                tr.setSeed( 79363 * ( _iterations + 1248 ) );
-                
-                System.out.print( tr.formatStartLine() );
-                tr.run();
-                System.out.print( tr.formatResults( _prior ) );
-
-                _prior = tr;
-
-                return true;
-            }
-            return false;
-        }
-    }
-    
-    
-    
-    public void run( String[] args ) 
-        throws Exception
+   
+    public void run( String[] args ) throws Exception
     {
         processArgs( args );
+        
         System.out.println( "Testing with (-c)oncurrency: " + _threadCount );
                            
-        // Build an instance of each test class up front and keep a reference
-        // to avoid loosing any optimizer passes with class gc.
-        for( Class<? extends PerformanceTest> prclass : _runnables ) {
-            _instances.add( prclass.newInstance() );
-        }
-        
         if( _verbose ) {
-            boolean wrap = ( _runnables.size() > 1 );
-            for( PerformanceTest t : _instances ) {
-                Class<? extends PerformanceTest> prclass = t.getClass();
-                
-                if( wrap ) {
-                    System.out.println( 
-                            "---- " + prclass.getName() + " ----" );
-                }
-                PerformanceTest test = prclass.newInstance();
-                test.setVerbose( true );
-                test.runTest( new FastRandom( 32020172 ) );
-                
-                if( wrap ) System.out.println();
-            }
-            return;
-        }
-        
-        System.out.println( "==== Warmup Runs :" );
-
-        System.out.print( TestRun.header() );
-
-        int lCount = Integer.MAX_VALUE;
-        if( _warmCount == 0 ) {
-            ArrayList<WarmupState> warmups = new ArrayList<WarmupState>();
-            for( PerformanceTest t : _instances ) {
-                Class<? extends PerformanceTest> prclass = t.getClass();
-                warmups.add( new WarmupState( prclass ) );
-            }
-            boolean remaining = true;
-            while( remaining ) {
-                remaining = false;
-                for( WarmupState warmup : warmups ) {
-                    if( warmup.run() ) remaining = true;
-                }
-            }
-            for( WarmupState warmup : warmups ) {
-                lCount = Math.min(  warmup.lastRunCount(), lCount );
-            }
+            runVerbose();
         }
         else {
-            ArrayList<RunState> warmups = new ArrayList<RunState>();
-            for( PerformanceTest t : _instances ) {
-                Class<? extends PerformanceTest> prclass = t.getClass();
-                warmups.add( 
-                    new RunState( prclass, _warmCount, _warmIterations ) );
-            }
-            boolean remaining = true;
-            while( remaining ) {
-                remaining = false;
-                for( RunState r: warmups ) {
-                    if( r.run() ) remaining = true;
-                }
-            }
-            lCount = _warmCount;
-        }
-        int rCount = ( _requestCount == 0 ) ? lCount : _requestCount;
-        
-        System.out.println( "\n==== Comparison Runs :" );
-
-        System.out.print( TestRun.header() );
-
-        TestRun lastFirst = null;
-        for( int i = 0; i < _requestIterations; ++i ) {
-            TestRun first = null;
-            for( PerformanceTest t : _instances ) {
-                Class<? extends PerformanceTest> prclass = t.getClass();
-
-                TestRun tr = 
-                    new TestRun( prclass, rCount, _threadCount );
-
-                tr.setSeed( 2828065 * ( i + 939829 ) );
-
-                System.out.print( tr.formatStartLine() );
-                tr.run();
-                System.out.print
-                ( tr.formatResults( (first == null) ? lastFirst : first  ) );
-
-                if( first == null ) lastFirst = first = tr;
-            }
+            warmup();
+            runComparisons();
         }
     }
 
+    /**
+     * Run the warmup iterations
+     */
+    private void warmup()
+    {
+        System.out.println( "==== Warmup Runs :" );
+        System.out.print( PerformanceTester.header() );
+
+        ArrayList<Runner> warmups = new ArrayList<Runner>();
+        for( ConcurrentTest t : _instances ) {
+            Runner r;
+            if( _warmCount == 0 ) {
+                r = new AdaptiveRunner( t );
+            }
+            else {
+                r = new Runner( t, _warmCount, _warmIterations );
+            }
+            warmups.add( r );
+        }
+        boolean remaining = true;
+        while( remaining ) {
+            remaining = false;
+            for( Runner warmup : warmups ) {
+                warmup.run( null );
+                if( warmup.hasMoreRuns() ) remaining = true;
+            }
+        }
+
+        double minTP = Double.MAX_VALUE;
+        double maxTP = Double.MIN_VALUE;
+        for( Runner warmup : warmups ) {
+            minTP = Math.min( minTP, warmup.prior().meanThroughput() );
+            maxTP = Math.max( maxTP, warmup.prior().meanThroughput() );
+        }
+
+        if( _compCount == 0 ) {
+            _compCount = (int) Math.min( _compTarget    * maxTP, 
+                                         _compTargetMax * minTP );
+        }
+    }
+
+    /**
+     * Run the comparison iterations.
+     */
+    private void runComparisons()
+    {
+        System.out.println( "\n==== Comparison Runs :" );
+        System.out.print( PerformanceTester.header() );
+        
+        ArrayList<Runner> comps = new ArrayList<Runner>();
+        for( ConcurrentTest t : _instances ) {
+            comps.add( new Runner( t, _compCount, _compIterations ) );
+        }
+        PerformanceTester lastFirst = null;
+        boolean remaining = true;
+        while( remaining ) {
+            remaining = false;
+            PerformanceTester first = null;
+            for( Runner comp : comps ) {
+                comp.run( (first != null) ? first : lastFirst );
+                if( first == null ) lastFirst = first = comp.prior();
+                if( comp.hasMoreRuns() ) remaining = true;
+            }
+        }
+    }
+    
+    /**
+     * Run verbose single execution.
+     * @throws Exception
+     */
+    private void runVerbose() throws Exception
+    {
+        boolean wrap = ( _instances.size() > 1 );
+        for( ConcurrentTest t : _instances ) {
+
+            if( wrap ) System.out.println( 
+                       "---- " + t.getClass().getName() + " ----" );
+
+            t.runTest( 1, 32020172 );
+            
+            if( wrap ) System.out.println();
+        }
+    }
+
+    
+    private class Runner
+    {
+        Runner( ConcurrentTest ctest, int runCount, int iterations )
+        {
+            this( ctest );
+            _runCount = runCount;
+            _iterations = iterations;
+            _fixedSeed = true;
+        }
+
+        void run( PerformanceTester prior )
+        {
+            if( prior == null ) prior = _prior;
+            
+            PerformanceTester tester = 
+                new PerformanceTester( _ctest, _runCount, _threadCount );
+            
+            if( _fixedSeed ) tester.setSeed( 7936 * ( _iterations + 1234 ) );
+                
+            System.out.print( tester.formatStartLine() );
+            tester.runTest();
+            System.out.print( tester.formatResults( prior ) );
+
+            _prior = tester;
+            
+            --_iterations;
+        }
+
+        boolean hasMoreRuns()
+        {
+            return ( _iterations > 0 );
+        }
+
+        PerformanceTester prior() 
+        {
+            return _prior;
+        }
+                
+        protected Runner( ConcurrentTest ctest )
+        {
+            _ctest = ctest;
+        }
+        
+        protected final ConcurrentTest _ctest;
+        protected int _runCount = 1;
+        protected PerformanceTester _prior = null;
+
+        private boolean _fixedSeed = false;
+        private int _iterations = 0;
+    }
+    
+    private class AdaptiveRunner extends Runner
+    {
+        AdaptiveRunner( ConcurrentTest ctest )
+        {
+            super( ctest );
+        }
+               
+        @Override
+        void run( PerformanceTester altPrior )
+        {
+            PerformanceTester prior = prior();
+            super.run( altPrior );
+            PerformanceTester current = prior(); 
+
+            _warmTime += current.duration().seconds();
+            _tchange = current.throughputChange( prior );
+            _runCount = (int) ( ( _warmTarget * _warmInterval ) * _runCount
+                        * 1.25d
+                        / current.duration().seconds() );
+        }
+        
+        @Override
+        boolean hasMoreRuns()
+        {
+            return ( ( _warmTime < _warmTarget ) || 
+                     ( _tchange < -_warmTolerance ) || 
+                     ( _tchange > _warmTolerance ) );
+        }
+        
+        private double _warmTime = 0d;
+        private double _tchange = Double.NaN;
+    }
+    
+    
+
     private void processArgs( String[] args ) 
-        throws ClassNotFoundException
+        throws ClassNotFoundException, 
+               InstantiationException, 
+               IllegalAccessException
     {
         int i = 0;  
         char flag = 0;
@@ -212,9 +217,9 @@ public class Harness
             else if( args[i].equals("--") ) doRunArgs = true;
 
             else if( flag != 0 ) {
-                if( flag == 'c' ) _threadCount=Integer.parseInt(args[i]);
+                if( flag == 'c' )      _threadCount=Integer.parseInt(args[i]);
                 else if( flag == 'w' ) _warmCount=Integer.parseInt(args[i]);
-                else if( flag == 'r' ) _requestCount=Integer.parseInt(args[i]);
+                else if( flag == 'r' ) _compCount=Integer.parseInt(args[i]);
                 else usage();
                 flag = 0;
             }
@@ -225,8 +230,10 @@ public class Harness
                 else flag = f;
             }
             else {
-                _runnables.add( 
-                    Class.forName(args[i]).asSubclass( PerformanceTest.class ) );
+                Class<? extends ConcurrentTest> ctClass =
+                    Class.forName( args[i] ).asSubclass( ConcurrentTest.class );
+                
+                _instances.add( ctClass.newInstance() );
             }
             i++;
         }
@@ -245,21 +252,23 @@ public class Harness
     }
 
     private int _threadCount = Runtime.getRuntime().availableProcessors();
-    private int _warmCount = 0;
-    private int _warmIterations = 3;
-    private int _requestCount = 0;
-    private int _requestIterations = 3;
-    private double _warmTarget = 60.0d;
-    private double _warmInterval = 1.0d / 3.0d;
-    private double _warmDeltaTarget = 0.05d;
-    private boolean _verbose = false;
+
+    private int    _warmCount      = 0;
+    private int    _warmIterations = 3;
+    private double _warmTarget     = 40.0d;
+    private double _warmInterval   = 1.0d / 4.0d; //~10 second intervals
+    private double _warmTolerance  = 0.05d; // +/- 5%
     
-    private ArrayList<Class<? extends PerformanceTest>> _runnables =
-        new ArrayList<Class<? extends PerformanceTest>>();
+    private int    _compCount      = 0;
+    private int    _compIterations = 3;
+    private double _compTarget     = 10.0d; //seconds
+    private double _compTargetMax  = 60.0d; //seconds
     
-    private ArrayList<PerformanceTest> _instances =
-        new ArrayList<PerformanceTest>();
+    private boolean _verbose       = false;
+        
+    private ArrayList<ConcurrentTest> _instances =
+        new ArrayList<ConcurrentTest>();
     
-    private String[] _runArgs = new String[0];
+    private String[] _runArgs = new String[0]; //FIXME: Use?
 }
     

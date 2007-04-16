@@ -75,7 +75,7 @@ public class MetricTest extends TestCase
         Random r = new Random();
         
         StringBuilder b = new StringBuilder(6);
-        for( int i = 1; i < 100000; ++i ) {
+        for( int i = 1; i < 1000; ++i ) {
             b.setLength( 0 );
             double v = r.nextDouble() * Math.pow( 10d, r.nextInt( 31 ) - 15 );
             if( r.nextBoolean() ) v = -v;
