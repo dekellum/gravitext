@@ -115,7 +115,7 @@ class ConcurrentTester implements Runnable
                 run_loop: 
                 while( _error == null ) {
 
-                    // atomic increment run up until == _runCount
+                    // atomic increment run while run <= _runCount
                     while( true ) {
                         count = _lastRun.get();
                         run = count + 1;
