@@ -1,4 +1,4 @@
-package com.gravitext.util.perftest;
+package com.gravitext.concurrent;
 
 import java.util.concurrent.TimeUnit;
 

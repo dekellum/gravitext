@@ -1,6 +1,8 @@
-package com.gravitext.util.perftest;
+package com.gravitext.perftest;
 
 import java.util.ArrayList;
+
+import com.gravitext.concurrent.ConcurrentTest;
 
 public class Harness
 {

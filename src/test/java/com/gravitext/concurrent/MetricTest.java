@@ -1,6 +1,8 @@
-package com.gravitext.util.perftest;
+package com.gravitext.concurrent;
 
 import java.util.Random;
+
+import com.gravitext.concurrent.Metric;
 
 import junit.framework.TestCase;
 

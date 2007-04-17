@@ -1,7 +1,11 @@
-package com.gravitext.util.perftest;
+package com.gravitext.concurrent;
 
-import java.util.BitSet;
 import java.util.concurrent.atomic.AtomicIntegerArray;
+
+import com.gravitext.concurrent.ConcurrentTest;
+import com.gravitext.concurrent.ConcurrentTester;
+import com.gravitext.concurrent.ConcurrentTests;
+import com.gravitext.concurrent.FastRandom;
 
 import junit.framework.TestCase;
 import junit.framework.AssertionFailedError;

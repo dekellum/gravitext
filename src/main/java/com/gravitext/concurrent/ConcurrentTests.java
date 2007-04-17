@@ -1,4 +1,4 @@
-package com.gravitext.util.perftest;
+package com.gravitext.concurrent;
 
 public final class ConcurrentTests
 {

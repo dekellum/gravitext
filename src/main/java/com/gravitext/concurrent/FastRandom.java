@@ -1,4 +1,4 @@
-package com.gravitext.util.perftest;
+package com.gravitext.concurrent;
 
 /**
  * A limited quality but high performance random number generator suitable for

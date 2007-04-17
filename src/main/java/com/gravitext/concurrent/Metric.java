@@ -1,4 +1,4 @@
-package com.gravitext.util.perftest;
+package com.gravitext.concurrent;
 
 import java.text.NumberFormat;
 

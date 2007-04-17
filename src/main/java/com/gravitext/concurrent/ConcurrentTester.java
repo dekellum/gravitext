@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gravitext.util.perftest;
+package com.gravitext.concurrent;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 
-class ConcurrentTester implements Runnable
+public class ConcurrentTester implements Runnable
 {
     public ConcurrentTester( ConcurrentTest ctest, 
                              int runs, 

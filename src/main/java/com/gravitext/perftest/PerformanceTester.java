@@ -1,6 +1,10 @@
-package com.gravitext.util.perftest;
+package com.gravitext.perftest;
 
 import java.util.Formatter;
+
+import com.gravitext.concurrent.ConcurrentTest;
+import com.gravitext.concurrent.ConcurrentTester;
+import com.gravitext.concurrent.Metric;
 
 class PerformanceTester extends ConcurrentTester
 {
