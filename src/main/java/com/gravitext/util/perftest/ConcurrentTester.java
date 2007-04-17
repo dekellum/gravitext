@@ -78,7 +78,7 @@ class ConcurrentTester implements Runnable
     
     public int runsExecuted()
     {
-        return ( _nextRun.get() - 1 );
+        return _lastRun.get();
     }
     
     public double meanThroughput()
@@ -112,15 +112,24 @@ class ConcurrentTester implements Runnable
                 int count;
                 final Stopwatch s = new Stopwatch();
                 
-                while( ( _error == null ) && 
-                       ( ( run = _nextRun.getAndIncrement() ) <= _runCount ) ) {
+                run_loop: 
+                while( _error == null ) {
 
+                    // atomic increment run up until == _runCount
+                    while( true ) {
+                        count = _lastRun.get();
+                        run = count + 1;
+                        if( run > _runCount ) break run_loop; 
+                        if( _lastRun.compareAndSet( count, run ) ) break; 
+                    }
+                    
                     s.start();
                     count = _ctest.runTest( run, _seed );
                     s.stop();
-                    
-                    _latencySum.addAndGet( s.delta() );
+
                     _resultSum.addAndGet( count );
+                    _latencySum.addAndGet( s.delta() );
+                    
                 }
             }
             catch( Throwable x ) {
@@ -143,7 +152,7 @@ class ConcurrentTester implements Runnable
     private final ConcurrentTest _ctest;
     private final int _threads;
     private final int _runCount;
-    private final AtomicInteger _nextRun = new AtomicInteger( 1 );
+    private final AtomicInteger _lastRun = new AtomicInteger( 0 );
     private final AtomicLong _resultSum = new AtomicLong( 0 );
     private final AtomicLong _latencySum = new AtomicLong( 0 );
     private final Stopwatch _totalRunTime = new Stopwatch();
