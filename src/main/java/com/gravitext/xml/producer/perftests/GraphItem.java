@@ -3,7 +3,7 @@ package com.gravitext.xml.producer.perftests;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gravitext.util.perftest.FastRandom;
+import com.gravitext.concurrent.FastRandom;
 
 public final class GraphItem
 {
