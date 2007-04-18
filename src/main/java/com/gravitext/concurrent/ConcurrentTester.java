@@ -22,6 +22,11 @@ public class ConcurrentTester implements Runnable
         _barrier = new CyclicBarrier( threads + 1, _totalRunTime );
     }
     
+    public void setSeed( int seed )
+    {
+        _seed = seed;
+    }
+    
     /**
      * @throws RuntimeException from ConcurrentTest.runTest() or wrapped 
      * Exception
@@ -92,12 +97,6 @@ public class ConcurrentTester implements Runnable
                    .subdivide( runsExecuted() );
     }
     
-    public void setSeed( int seed )
-    {
-        _seed = seed;
-        
-    }
-
     public Class<? extends ConcurrentTest> testClass()
     {
         return _ctest.getClass();
