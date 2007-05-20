@@ -5,7 +5,7 @@ import com.gravitext.reflect.BeanException;
 
 import junit.framework.TestCase;
 
-public class BeanSetterTest extends TestCase
+public class BeanAccessorTest extends TestCase
 {
 
     public void testPrimativeTypeAssignable() 
