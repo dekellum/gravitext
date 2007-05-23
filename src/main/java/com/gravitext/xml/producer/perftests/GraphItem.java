@@ -11,17 +11,17 @@ public final class GraphItem
     public GraphItem( FastRandom r )
     {
         int s = 0;
-        _content = CHAR_DATA.substring( s = r.nextInt(100), 
-                                        s + r.nextInt(900));
+        _content = CHAR_DATA.substring( s = r.nextInt(101), 
+                                        s + r.nextInt(901));
         _score = r.nextInt();
         _value = r.nextInt();
-        _name = CHAR_DATA.substring( s = r.nextInt(200), s + r.nextInt(20) );
+        _name = CHAR_DATA.substring( s = r.nextInt(201), s + r.nextInt(21) );
         
-        int count = r.nextInt(11);
+        int count = r.nextInt(12);
         _list = new ArrayList<String>( count );
         for( int i = 0; i < count; ++i ) {
-            _list.add( CHAR_DATA.substring( s = r.nextInt(200), 
-                                            s + r.nextInt(33) ) );
+            _list.add( CHAR_DATA.substring( s = r.nextInt(201), 
+                                            s + r.nextInt(34) ) );
         }
     }
 
