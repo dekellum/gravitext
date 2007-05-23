@@ -168,7 +168,7 @@ public class BeanAccessor
         throws BeanException
     {
         try {
-            return Enum.valueOf( type, value );
+            return type.cast( Enum.valueOf( type, value ) );
         }
         catch( IllegalArgumentException x ) {
             throw new BeanException( x );

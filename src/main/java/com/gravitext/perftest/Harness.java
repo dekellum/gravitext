@@ -1,8 +1,12 @@
 package com.gravitext.perftest;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.gravitext.concurrent.ConcurrentTest;
+import com.gravitext.reflect.BeanAccessor;
+import com.gravitext.reflect.BeanException;
 
 public class Harness
 {
@@ -201,28 +205,30 @@ public class Harness
     private void processArgs( String[] args ) 
         throws ClassNotFoundException, 
                InstantiationException, 
-               IllegalAccessException
+               IllegalAccessException,
+               BeanException
     {
         int i = 0;  
         char flag = 0;
-        boolean doRunArgs = false;
-        ArrayList<String> runArgs = new ArrayList<String>();
+        ArrayList<String> commonArgs = new ArrayList<String>();
+
+        ConcurrentTest _lastTest = null;
         
         while( i < args.length ) {
-            if( doRunArgs ) {
-                if( ! args[i].startsWith( "-" ) ) {
-                    doRunArgs = false;
-                    continue;
-                }
-                runArgs.add( args[i] );
-            }
-            else if( args[i].equals("--") ) doRunArgs = true;
 
+            if( args[i].startsWith("--") ) {
+                if( _lastTest == null ) commonArgs.add( args[i] );
+                else applyArgument( _lastTest, args[i] );
+            }
             else if( flag != 0 ) {
                 if( flag == 'c' )      _threadCount=Integer.parseInt(args[i]);
                 else if( flag == 'w' ) _warmCount=Integer.parseInt(args[i]);
                 else if( flag == 'r' ) _compCount=Integer.parseInt(args[i]);
-                else usage();
+                else {
+                    System.err.println(
+                        "ERROR: Invalid flag [-" + flag + "]." );
+                    usage();
+                }
                 flag = 0;
             }
             else if( args[i].startsWith( "-" ) ) {
@@ -234,21 +240,64 @@ public class Harness
             else {
                 Class<? extends ConcurrentTest> ctClass =
                     Class.forName( args[i] ).asSubclass( ConcurrentTest.class );
+                _lastTest = ctClass.newInstance();
                 
-                _instances.add( ctClass.newInstance() );
+                if( _verbose ) setVerbose( _lastTest );
+                
+                for( String arg : commonArgs ) {
+                    applyArgument( _lastTest, arg );
+                }
+                
+                _instances.add( _lastTest );
             }
             i++;
         }
         if( flag != 0 ) usage();
-        
-        _runArgs = runArgs.toArray( _runArgs );
+        if( _instances.size() < 1 ) usage();
     }
 
+    private void setVerbose( Object bean )
+    {
+        try {
+            new BeanAccessor( bean ).setProperty( "verbose", true );
+        }
+        catch( BeanException x ) {
+            // Ignore in verbose case.
+        }
+    }
+
+
+    private void applyArgument( Object bean, String argument ) 
+        throws BeanException
+    {
+        Matcher m = ARG_PATTERN.matcher( argument );
+        if( m.find() ) {
+            String property = m.group( 1 );
+            Object value = m.group( 3 );
+            if( value == null ) value = true;
+            new BeanAccessor( bean ).setProperty( property, value );
+        }
+        else {
+            System.err.println(
+                "ERROR: Invalid bean argument [" + argument + "]." );
+            usage();
+        }
+    }
+
+    private static final Pattern ARG_PATTERN = 
+        Pattern.compile( "^\\-\\-([^=\\s]+)(=(.+))?$" );
+    
     private void usage()
     {
-        System.out.println( 
-        "Usage: " + getClass().getName() + '\n' +
-        "       -c -w -r -v [-- <global args>] <class> ...\n"
+        System.err.println( 
+    "Usage: " + getClass().getName() + " [-c] [-w] [-r] [-v]\n" +
+    "       [--globalProp[=value]]... [<testclass> --prop[=value]...] ... \n" +
+    " -c threads : thread count.\n" +
+    " -w count   : test run count per warmup iteration.\n" +
+    " -r count   : test run count per comparison run iteration.\n" +
+    " -v         : Verbose mode (testclass.setVerbose(true)).\n" +
+    " --globalProp[=value] : Set property value on all testclass instances.\n" +
+    " --prop[=value]       : Set property value on previous testclass only.\n\n"
         );
         System.exit(1);
     }
@@ -270,7 +319,5 @@ public class Harness
         
     private ArrayList<ConcurrentTest> _instances =
         new ArrayList<ConcurrentTest>();
-    
-    private String[] _runArgs = new String[0]; //FIXME: Use?
 }
     
