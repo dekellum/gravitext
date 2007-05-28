@@ -4,8 +4,8 @@ package com.gravitext.concurrent;
  * A limited quality but high performance random number generator suitable for
  * performance testing. This class offers no thread safety and is best used
  * exclusively by each test thread. The performance advantage over
- * java.util.Random was found to be 34x for Sun JDK 1.5.0_09 and 29x for Sun JDK
- * 1.6.0-beta2 on Linux. The generation cost for java.util.Random is potentially
+ * java.util.Random was found to be 34x for Sun JDK 1.5.0_09 and 30x for Sun JDK
+ * 1.6.0_01 on Linux 2xCPU. The generation cost for java.util.Random is potentially
  * significant to some performance test cases.
  * 
  * @author David Kellum
