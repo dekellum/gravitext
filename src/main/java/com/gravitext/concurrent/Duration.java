@@ -10,8 +10,6 @@ public final class Duration
 {
     /**
      * Construct given a long value and associated time unit
-     * @param delta 
-     * @param unit
      */
     public Duration(long delta, TimeUnit unit)
     {
