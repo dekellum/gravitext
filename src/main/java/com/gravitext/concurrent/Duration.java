@@ -2,37 +2,65 @@ package com.gravitext.concurrent;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Immutable representation of a span of time.
+ * @author David Kellum
+ */
 public final class Duration
 {
+    /**
+     * Construct given a long value and associated time unit
+     * @param delta 
+     * @param unit
+     */
     public Duration(long delta, TimeUnit unit)
     {
+        double s = (double) delta;
+
         switch( unit ) {
-        case NANOSECONDS:  _seconds = (double) delta / 1e9d; break;
-        case MICROSECONDS: _seconds = (double) delta / 1e6d; break;
-        case MILLISECONDS: _seconds = (double) delta / 1e3d; break;
-        case SECONDS:      _seconds = (double) delta; break;
+        case NANOSECONDS:  s /= 1e9d; break;
+        case MICROSECONDS: s /= 1e6d; break;
+        case MILLISECONDS: s /= 1e3d; break;
+        case SECONDS:      break;
+        case MINUTES:      s *= 60d; break;
+        case HOURS:        s *= 60d * 60d; break;
+        case DAYS:         s *= 60d * 60d * 24d; break;
+        default: throw new IllegalArgumentException( "Unknown: "+ unit );
         }
+
+        _seconds = s;
     }
     
+    /**
+     * Construct given a double value in seconds.
+     */
     public Duration( double seconds )
     {
         _seconds = seconds;
     }
     
+    /**
+     * Return duration as a double value in seconds.
+     */
     public double seconds()
     {
         return _seconds;
     }
     
-    public Duration subdivide( long divisor )
+    /**
+     * Return a new duration from this duration divided by the specified 
+     * divisor.
+     */
+    public Duration divide( double divisor )
     {
         return new Duration ( _seconds / divisor );
     }
     
     /**
-     * Returns a String representation of this duration using the most
-     * appropriate unit [s ms µs ns] and 3 fractional digits.
+     * Return a String representation of this duration using the most
+     * appropriate unit (ex: s ms µs ns) and 3 fractional digits.
      */
+    @Override
     public String toString()
     {
         StringBuilder b = new StringBuilder( 16 );
@@ -41,5 +69,5 @@ public final class Duration
         return b.toString();
     }
 
-    private double _seconds; // In seconds.
+    private final double _seconds; // Duration in seconds
 }

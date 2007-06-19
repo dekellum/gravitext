@@ -45,7 +45,6 @@
         <artifactId>cobertura-maven-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
@@ -59,12 +58,22 @@
   </build>
 
   <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
+	<plugins>
+	  <plugin>
+		<groupId>org.codehaus.mojo</groupId>
+		<artifactId>cobertura-maven-plugin</artifactId>
+		<version>2.0</version>
+	  </plugin>
+
+	  <plugin>
+		<artifactId>maven-javadoc-plugin</artifactId>
+		<configuration>
+		  <links>
+			<link>http://java.sun.com/javase/6/docs/api/</link>
+		  </links>
+		</configuration>
+	  </plugin>
+	</plugins>
   </reporting>
 
 </project>

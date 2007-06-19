@@ -291,13 +291,13 @@ public class Harness
     {
         System.err.println( 
     "Usage: " + getClass().getName() + " [-c] [-w] [-r] [-v]\n" +
-    "       [--globalProp[=value]]... [<testclass> --prop[=value]...] ... \n" +
+    "       [--globalProp[=value]]... [<TestClass> --prop[=value]...] ... \n" +
     " -c threads : thread count.\n" +
     " -w count   : test run count per warmup iteration.\n" +
     " -r count   : test run count per comparison run iteration.\n" +
-    " -v         : Verbose mode (testclass.setVerbose(true)).\n" +
-    " --globalProp[=value] : Set property value on all testclass instances.\n" +
-    " --prop[=value]       : Set property value on previous testclass only.\n\n"
+    " -v         : Verbose mode (TestClass.setVerbose(true)).\n" +
+    " --globalProp[=value] : Set globalProp value on all TestClass instances.\n" +
+    " --prop[=value]       : Set prop value on previous TestClass only.\n\n"
         );
         System.exit(1);
     }
@@ -306,7 +306,7 @@ public class Harness
 
     private int    _warmCount      = 0;
     private int    _warmIterations = 3;
-    private double _warmTarget     = 40.0d;
+    private double _warmTarget     = 40.0d; //seconds
     private double _warmInterval   = 1.0d / 4.0d; //~10 second intervals
     private double _warmTolerance  = 0.05d; // +/- 5%
     

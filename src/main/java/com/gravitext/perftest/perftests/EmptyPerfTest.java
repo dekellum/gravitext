@@ -4,7 +4,7 @@ import com.gravitext.concurrent.ConcurrentTest;
 
 public class EmptyPerfTest implements ConcurrentTest
 {
-    public int runTest( int run, int seed ) throws Exception
+    public int runTest( int run, int seed )
     {
         return _returnValue;
     }

@@ -27,6 +27,6 @@ public class DurationTest extends TestCase
         assertEquals( "5.000ms",
                       new Duration( 5000000000000000000L,
                                     TimeUnit.MILLISECONDS )
-                        .subdivide( 1000000000000000000L ).toString() );
+                        .divide( 1000000000000000000L ).toString() );
     }
 }

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.gravitext.concurrent;
 
 import java.util.concurrent.BrokenBarrierException;
@@ -9,9 +6,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-
-public class ConcurrentTester implements Runnable
+/**
+ * Runs a ConcurrentTest instance with a specified number of threads and 
+ * iterations.
+ * @see ConcurrentTests#run
+ * @author David Kellum
+ */
+public class ConcurrentTester
 {
+    /**
+     * @param ctest the instance to test
+     * @param runs the total number of runs to test
+     * @param threads the number of threads to concurrently run the test
+     */
     public ConcurrentTester( ConcurrentTest ctest, 
                              int runs, 
                              int threads )
@@ -22,21 +29,32 @@ public class ConcurrentTester implements Runnable
         _barrier = new CyclicBarrier( threads + 1, _totalRunTime );
     }
     
+    /**
+     * Set an alternative seed value to pass to each call of
+     * {@code ConcurrentTest.runTest()}. The default seed is randomly 
+     * selected with such factors as the current system clock. 
+     */
     public void setSeed( int seed )
     {
         _seed = seed;
     }
     
     /**
-     * @throws RuntimeException from ConcurrentTest.runTest() or wrapped 
-     * Exception
-     * @throws Error for example when jUnit assertions are used in the 
+     * Run the ConcurrentTest based on constructed values. The first of any 
+     * Exceptions thrown in a test thread from {@code ConcurrentTest.runTest()}
+     * will be re-thrown from this method after wrapping as needed in a 
+     * RuntimeException. 
+     * @throws RuntimeException from ConcurrentTest.runTest()
+     * @throws Error, for example, when jUnit assertions are used in the 
      * ConcurrentTest
+     * @return the sum of result counts returned from 
+     * {@code ConcurrentTest.runTest()}
      */
     public final long runTest()
     {
+        Runner runner = new Runner();
         for(int i = 0; i < _threads; ++i ) {
-            new Thread( this, testClass().getSimpleName() + ':' + i ).start();
+            new Thread( runner, testClass().getSimpleName() + ':' + i ).start();
         }
         
         try {
@@ -66,85 +84,109 @@ public class ConcurrentTester implements Runnable
         } 
     }
     
-    public Duration duration()
+    /**
+     * Return the total (wall) time used to run the test.
+     */
+    public final Duration duration()
     {
         return _totalRunTime.duration();
     }
 
-    public long resultSum()
+    /**
+     * Return the sum of result counts returned from 
+     * {@code ConcurrentTest.runTest()}.
+     */
+    public final long resultSum()
     {
         return _resultSum.get();
     }
 
-    public int runsTarget()
+    /**
+     * Return the number of runs requested on construction.
+     */
+    public final int runsTarget()
     {
         return _runCount;
     }
     
-    public int runsExecuted()
+    /**
+     * Return the number of runs actually executed (before completed or error).
+     */
+    public final int runsExecuted()
     {
         return _lastRun.get();
     }
     
-    public double meanThroughput()
+    /**
+     * Return the mean throughput in runs/second.
+     */
+    public final double meanThroughput()
     {
         return ( ( (double) runsExecuted() ) / duration().seconds() );
     }
 
-    public Duration meanLatency()
+    /**
+     * Return the mean latency per test run.
+     */
+    public final Duration meanLatency()
     {
         return new Duration( _latencySum.get(), TimeUnit.NANOSECONDS )
-                   .subdivide( runsExecuted() );
+                   .divide( runsExecuted() );
     }
     
-    public Class<? extends ConcurrentTest> testClass()
+    /**
+     * Return the class of the ConcurrentTest passed on construction.
+     */
+    protected final Class<? extends ConcurrentTest> testClass()
     {
         return _ctest.getClass();
     }
     
-    public final void run()
+    private final class Runner implements Runnable 
     {
-        try {
-            _barrier.await(); // Signal ready and wait
+        public final void run()
+        {
             try {
-                int run;
-                int count;
-                final Stopwatch s = new Stopwatch();
-                
-                run_loop: 
-                while( _error == null ) {
+                _barrier.await(); // Signal ready and wait
+                try {
+                    int run;
+                    int count;
+                    final Stopwatch s = new Stopwatch();
 
-                    // atomic increment run while run <= _runCount
-                    while( true ) {
-                        count = _lastRun.get();
-                        run = count + 1;
-                        if( run > _runCount ) break run_loop; 
-                        if( _lastRun.compareAndSet( count, run ) ) break; 
+                    run_loop: 
+                    while( _error == null ) {
+
+                        // atomic increment run while run <= _runCount
+                        while( true ) {
+                            count = _lastRun.get();
+                            run = count + 1;
+                            if( run > _runCount ) break run_loop; 
+                            if( _lastRun.compareAndSet( count, run ) ) break; 
+                        }
+
+                        s.start();
+                        count = _ctest.runTest( run, _seed );
+                        s.stop();
+
+                        _resultSum.addAndGet( count );
+                        _latencySum.addAndGet( s.delta() );
                     }
-                    
-                    s.start();
-                    count = _ctest.runTest( run, _seed );
-                    s.stop();
-
-                    _resultSum.addAndGet( count );
-                    _latencySum.addAndGet( s.delta() );
-                    
+                }
+                catch( Throwable x ) {
+                    synchronized( ConcurrentTester.this ) {
+                        if( _error == null ) _error = x;
+                    }
+                }
+                finally {
+                    _barrier.await();
                 }
             }
-            catch( Throwable x ) {
-                synchronized( this ) {
-                    if( _error == null ) _error = x;
-                }
+            catch( InterruptedException e ) {
+                //ignore but terminate
             }
-            finally {
-                _barrier.await();
+            catch( BrokenBarrierException e ) {
+                //ignore but terminate
             }
-        }
-        catch( InterruptedException e ) {
-            //ignore but terminate
-        }
-        catch( BrokenBarrierException e ) {
-            //ignore but terminate
         }
     }
 
