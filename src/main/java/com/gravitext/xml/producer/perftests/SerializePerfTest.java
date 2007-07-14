@@ -11,7 +11,7 @@ import java.io.Writer;
 import java.util.List;
 
 import com.gravitext.concurrent.ConcurrentTest;
-import com.gravitext.concurrent.FastRandom;
+import com.gravitext.util.FastRandom;
 import com.gravitext.xml.producer.Indentor;
 
 public abstract class SerializePerfTest implements ConcurrentTest
