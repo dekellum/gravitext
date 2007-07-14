@@ -5,14 +5,14 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.gravitext</groupId>
-  <artifactId>perftest</artifactId>
+  <artifactId>gravitext-util</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>perftest</name>
+  <name>Gravitext Utilities</name>
 
   <parent>
     <groupId>com.gravitext</groupId>
-    <artifactId>parent</artifactId>
+    <artifactId>gravitext-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
