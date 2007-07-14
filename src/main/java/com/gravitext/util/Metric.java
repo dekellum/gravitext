@@ -1,4 +1,4 @@
-package com.gravitext.concurrent;
+package com.gravitext.util;
 
 import java.text.NumberFormat;
 

@@ -1,7 +1,7 @@
-package com.gravitext.concurrent.perftests;
+package com.gravitext.perftest.tests;
 
 import com.gravitext.concurrent.ConcurrentTest;
-import com.gravitext.concurrent.FastRandom;
+import com.gravitext.util.FastRandom;
 
 public class FastRandomPerfTest implements ConcurrentTest
 {

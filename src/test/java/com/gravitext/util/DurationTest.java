@@ -1,8 +1,8 @@
-package com.gravitext.concurrent;
+package com.gravitext.util;
 
 import java.util.concurrent.TimeUnit;
 
-import com.gravitext.concurrent.Duration;
+import com.gravitext.util.Duration;
 
 import junit.framework.TestCase;
 

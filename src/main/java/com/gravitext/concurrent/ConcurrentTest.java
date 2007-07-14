@@ -1,5 +1,7 @@
 package com.gravitext.concurrent;
 
+import com.gravitext.util.FastRandom;
+
 /**
  * Interface for a concurrent performance or thread safety test. Implementations 
  * of this interface should provide a default constructor for operability with 

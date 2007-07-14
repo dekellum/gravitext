@@ -1,11 +1,11 @@
-package com.gravitext.concurrent.perftests;
+package com.gravitext.perftest.tests;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import com.gravitext.concurrent.ConcurrentTest;
-import com.gravitext.concurrent.FastRandom;
+import com.gravitext.util.FastRandom;
 
 public class SamplePerfTest implements ConcurrentTest
 {

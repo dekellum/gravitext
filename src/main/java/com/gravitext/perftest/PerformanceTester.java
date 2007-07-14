@@ -4,7 +4,7 @@ import java.util.Formatter;
 
 import com.gravitext.concurrent.ConcurrentTest;
 import com.gravitext.concurrent.ConcurrentTester;
-import com.gravitext.concurrent.Metric;
+import com.gravitext.util.Metric;
 
 class PerformanceTester extends ConcurrentTester
 {

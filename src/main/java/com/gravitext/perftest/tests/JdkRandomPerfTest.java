@@ -1,4 +1,4 @@
-package com.gravitext.concurrent.perftests;
+package com.gravitext.perftest.tests;
 
 import java.util.Random;
 
