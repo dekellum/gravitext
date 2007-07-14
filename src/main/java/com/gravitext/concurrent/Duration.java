@@ -20,9 +20,13 @@ public final class Duration
         case MICROSECONDS: s /= 1e6d; break;
         case MILLISECONDS: s /= 1e3d; break;
         case SECONDS:      break;
-        case MINUTES:      s *= 60d; break;
-        case HOURS:        s *= 60d * 60d; break;
-        case DAYS:         s *= 60d * 60d * 24d; break;
+        
+        //FIXME: These were added in JDK 1.6 but we don't want that 
+        //dependency yet.
+        //case MINUTES:      s *= 60d; break;
+        //case HOURS:        s *= 60d * 60d; break;
+        //case DAYS:         s *= 60d * 60d * 24d; break;
+        
         default: throw new IllegalArgumentException( "Unknown: "+ unit );
         }
 
