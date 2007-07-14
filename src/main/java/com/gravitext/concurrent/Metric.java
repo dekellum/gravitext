@@ -3,8 +3,8 @@ package com.gravitext.concurrent;
 import java.text.NumberFormat;
 
 /**
- * Utilities to format numeric values with metric (SI) unit
- * or percent difference suffixes, and limited fractional digits.
+ * Utilities to format numeric values with metric (SI) unit or percent
+ * difference suffixes, and limited fractional digits.
  *
  * @author David Kellum
  */
@@ -12,12 +12,12 @@ public final class Metric
 {
     
     /**
-     * Write formatted value to out, using six total characters and the
-     * most appropriate metric unit suffix.  Metric suffixes in the
-     * range peta (P, 1e15) to femto (f, 1e-15) are supported.  Values
-     * outside of the supported metric range may force formatting of
-     * more than six characters.  In some cases the value may be left
-     * padded with a space: (ex: " 1.000").
+     * Write formatted value to out, using six total characters and
+     * the most appropriate metric unit suffix.  Metric suffixes in
+     * the range peta (P, 1e15) to femto (f, 1e-15) are supported.
+     * Values outside of the supported metric range may force
+     * formatting of more than six characters.  In some cases the
+     * value may be left padded with a space: (ex: " 1.000").
      */
     public static void format( double value, StringBuilder out )
     {     
@@ -74,12 +74,13 @@ public final class Metric
      * will be formatted as a multiple (ex: 1.1 --&gt; "2.100x").
      * Note that 1.0 is added to the difference in this case. Consider
      * an initial value 1.0 and final value 2.1. The difference is
-     * computed as (final - initial) / initial = 1.1 and thus formatted
-     * as "2.100x".  All other values (&lt;= 1.0) will be formatted as
-     * a positive or negative percentage: (ex: 0.25 --&gt; "+25.0%").
-     * Values will be left padded as necessary for output to six
-     * character width. Values outside the range (-9.995, 9998.5)
-     * will be formatted using more than six characters.
+     * computed as (final - initial) / initial = 1.1 and thus
+     * formatted as "2.100x".  All other values (&lt;= 1.0) will be
+     * formatted as a positive or negative percentage: (ex: 0.25
+     * --&gt; "+25.0%").  Values will be left padded as necessary for
+     * output to six character width. Values outside the range
+     * (-9.995, 9998.5) will be formatted using more than six
+     * characters.
      */
     public static void formatDifference( double value, StringBuilder out )
     {
@@ -122,8 +123,8 @@ public final class Metric
     }
     
     /** 
-     * Return formatted value as String using six characters
-     * and the most appropriate metric suffix.
+     * Return formatted value as String using six characters and the
+     * most appropriate metric suffix.
      * @see #format(double, StringBuilder)
      */
     public static String format( double value )

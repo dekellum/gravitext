@@ -9,9 +9,9 @@ import java.util.concurrent.TimeUnit;
 public final class Duration
 {
     /**
-     * Construct given a long value and associated time unit
+     * Construct given a long duration value and associated time unit.
      */
-    public Duration(long delta, TimeUnit unit)
+    public Duration( long delta, TimeUnit unit )
     {
         double s = (double) delta;
 
@@ -19,7 +19,7 @@ public final class Duration
         case NANOSECONDS:  s /= 1e9d; break;
         case MICROSECONDS: s /= 1e6d; break;
         case MILLISECONDS: s /= 1e3d; break;
-        case SECONDS:      break;
+        case SECONDS:                 break;
         
         //FIXME: These were added in JDK 1.6 but we don't want that 
         //dependency yet.
@@ -50,8 +50,8 @@ public final class Duration
     }
     
     /**
-     * Return a new duration from this duration divided by the specified 
-     * divisor.
+     * Return a new duration from this duration divided by the
+     * specified divisor.
      */
     public Duration divide( double divisor )
     {
@@ -60,7 +60,8 @@ public final class Duration
     
     /**
      * Return a String representation of this duration using the most
-     * appropriate unit (ex: s ms µs ns) and 3 fractional digits.
+     * appropriate unit suffix (ex: s ms µs ns) and seven total
+     * characters.
      */
     @Override
     public String toString()
