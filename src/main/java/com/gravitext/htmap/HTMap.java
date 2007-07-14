@@ -3,7 +3,7 @@ package com.gravitext.htmap;
 import java.util.Map;
 
 /**
- * <b>H</b>eterogeneous <b>T</b>ype-safe extension to the Map
+ * <b>H</b>eterogeneous <b>T</b>ype-safe extension to the <b>Map</b>
  * interface.  All map keys are of the generic type 
  * {@link Key Key&lt;T&gt;}, where T is a key-specific value
  * type. HTMap extends the Map interface, so a HTMap implementation

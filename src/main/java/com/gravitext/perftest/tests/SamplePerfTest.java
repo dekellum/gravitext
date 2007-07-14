@@ -7,6 +7,11 @@ import java.util.List;
 import com.gravitext.concurrent.ConcurrentTest;
 import com.gravitext.util.FastRandom;
 
+/**
+ * A sample performance test of sorting a list of integers via the
+ * java.util.Collections sort.
+ * @author David Kellum
+ */
 public class SamplePerfTest implements ConcurrentTest
 {
     public int runTest( int run, int seed )

@@ -8,6 +8,12 @@ import com.gravitext.concurrent.ConcurrentTest;
 import com.gravitext.reflect.BeanAccessor;
 import com.gravitext.reflect.BeanException;
 
+/**
+ * Standalone concurrent performance test driver.  For usage text,
+ * execute this class (or the containing jar) without any arguments.
+ *
+ * @author David Kellum
+ */
 public class Harness
 {
     public static void main( String[] args ) throws Exception

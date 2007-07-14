@@ -4,6 +4,10 @@ import java.util.Random;
 
 import com.gravitext.concurrent.ConcurrentTest;
 
+/**
+ * Performance test of java.util.Random.
+ * @author David Kellum
+ */
 public class JdkRandomPerfTest implements ConcurrentTest
 {
 

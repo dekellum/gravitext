@@ -3,6 +3,10 @@ package com.gravitext.perftest.tests;
 import com.gravitext.concurrent.ConcurrentTest;
 import com.gravitext.util.FastRandom;
 
+/**
+ * Performance test of FastRandom.
+ * @author David Kellum
+ */
 public class FastRandomPerfTest implements ConcurrentTest
 {
     public int runTest( int run, int seed )
