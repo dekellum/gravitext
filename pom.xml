@@ -4,7 +4,7 @@
   <groupId>com.gravitext</groupId>
   <artifactId>gravitext-util</artifactId>
   <packaging>jar</packaging>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
   <name>Gravitext Utilities</name>
   <url>http://gravitext.com/oss/gravitext-util</url>
 
@@ -36,7 +36,7 @@
   </parent>
 
   <scm>
-    <developerConnection>scm:svn:svn://localhost/subversion.repo/src/gravitext-util/tags/1.1</developerConnection>
+    <developerConnection>scm:svn:svn://localhost/subversion.repo/src/gravitext-util/trunk</developerConnection>
   </scm>
 
   <distributionManagement>
