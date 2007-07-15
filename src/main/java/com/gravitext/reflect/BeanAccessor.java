@@ -205,7 +205,8 @@ public class BeanAccessor
 
     /**
      * Coerces the specified String value to the specified enum type
-     * via the {@link java.lang.Enum#valueOf() Enum.valueOf()} method.
+     * via the {@link java.lang.Enum#valueOf(java.lang.Class, java.lang.String) Enum.valueOf()} 
+     * method.
      * @throws BeanException wrapping an IllegalArgumentException if
      * the string value does not match a Enum constant of the
      * specified type.
