@@ -13,7 +13,7 @@
   <parent>
     <groupId>com.gravitext</groupId>
     <artifactId>gravitext-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
 
   <scm>
