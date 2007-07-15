@@ -1,4 +1,22 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+Copyright 2007 David Kellum
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.gravitext</groupId>
@@ -6,16 +24,61 @@
   <packaging>jar</packaging>
   <version>1.1-SNAPSHOT</version>
   <name>Gravitext Utilities</name>
+  <url>http://gravitext.com/oss/gravitext-util</url>
+
+  <description>A set of common utility packages. Most notably a
+  concurrent test facility and a htmap.</description>
+
+  <developers>
+	<developer>
+	  <id>david</id>
+	  <name>David Kellum</name>
+	  <email>dek95@[org]</email>
+	  <organization>Gravitext</organization>
+	  <organizationUrl>http://gravitext.com</organizationUrl>
+	</developer>
+  </developers>
+
+  <licenses>
+	<license>
+	  <name>Apache License, Version 2.0</name>
+	  <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+	  <distribution>repo</distribution>
+	</license>
+  </licenses>
 
   <parent>
     <groupId>com.gravitext</groupId>
     <artifactId>gravitext-parent</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
   </parent>
 
   <scm>
     <developerConnection>scm:svn:svn://localhost/subversion.repo/src/gravitext-util/trunk</developerConnection>
   </scm>
+
+  <distributionManagement>
+    <repository>
+      <id>gravitext</id>
+      <name>Gravitext Repo</name>
+      <url>file:///home/david/repo/releases</url>
+      <layout>default</layout>
+      <uniqueVersion>false</uniqueVersion>
+    </repository>
+    <snapshotRepository>
+      <id>gravitext</id>
+      <name>Gravitext Repo</name>
+      <url>file:///home/david/repo/snapshots</url>
+      <layout>default</layout>
+      <uniqueVersion>true</uniqueVersion>
+    </snapshotRepository>
+	<site>
+	  <id>gravitext oss site</id>
+      <name>Gravitext OSS WebSite</name>
+      <url>file:///home/david/public_html/oss/gravitext-util</url>
+    </site>
+	<downloadUrl>http://gravitext.com/repo</downloadUrl>
+  </distributionManagement>
 
   <dependencies>
 
