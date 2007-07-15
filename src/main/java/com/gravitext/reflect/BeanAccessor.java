@@ -1,3 +1,19 @@
+/*
+ * Copyright 2007 David Kellum
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.gravitext.reflect;
 
 import java.lang.reflect.InvocationTargetException;
@@ -12,10 +28,21 @@ import java.math.BigInteger;
  */
 public class BeanAccessor
 {
+    /**
+     * Construct given bean instance to access.
+     */
     public BeanAccessor( Object bean ) {
         _bean = bean;
     }
-
+    
+    /**
+     * Set the specified property to value on the bean passed on
+     * construction.
+     * @throws BeanException if a suitable setter is not found for
+     * this property, if the specified value could not be coerced to
+     * the property type, or to wrap a multitude of exceptions which can
+     * be thrown on coercion or invocation.
+     */
     public void setProperty( String property, Object value )
         throws BeanException
     {
@@ -66,7 +93,17 @@ public class BeanAccessor
         }
     }
 
-    
+    /**
+     * Attempts to coerce the specified value to the specified
+     * type. If the value is a CharSequence it will be coerced via
+     * {@link #coerceString coerceString()}. If the value is a
+     * Number the target type is a type of Number, then 
+     * {@link #coerceNumber coerceNumber()} will be used.
+     * @throws BeanException if the specified value could not be
+     * coerced to the property type or to wrap a multitude of
+     * exceptions which can be thrown on coercion (ex:
+     * NumberFormatException).
+     */
     public <T> T coerceObject( Class<T> type, Object value )
         throws BeanException
     {
@@ -89,6 +126,16 @@ public class BeanAccessor
     }
     
     
+    /**
+     * Attempts to coerce the specified string value to the specified
+     * type. All of the primitive types, associated primitive wrapper
+     * classes, additional JDK Number classes BigDecimal and
+     * BigInteger, and Java enums are supported.
+     * @throws BeanException if the specified value could not be
+     * coerced to the property type or to wrap a multitude of
+     * exceptions which can be thrown on coercion (ex:
+     * NumberFormatException).
+     */
     public <T> T coerceString( Class<T> type, String val )
         throws BeanException
     {
@@ -137,6 +184,15 @@ public class BeanAccessor
         return type.cast( res );
     }
 
+
+    /**
+     * Coerces the specified Number value to an alternative specified
+     * Number type via the standard Number defined conversion methods.
+     * @throws BeanException if the specified value could not be
+     * coerced to the property type or to wrap a multitude of
+     * exceptions which can be thrown on coercion (ex:
+     * NumberFormatException).
+     */
     public <T extends Number> T coerceNumber( Class<T> type, Number val ) 
         throws BeanException
     {
@@ -163,6 +219,14 @@ public class BeanAccessor
         return type.cast( val );
     }
 
+    /**
+     * Coerces the specified String value to the specified enum type
+     * via the {@link java.lang.Enum#valueOf(java.lang.Class, java.lang.String) Enum.valueOf()} 
+     * method.
+     * @throws BeanException wrapping an IllegalArgumentException if
+     * the string value does not match a Enum constant of the
+     * specified type.
+     */
     @SuppressWarnings("unchecked")
     public <T extends Enum> T coerceEnum( Class<T> type, String value ) 
         throws BeanException
