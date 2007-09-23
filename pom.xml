@@ -10,21 +10,21 @@
   <description>Gravitext OSS project parent.</description>
 
   <developers>
-	<developer>
-	  <id>david</id>
-	  <name>David Kellum</name>
-	  <email>dek95@[org]</email>
-	  <organization>Gravitext</organization>
-	  <organizationUrl>http://gravitext.com</organizationUrl>
-	</developer>
+    <developer>
+      <id>david</id>
+      <name>David Kellum</name>
+      <email>dek95@[org]</email>
+      <organization>Gravitext</organization>
+      <organizationUrl>http://gravitext.com</organizationUrl>
+    </developer>
   </developers>
 
   <licenses>
-	<license>
-	  <name>Apache License, Version 2.0</name>
-	  <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-	  <distribution>repo</distribution>
-	</license>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
   </licenses>
 
   <scm>
@@ -46,7 +46,7 @@
       <layout>default</layout>
       <uniqueVersion>true</uniqueVersion>
     </snapshotRepository>
-	<downloadUrl>http://gravitext.com/repo/releases</downloadUrl>
+    <downloadUrl>http://gravitext.com/repo/releases</downloadUrl>
   </distributionManagement>
 
   <dependencyManagement>
