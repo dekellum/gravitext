@@ -12,21 +12,21 @@
   concurrent test facility and a htmap.</description>
 
   <developers>
-	<developer>
-	  <id>david</id>
-	  <name>David Kellum</name>
-	  <email>dek95@[org]</email>
-	  <organization>Gravitext</organization>
-	  <organizationUrl>http://gravitext.com</organizationUrl>
-	</developer>
+    <developer>
+      <id>david</id>
+      <name>David Kellum</name>
+      <email>dek95@[org]</email>
+      <organization>Gravitext</organization>
+      <organizationUrl>http://gravitext.com</organizationUrl>
+    </developer>
   </developers>
 
   <licenses>
-	<license>
-	  <name>Apache License, Version 2.0</name>
-	  <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-	  <distribution>repo</distribution>
-	</license>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
   </licenses>
 
   <parent>
@@ -54,12 +54,12 @@
       <layout>default</layout>
       <uniqueVersion>true</uniqueVersion>
     </snapshotRepository>
-	<site>
-	  <id>gravitext oss site</id>
+    <site>
+      <id>gravitext oss site</id>
       <name>Gravitext OSS WebSite</name>
       <url>file:///home/david/public_html/oss/gravitext-util</url>
     </site>
-	<downloadUrl>http://gravitext.com/repo</downloadUrl>
+    <downloadUrl>http://gravitext.com/repo</downloadUrl>
   </distributionManagement>
 
   <dependencies>
@@ -99,29 +99,29 @@
           </archive>
         </configuration>
       </plugin>
-	  <plugin>
-		<artifactId>maven-source-plugin</artifactId>
-	  </plugin>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
     </plugins>
   </build>
 
   <reporting>
-	<plugins>
-	  <plugin>
-		<groupId>org.codehaus.mojo</groupId>
-		<artifactId>cobertura-maven-plugin</artifactId>
-		<version>2.0</version>
-	  </plugin>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.0</version>
+      </plugin>
 
-	  <plugin>
-		<artifactId>maven-javadoc-plugin</artifactId>
-		<configuration>
-		  <links>
-			<link>http://java.sun.com/javase/6/docs/api/</link>
-		  </links>
-		</configuration>
-	  </plugin>
-	</plugins>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <links>
+            <link>http://java.sun.com/javase/6/docs/api/</link>
+          </links>
+        </configuration>
+      </plugin>
+    </plugins>
   </reporting>
 
 </project>

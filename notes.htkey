@@ -1,0 +1,38 @@
+Given a method that takes a (generic) Key:
+
+setKey( Key f )
+
+There is no way to determine what KeySpace the key should be in, and
+therefore no way to automaticly convert a String to the appropriate key.
+
+Would be nice if there as was typed support of keys:
+
+BaseKey
+{
+  BaseKey A
+  BaseKey B
+}
+
+
+DerivedKey
+{
+ BaseKey C
+ BaseKey D
+}
+
+HTMap<BaseKey>
+
+Conclusion: Not terribly worable. Doesn't look good. See
+com.gravtext.htmap.DerivedKeyTest case.
+
+
+
+
+
+
+
+
+
+
+
+
