@@ -60,6 +60,15 @@ public class ConcurrentTester
     }
     
     /**
+     * Set whether to do per-run latency timing.  This timing can be 
+     * costly for very fine grain test runs. 
+     */
+    public void setDoLatencyTiming( boolean doTime )
+    {
+        _doLatency = doTime;
+    }
+    
+    /**
      * Run the ConcurrentTest based on constructed values. The first of any 
      * Exceptions thrown in a test thread from {@code ConcurrentTest.runTest()}
      * will be re-thrown from this method after wrapping as needed in a 
@@ -171,8 +180,9 @@ public class ConcurrentTester
                 try {
                     int run;
                     int count;
-                    final Stopwatch s = new Stopwatch();
-
+                    final Stopwatch s = _doLatency ? new Stopwatch() : null;
+                    final int seed = _seed;
+                        
                     run_loop: 
                     while( _error == null ) {
 
@@ -184,12 +194,12 @@ public class ConcurrentTester
                             if( _lastRun.compareAndSet( count, run ) ) break; 
                         }
 
-                        s.start();
-                        count = _ctest.runTest( run, _seed );
-                        s.stop();
+                        if( s != null ) s.start();
+                        count = _ctest.runTest( run, seed );
+                        if( s != null )  s.stop();
 
                         _resultSum.addAndGet( count );
-                        _latencySum.addAndGet( s.delta() );
+                        if( s != null ) _latencySum.addAndGet( s.delta() );
                     }
                 }
                 catch( Throwable x ) {
@@ -216,6 +226,7 @@ public class ConcurrentTester
     private final AtomicInteger _lastRun = new AtomicInteger( 0 );
     private final AtomicLong _resultSum = new AtomicLong( 0 );
     private final AtomicLong _latencySum = new AtomicLong( 0 );
+    private boolean _doLatency = true;
     private final Stopwatch _totalRunTime = new Stopwatch();
     private final CyclicBarrier _barrier;
     private int _seed = FastRandom.generateSeed();

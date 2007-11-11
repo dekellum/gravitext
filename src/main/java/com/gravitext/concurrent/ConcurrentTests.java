@@ -36,6 +36,8 @@ public final class ConcurrentTests
      */
     public static long run( ConcurrentTest test, int runs, int threads )
     {
-        return new ConcurrentTester( test, runs, threads ).runTest();
+        ConcurrentTester tester = new ConcurrentTester( test, runs, threads );
+        tester.setDoLatencyTiming( false );
+        return tester.runTest();
     }
 }
