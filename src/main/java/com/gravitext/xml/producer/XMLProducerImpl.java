@@ -294,11 +294,11 @@ final class XMLProducerImpl
     }
             
     private State _state = State.BEGIN;
-    private Appendable _out;
-    private CharacterEncoder _encoder;
+    private final Appendable _out;
+    private final CharacterEncoder _encoder;
     
     private Indentor _indentor = Indentor.LINE_BREAK;
     
-    private ArrayList<Tag>    _openTags = new ArrayList<Tag>(16);
-    private ArrayList<NScope> _nScopes  = new ArrayList<NScope>(8);
+    private final ArrayList<Tag>    _openTags = new ArrayList<Tag>(16);
+    private final ArrayList<NScope> _nScopes  = new ArrayList<NScope>(8);
 }
