@@ -22,11 +22,17 @@ package com.gravitext.xml.producer;
  */
 public final class Tag
 {
+    /**
+     * Construct with name and default namespace.
+     */
     public Tag( final String name )
     {
         this( name, null );
     }
     
+    /**
+     * Construct given (local) name and the specified namespace.
+     */
     public Tag( final String name, final Namespace ns )
     {
         if( name == null ) throw new NullPointerException("name");
@@ -46,26 +52,32 @@ public final class Tag
         _endTag = "</" + qName + ">";
     }
 
+    /**
+     * Return the local name of the tag.
+     */
     public String name()
     {
         return _name;
     }
 
-    @Override
-    public String toString()
-    {
-        return ( beginTag() + '>' ); 
-    }
-    
     /**
-     * @return the Namespace associated with this Tag or null if no Namespace
-     *         was specified on construction.
+     * Return the Namespace of this Tag or null if no namespace was
+     * specified on construction.
      */
     public Namespace namespace()
     {
         return _namespace;
     }
 
+    /**
+     * Return string repreesentation of the tag.
+     */
+    @Override
+    public String toString()
+    {
+        return ( beginTag() + '>' ); 
+    }
+    
     String beginTag()
     {
         return _beginTag;

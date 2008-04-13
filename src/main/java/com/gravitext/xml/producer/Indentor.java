@@ -19,66 +19,72 @@ package com.gravitext.xml.producer;
 import java.io.IOException;
 
 /**
- * XML indentor for human readability.  
+ * Immutable XML indentor for human readability.  
  * @author David Kellum
  */
-public final class Indentor implements Cloneable
+public final class Indentor
 {
     /**
      * Constant Indentor for no indentation or line breaks.
      */
-    public static final Indentor COMPRESSED = new Indentor( null );
+    public static final Indentor COMPRESSED = new Indentor();
 
     /**
-     * Constant Indentor for line breaks but no indentation.  
+     * Constant Indentor for UNIX line breaks and no indentation.  
      */
     public static final Indentor LINE_BREAK = new Indentor( "" );
 
     /**
-     * Constant Indentor with line breaks and single space
+     * Constant Indentor with UNIX line breaks and single space
      * indentation.
      */
     public static final Indentor PRETTY = new Indentor( " " );
     
-    // FIXME: Indentor keeps an internal cached representation and is
-    // not synchronized. Thus each producer should use a new or cloned
-    // Indentor instance.
 
-    //FIXME: Add support for non-UNIX default line-break on request
-
+    public Indentor()
+    {
+        this( null );
+    }
+    
     /**
      * Construct Indentor using indent string for each indentation
-     * level (typically some number of tabs and spaces.) Any non-null
-     * indent value implies line-breaks as well.
+     * level and the lineSeperator to use. The indent is typically
+     * some number of tabs or spaces. Any non-null indent value
+     * implies line-breaks as well.
      */
-    public Indentor( String indent )
+    public Indentor( final String indent )
     {
-        if( indent == null ) {
+        this( indent, "\n" );
+    }
+    
+    /**
+     * Construct Indentor using indent string for each indentation
+     * level and the lineSeperator to use. The indent is typically
+     * some number of tabs or spaces. Any non-null indent value
+     * implies line-breaks as well.
+     */
+    public Indentor( final String indent, final String lineSeparator )
+    {
+        _indent = indent;
+        _lineSeparator = lineSeparator;
+        
+        if( _indent == null ) {
             _indentSize = -1;
             _indents = null;
         }
         else {
-            _indentSize = indent.length();
-            StringBuilder b = new StringBuilder( 1 + _indentSize * 16 );
-            b.append( '\n' );
+            _indentSize = _indent.length();
+            StringBuilder b = 
+                new StringBuilder( _lineSeparator.length() + 
+                                   _indentSize * CACHE_INDENTS );
+            b.append( _lineSeparator );
             if( _indentSize > 0 ) {
-                for( int i = 0; i < 16; ++i ) b.append( indent );
+                for( int i = 0; i < CACHE_INDENTS; ++i ) b.append( _indent );
             }
             _indents = b.toString();
         }
     }
     
-    @Override
-    public Indentor clone()
-    {
-        try {
-            return (Indentor) super.clone();
-        }
-        catch( CloneNotSupportedException e ) {
-            throw new RuntimeException( e );
-        }
-    }
-
     /**
      * Return true if this Indentor is equivalent to COMPRESSED
      * constant.
@@ -97,19 +103,25 @@ public final class Indentor implements Cloneable
         return ( _indentSize == 0 );
     }
     
-    void indent( final Appendable out, final int level ) 
+    public void indent( final Appendable out, final int level ) 
         throws IOException 
     {
-        if( _indentSize == 0 ) out.append( '\n' );
+        if( _indentSize == 0 ) { out.append( _lineSeparator ); }
         else if( _indentSize > 0 ) {
-            int len = 1 + ( level * _indentSize );
-            while( len > _indents.length() ) {
-                _indents = _indents + _indents.substring(1);
+            int olev = Math.min( level, CACHE_INDENTS );
+            out.append( _indents, 0, 
+                        _lineSeparator.length() + ( olev * _indentSize ) );
+            while( olev < level ) { //Remainder
+                out.append( _indent );
+                ++olev;
             }
-            out.append( _indents, 0, len );
         }
     }
     
     private final int _indentSize;
-    private String _indents;
- }
+    private final String _indent;
+    private final String _lineSeparator;
+    private final String _indents;
+
+    private static final int CACHE_INDENTS = 32;
+}

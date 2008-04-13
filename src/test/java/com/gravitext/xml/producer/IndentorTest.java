@@ -8,14 +8,14 @@ public class IndentorTest extends TestCase
 {
     public void testInvarients()
     {
-        assertTrue ( Indentor.COMPRESSED.clone().isCompressed() );
+        assertTrue ( Indentor.COMPRESSED.isCompressed() );
         assertTrue (          new Indentor(null).isCompressed() );
-        assertFalse( Indentor.LINE_BREAK.clone().isCompressed() );
+        assertFalse( Indentor.LINE_BREAK.isCompressed() );
         assertFalse(           new Indentor("X").isCompressed() );
 
-        assertTrue ( Indentor.LINE_BREAK.clone().isLineBreak() );
+        assertTrue ( Indentor.LINE_BREAK.isLineBreak() );
         assertTrue (            new Indentor("").isLineBreak() );
-        assertFalse( Indentor.COMPRESSED.clone().isLineBreak() );
+        assertFalse( Indentor.COMPRESSED.isLineBreak() );
         assertFalse(           new Indentor("X").isLineBreak() );
     }
     
@@ -35,7 +35,7 @@ public class IndentorTest extends TestCase
     
     public void testCompressed() throws IOException
     {
-        Indentor i = Indentor.COMPRESSED.clone();
+        Indentor i = Indentor.COMPRESSED;
         StringBuilder b = new StringBuilder(128);
         i.indent( b, 3 );
         assertEquals( "", b.toString() );
@@ -43,7 +43,7 @@ public class IndentorTest extends TestCase
     
     public void testLineBreaks() throws IOException
     {
-        Indentor i = Indentor.LINE_BREAK.clone();
+        Indentor i = Indentor.LINE_BREAK;
         StringBuilder b = new StringBuilder(128);
         i.indent( b, 3 );
         assertEquals( "\n", b.toString() );

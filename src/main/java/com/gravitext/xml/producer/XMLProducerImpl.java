@@ -34,7 +34,7 @@ final class XMLProducerImpl
        
     public void setIndent( final Indentor indentor )
     {
-        _indentor = indentor.clone();
+        _indentor = indentor;
     }
      
     public void putXMLDeclaration( final String encoding )
@@ -185,7 +185,7 @@ final class XMLProducerImpl
         Tag openTag = _openTags.remove( depth );
         if( ( tag != null ) && ( tag != openTag ) ) {
             throw new IllegalStateException(
-                "XMLProducer: Attempt to endTag(" + tag + ") while tag " 
+                "XMLProducer: Attempt to end " + tag + " while " 
                 + openTag + " is open." );
         }
         
@@ -297,7 +297,7 @@ final class XMLProducerImpl
     private Appendable _out;
     private CharacterEncoder _encoder;
     
-    private Indentor _indentor = Indentor.LINE_BREAK.clone();
+    private Indentor _indentor = Indentor.LINE_BREAK;
     
     private ArrayList<Tag>    _openTags = new ArrayList<Tag>(16);
     private ArrayList<NScope> _nScopes  = new ArrayList<NScope>(8);
