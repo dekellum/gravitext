@@ -7,94 +7,72 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.util.List;
+import java.nio.CharBuffer;
 
 import com.gravitext.concurrent.ConcurrentTest;
 import com.gravitext.util.FastRandom;
 import com.gravitext.util.ResizableCharBufferWriter;
-import com.gravitext.xml.producer.Indentor;
+import com.gravitext.xml.producer.CharacterEncoder;
 
-public abstract class SerializePerfTest implements ConcurrentTest
+public class StringBufferEncodePerfTest implements ConcurrentTest
 {
     public int runTest( int run, int seed ) throws Exception
     {   
-        FastRandom random = new FastRandom( seed + run );
-        
-        GraphGenerator generator = new GraphGenerator( random );
-        
-        List<GraphItem> g = generator.nextGraph();
+        FastRandom rnd = new FastRandom( seed + run );
         
         TestOutput out = new TestOutput();
         
-        if( _doSerialize ) serializeGraph( g, out );
+        CharacterEncoder encoder = new CharacterEncoder( out.getWriter() );
+        
+        for( int t = rnd.nextInt( 50 ) + 51; t > 0; --t ) {
+            int length = ( ( rnd.nextInt( 5 ) + 1 ) * 
+                           ( rnd.nextInt( 10 ) + 1 ) * 
+                           ( rnd.nextInt( 20 ) + 1 ) +
+                           rnd.nextInt( 40 ) );
 
+            int offset = rnd.nextInt( CHAR_DATA.length - length );
+
+            CharSequence cs;
+            if( _useCharBuffer ) {
+                cs = CharBuffer.wrap( CHAR_DATA, offset, length );
+            }
+            else {
+                cs = new String( CHAR_DATA, offset, length );
+            }
+
+            encoder.encodeCharData( cs ); 
+        }
+        
         out.flush();
 
         if( _doVerbose ) out.print();
         
-        if( _doSerialize ) return out.size();
-        
-        return ( ( random.nextInt() & 0x7fffffff ) % 3 );
+
+        return out.size();
     }
 
     public void setVerbose( boolean doVerbose )
     {
         _doVerbose = doVerbose;
     }
-    
+
     public void setDoEncode( boolean doEncode )
     {
         _doEncode = doEncode;
     }
-
-    public String getEncoding()
-    {
-        return _encoding;
-    }
-
     public void setEncoding( String encoding )
     {
         _encoding = encoding;
     }
+    
+    public void setUseCharBuffer( boolean useCharBuffer )
+    {
+        _useCharBuffer = useCharBuffer;
+    }
 
-    public boolean useWriter()
-    {
-        return _useWriter;
-    }
-    
-
-    public void setUseWriter( boolean useWriter )
-    {
-        _useWriter = useWriter;
-    }
-    
-    /**
-     * @param indent null -> compressed, "" -> linebreaks only, 
-     *               or else per level "xx"
-     */
-    public void setIndent( Indentor indentor )
-    {
-        _indentor = indentor;
-    }
-    
-    public Indentor getIndent()
-    {
-        return _indentor;
-    }
-    
+        
     protected final class TestOutput
     {
-        public OutputStream getStream() 
-        {
-            if( !_doEncode ) throw new IllegalStateException
-            ( "If not doEncode, shouldn't use stream." );
-
-            if( _stream == null ) {
-                _stream = new ByteArrayOutputStream( 1024 * 24 );
-            }
-            return _stream;
-        }
-
         public void print() throws UnsupportedEncodingException
         {
             if( _doEncode ) {
@@ -127,26 +105,47 @@ public abstract class SerializePerfTest implements ConcurrentTest
                     _writer = new BufferedWriter( t, 1024 );
                 }
                 else {
-                    _writer = new ResizableCharBufferWriter( 1024 * 24 );
+                    _writer = new ResizableCharBufferWriter( 1024 * 100 );
                 }
             }
             return _writer;
+        }
+
+        private OutputStream getStream() 
+        {
+            if( !_doEncode ) throw new IllegalStateException
+            ( "If not doEncode, shouldn't use stream." );
+
+            if( _stream == null ) {
+                _stream = new ByteArrayOutputStream( 1024 * 100 );
+            }
+            return _stream;
         }
         
         private ByteArrayOutputStream _stream = null;
         private Writer _writer                = null;
     }
 
-    protected abstract void serializeGraph( List<GraphItem> graph, 
-                                            TestOutput out )
-        throws Exception;
-
     private boolean _doVerbose   = false;
     private String  _encoding    = "ISO-8859-1";
-    private boolean _doEncode    = false;
-    private boolean _doSerialize = true; // vs. test generation time exclusively 
+    private boolean _doEncode    = true;
+   
+    private boolean _useCharBuffer = true;
     
-    private boolean _useWriter   = true;
+    private static final char[] CHAR_DATA; //10000 bytes minimum
+    
+    static {
+        StringBuilder b = new StringBuilder( 11000 );
+        FastRandom random = new FastRandom( 1 );
+        while( b.length() < ( 10000 ) ) {
+            if( random.nextInt(10) == 0 ) {
+                b.append( "[ Cérébrales escaped \"char & data\"] ");
+            }
+            else {
+                b.append( "otherwise clean text " );
+            }
 
-    private Indentor _indentor   = Indentor.LINE_BREAK;
+        }
+        CHAR_DATA = b.toString().toCharArray();    
+    }
 }

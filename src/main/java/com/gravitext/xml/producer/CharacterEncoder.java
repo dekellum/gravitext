@@ -2,6 +2,7 @@ package com.gravitext.xml.producer;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.CharBuffer;
 
 /**
  * Encodes java text as XML character data and attribute values. 
@@ -108,6 +109,44 @@ public class CharacterEncoder
         return _version;
     }
     
+    public final void encodeComment( final CharSequence in ) 
+        throws IOException
+    {
+        int i = 0;
+        int last = 0;
+        final int end = in.length();
+    
+        while( i < end ) {
+            final char c = in.charAt( i );
+    
+            if ( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
+                // ignore 
+                ++i;
+            }
+            // Dash at very end or "--" anyplace is invalid.
+            else if( c == '-' ) {
+                if( ( i+1 == end ) || ( in.charAt(i+1) == '-' ) ) {
+                    _outA.append( in, last, i );
+                    handleSpecialChar( _modeCommentDash, c, i );
+                    last = ++i;
+                }
+                else ++i;
+            }
+            else if( c <= 0x1F ) { // Other than TAB, CR, LF
+                _outA.append( in, last, i );
+                handleSpecialChar
+                ( (c == 0x0) ? _modeCommentNUL : _modeCommentC0, c, i );
+                last = ++i;
+            }
+            else if ( c >= 0x7F && c <= 0x9F && c != 0x85 ) { // NEL
+                _outA.append( in, last, i );
+                handleSpecialChar( _modeCommentC1, c, i );
+                last = ++i;
+            }
+            else ++i; // And ignore everything else.
+        } // while
+        _outA.append( in, last, i );
+    }
     
     /**
      * Encodes the special characters '&amp;' and '<' to "&amp;amp;" and
@@ -117,15 +156,23 @@ public class CharacterEncoder
      */
     public final void encodeCharData( final CharSequence in )
         throws IOException
-    {
-        // We effectively mitigate the performance cost of the CharSequence 
-        // and Appendable abstractions for the common case here. This is a 10%
-        // improvement in perf. testing.
-        
-        if( ( in instanceof String ) && ( _outW != null ) ) {
-            encodeChars( (String) in, false );
+    {        
+        if( _outW != null ) {
+            if( in instanceof String ) {
+                encodeString( (String) in, false );
+                return;
+            }
+            if( in instanceof CharBuffer ) {
+                final CharBuffer cb = (CharBuffer) in;
+                if( cb.hasArray() ) {
+                    encodeArray( cb.array(), 
+                                 cb.arrayOffset() + cb.position(), 
+                                 cb.remaining(), false );
+                    return;
+                }
+            }
         }
-        else encodeChars( in, false );
+        encodeCharSequence( in, false );
     }
 
     /**
@@ -139,21 +186,21 @@ public class CharacterEncoder
         throws IOException
     {
         if( ( in instanceof String ) && ( _outW != null ) ) {
-            encodeChars( (String) in, true );
+            encodeString( (String) in, true );
         }
-        else encodeChars( in, true );
+        else encodeCharSequence( in, true );
     }
    
-    private final void encodeChars( final CharSequence in, 
-                                    final boolean doEncodeQuote ) 
+    private final void encodeCharSequence( final CharSequence in, 
+                                           final boolean doEncodeQuote ) 
         throws IOException
     {
         int i = 0;
         int last = 0;
-        int end = in.length();
+        final int end = in.length();
 
         while( i < end ) {
-            char c = in.charAt( i );
+            final char c = in.charAt( i );
 
             if ( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
                 // ignore 
@@ -176,13 +223,12 @@ public class CharacterEncoder
             }
             else if( c <= 0x1F ) { // Other than TAB, CR, LF
                 _outA.append( in, last, i );
-                handleSpecialChar( (c == 0x0) ? _modeNUL : _modeC0, 
-                                   in.charAt( i ), i );
+                handleSpecialChar( (c == 0x0) ? _modeNUL : _modeC0, c, i );
                 last = ++i;
             }
             else if ( c >= 0x7F && c <= 0x9F && c != 0x85 ) { // NEL
                 _outA.append( in, last, i );
-                handleSpecialChar( _modeC1, in.charAt( i ), i );
+                handleSpecialChar( _modeC1, c, i );
                 last = ++i;
             }
             else ++i; // And ignore everything else.
@@ -190,16 +236,16 @@ public class CharacterEncoder
         _outA.append( in, last, i );
     }
 
-    private final void encodeChars( final String in, 
-                                    final boolean doEncodeQuote )
+    private final void encodeString( final String in, 
+                                     final boolean doEncodeQuote )
         throws IOException
     {
         int i = 0;
         int last = 0;
-        int end = in.length();
+        final int end = in.length();
 
         while( i < end ) {
-            char c = in.charAt( i );
+            final char c = in.charAt( i );
 
             if ( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
                 // ignore 
@@ -222,13 +268,59 @@ public class CharacterEncoder
             }
             else if( c <= 0x1F ) { // Other than TAB, CR, LF
                 _outW.write( in, last, i - last );
-                handleSpecialChar( (c == 0x0) ? _modeNUL : _modeC0, 
-                                   in.charAt( i ), i );
+                handleSpecialChar( (c == 0x0) ? _modeNUL : _modeC0, c, i );
                 last = ++i;
             }
             else if ( c >= 0x7F && c <= 0x9F && c != 0x85 ) { // NEL
                 _outW.write( in, last, i - last );
-                handleSpecialChar( _modeC1, in.charAt( i ), i );
+                handleSpecialChar( _modeC1, c, i );
+                last = ++i;
+            }
+            else ++i; // And ignore everything else.
+        } // while
+        _outW.write( in, last, i - last );
+    }
+    
+    private final void encodeArray( final char[] in,
+                                    int offset,
+                                    int length,
+                                    final boolean doEncodeQuote )
+        throws IOException
+    {
+        int i = offset;
+        int last = i;
+        final int end = i + length;
+
+        while( i < end ) {
+            final char c = in[i];
+
+            if ( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
+                // ignore 
+                ++i;
+            }
+            else if ( doEncodeQuote && c == '"' ) {
+                _outW.write( in, last, i - last );
+                _outW.write( "&quot;" );
+                last = ++i;
+            }
+            else if ( c == '<' ) {
+                _outW.write( in, last, i - last );
+                _outW.write( "&lt;" );
+                last = ++i;
+            }
+            else if ( c == '&' ) {
+                _outW.write( in, last, i - last );
+                _outW.write( "&amp;" );
+                last = ++i;
+            }
+            else if( c <= 0x1F ) { // Other than TAB, CR, LF
+                _outW.write( in, last, i - last );
+                handleSpecialChar( (c == 0x0) ? _modeNUL : _modeC0, c, i );
+                last = ++i;
+            }
+            else if ( c >= 0x7F && c <= 0x9F && c != 0x85 ) { // NEL
+                _outW.write( in, last, i - last );
+                handleSpecialChar( _modeC1, c, i );
                 last = ++i;
             }
             else ++i; // And ignore everything else.
@@ -236,47 +328,6 @@ public class CharacterEncoder
         _outW.write( in, last, i - last );
     }
 
-    public final void encodeComment( final CharSequence in ) 
-        throws IOException
-    {
-        int i = 0;
-        int last = 0;
-        int end = in.length();
-    
-        while( i < end ) {
-            char c = in.charAt( i );
-    
-            if ( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
-                // ignore 
-                ++i;
-            }
-            // Dash at very end or "--" anyplace is invalid.
-            else if( c == '-' ) {
-                if( ( i+1 == end ) || ( in.charAt(i+1) == '-' ) ) {
-                    _outA.append( in, last, i );
-                    handleSpecialChar( _modeCommentDash, in.charAt( i ), i );
-                    last = ++i;
-                }
-                else ++i;
-            }
-            else if( c <= 0x1F ) { // Other than TAB, CR, LF
-                _outA.append( in, last, i );
-                handleSpecialChar
-                ( (c == 0x0) ? _modeCommentNUL : _modeCommentC0,
-                  in.charAt( i ), i );
-                last = ++i;
-            }
-            else if ( c >= 0x7F && c <= 0x9F && c != 0x85 ) { // NEL
-                _outA.append( in, last, i );
-                handleSpecialChar( _modeCommentC1, in.charAt( i ), i );
-                last = ++i;
-            }
-            else ++i; // And ignore everything else.
-        } // while
-        _outA.append( in, last, i );
-    }
-
-    
 
     private final void handleSpecialChar( Mode mode, char c, int pos )
         throws IOException
@@ -328,10 +379,10 @@ public class CharacterEncoder
     private Mode _modeC0    = Mode.ERROR;
     private Mode _modeC1    = Mode.ENCODE;
 
-    private Mode _modeCommentNUL   = Mode.ERROR;
-    private Mode _modeCommentC0    = Mode.ERROR;
-    private Mode _modeCommentC1    = Mode.ERROR;
-    private Mode _modeCommentDash  = Mode.ERROR;
+    private static final Mode _modeCommentNUL   = Mode.ERROR;
+    private static final Mode _modeCommentC0    = Mode.ERROR;
+    private static final Mode _modeCommentC1    = Mode.ERROR;
+    private static final Mode _modeCommentDash  = Mode.ERROR;
     
     // FIXME: Provide override mechanism for the comment modes if
     // someone ever asks to override them. Unless comments are somehow 

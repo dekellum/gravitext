@@ -199,6 +199,7 @@ final class XMLProducerImpl
             _encoder.encodeCharData( data );
         }
     }
+
     
     public void putCharsSafe( String data ) throws IOException
     {

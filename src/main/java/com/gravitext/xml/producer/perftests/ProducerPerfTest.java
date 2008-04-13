@@ -30,7 +30,7 @@ public final class ProducerPerfTest
         XMLProducer p = new XMLProducer( out.getWriter() );
         p.setIndent( getIndent() );
                 
-        p.putXMLDeclaration( "ISO-8859-1" );
+        p.putXMLDeclaration( getEncoding() );
         p.putSystemDTD( "testdoc", "bogus.dtd" );
         
         p.startTag( testdoc );
@@ -55,5 +55,4 @@ public final class ProducerPerfTest
         
         p.endTag( testdoc );
     }
-
 }

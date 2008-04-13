@@ -132,7 +132,6 @@ public final class XMLProducer
         return this;
     }
     
-    
     /**
      * @throws IOException from the underlying Appendable.
      * @throws CharEncodeException (an IOException) from the underlying
@@ -145,6 +144,7 @@ public final class XMLProducer
         _impl.putChars( text );
         return this;
     }
+    
     
     public XMLProducer putChars( short value ) throws IOException
     {
