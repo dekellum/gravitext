@@ -154,7 +154,7 @@ public class ResizableByteBuffer
     }
 
     /**
-     * Allocate length additional capacity if needed.
+     * Insure that length additional capacity is available.
      */
     public final void requestCapacity( final int length )
     {                                                                           

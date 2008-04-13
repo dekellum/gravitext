@@ -20,8 +20,8 @@ import java.io.Writer;
 
 /**
  * A writer to a {@link ResizableCharBuffer}. Provides an
- * unsynchronized and fast alterternative to both {@link
- * java.io.StringWriter} (based on synchronized StringBuffer) and
+ * unsynchronized and fast alterternative to both {@link java.io.StringWriter} 
+ * (based on synchronized StringBuffer) and
  * {@link java.io.CharArrayWriter} (synchronized).
  * 
  * @author David Kellum

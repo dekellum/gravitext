@@ -27,6 +27,7 @@ import java.nio.CharBuffer;
 public final class ResizableCharBuffer 
     implements Appendable
 {
+
     /**
      * Construct given initial capacity.
      */
@@ -223,7 +224,7 @@ public final class ResizableCharBuffer
     }
     
     /**
-     * Allocate length additional capacity if needed.
+     * Insure that length additional capacity is available.
      */
     public final void requestCapacity( final int length )
     {
@@ -253,6 +254,13 @@ public final class ResizableCharBuffer
 
         return CharBuffer.wrap( _b, 0, _pos );
     }
+    
+    @Override
+    public String toString()
+    {
+        return new String( _b, 0, _pos );
+    }
+    
     
     private char[] _b;
     private int _pos = 0;
