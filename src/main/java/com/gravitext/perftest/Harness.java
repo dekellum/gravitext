@@ -69,6 +69,7 @@ public class Harness
             }
             else {
                 r = new Runner( t, _warmCount, _warmIterations );
+                r.setThreadCount( _threadCount );
             }
             warmups.add( r );
         }
@@ -104,7 +105,9 @@ public class Harness
         
         ArrayList<Runner> comps = new ArrayList<Runner>();
         for( ConcurrentTest t : _instances ) {
-            comps.add( new Runner( t, _compCount, _compIterations ) );
+            Runner r = new Runner( t, _compCount, _compIterations );
+            r.setThreadCount( _threadCount );
+            comps.add( r );
         }
         PerformanceTester lastFirst = null;
         boolean remaining = true;
@@ -138,92 +141,6 @@ public class Harness
     }
 
     
-    private class Runner
-    {
-        Runner( ConcurrentTest ctest, int runCount, int iterations )
-        {
-            this( ctest );
-            _runCount = runCount;
-            _iterations = iterations;
-            _fixedSeed = true;
-        }
-
-        void run( PerformanceTester prior )
-        {
-            if( prior == null ) prior = _prior;
-            
-            PerformanceTester tester = 
-                new PerformanceTester( _ctest, _runCount, _threadCount );
-            
-            if( _fixedSeed ) tester.setSeed( 7936 * ( _iterations + 1234 ) );
-                
-            System.out.print( tester.formatStartLine() );
-            tester.runTest();
-            System.out.print( tester.formatResults( prior ) );
-
-            _prior = tester;
-            
-            --_iterations;
-        }
-
-        boolean hasMoreRuns()
-        {
-            return ( _iterations > 0 );
-        }
-
-        PerformanceTester prior() 
-        {
-            return _prior;
-        }
-                
-        protected Runner( ConcurrentTest ctest )
-        {
-            _ctest = ctest;
-        }
-        
-        protected final ConcurrentTest _ctest;
-        protected int _runCount = 1;
-        protected PerformanceTester _prior = null;
-
-        private boolean _fixedSeed = false;
-        private int _iterations = 0;
-    }
-    
-    private class AdaptiveRunner extends Runner
-    {
-        AdaptiveRunner( ConcurrentTest ctest )
-        {
-            super( ctest );
-        }
-               
-        @Override
-        void run( PerformanceTester altPrior )
-        {
-            PerformanceTester prior = prior();
-            super.run( altPrior );
-            PerformanceTester current = prior(); 
-
-            _warmTime += current.duration().seconds();
-            _tchange = current.throughputChange( prior );
-            _runCount = (int) ( ( _warmTarget * _warmInterval ) * _runCount
-                        * 1.25d
-                        / current.duration().seconds() );
-        }
-        
-        @Override
-        boolean hasMoreRuns()
-        {
-            return ( ( _warmTime < _warmTarget ) || 
-                     ( _tchange < -_warmTolerance ) || 
-                     ( _tchange > _warmTolerance ) );
-        }
-        
-        private double _warmTime = 0d;
-        private double _tchange = Double.NaN;
-    }
-    
-    
-
     private void processArgs( String[] args ) 
         throws ClassNotFoundException, 
                InstantiationException, 
@@ -328,9 +245,6 @@ public class Harness
 
     private int    _warmCount      = 0;
     private int    _warmIterations = 3;
-    private double _warmTarget     = 40.0d; //seconds
-    private double _warmInterval   = 1.0d / 4.0d; //~10 second intervals
-    private double _warmTolerance  = 0.05d; // +/- 5%
     
     private int    _compCount      = 0;
     private int    _compIterations = 3;

@@ -30,7 +30,7 @@ public final class ConcurrentTests
      * @param runs the total number of runs to test
      * @param threads the number of threads to concurrently run the test
      * @throws RuntimeException from ConcurrentTest.runTest()
-     * @throws Error for example, when jUnit assertions are used in the
+     * @throws Error, for example, when jUnit assertions fail in the
      *         ConcurrentTest
      * @return the sum of result counts returned from {@code test.runTest()}
      */
