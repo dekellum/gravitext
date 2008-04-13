@@ -1,10 +1,12 @@
 package com.gravitext.xml.producer;
 
-
 import java.io.IOException;
+import java.nio.CharBuffer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.gravitext.util.ResizableCharBufferWriter;
 
 import junit.framework.TestCase;
 
@@ -67,7 +69,8 @@ public class XMLProducerTest extends TestCase
     
     public void testTypes() throws IOException
     {
-        StringBuilder out = new StringBuilder();
+        ResizableCharBufferWriter out = new ResizableCharBufferWriter( 16 );
+        
         XMLProducer p = new XMLProducer( out );
         p.setIndent( Indentor.PRETTY );
         
@@ -76,6 +79,9 @@ public class XMLProducerTest extends TestCase
         p.startTag  (  SUB ).putChars( 1234567     ).endTag();
         p.startTag  (  SUB ).putChars( -123456789L ).endTag();
         p.startTag  (  SUB ).putChars( Colors.BLUE ).endTag();
+        p.startTag  (  SUB ).putChars( 
+            CharBuffer.wrap( "more&mooses".toCharArray() ) );
+        p.endTag    (  SUB );
 
         p.startTag  (  SUB ).addAttr( AT,   (short) 12  ).endTag();
         p.startTag  (  SUB ).addAttr( AT,   -1234567    ).endTag();
@@ -94,6 +100,7 @@ public class XMLProducerTest extends TestCase
                       " <sub>1234567</sub>\n" +
                       " <sub>-123456789</sub>\n" +
                       " <sub>BLUE</sub>\n" +
+                      " <sub>more&amp;mooses</sub>\n" +
                       " <sub at=\"12\"/>\n" +
                       " <sub at=\"-1234567\"/>\n" +
                       " <sub at=\"1234567890\"/>\n" +
@@ -103,7 +110,7 @@ public class XMLProducerTest extends TestCase
                       " <sub at=\"1234567890\"/>\n" +
                       " <sub at=\"BLUE\"/>\n" +
                       "</doc>\n",
-                      out.toString() );
+                      out.buffer().toString() );
     }
     
     public void testCompressed() throws IOException

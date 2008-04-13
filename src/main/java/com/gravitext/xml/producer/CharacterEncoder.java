@@ -1,3 +1,19 @@
+/*
+ * Copyright 2007 David Kellum
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.gravitext.xml.producer;
 
 import java.io.IOException;
@@ -5,7 +21,7 @@ import java.io.Writer;
 import java.nio.CharBuffer;
 
 /**
- * Encodes java text as XML character data and attribute values. 
+ * Encodes text as XML character data and attribute values. 
  * 
  * @author David Kellum
  */
@@ -35,6 +51,9 @@ public class CharacterEncoder
         REPLACE
     }
 
+    /**
+     * Construct with defaults for XML 1.0
+     */
     public CharacterEncoder( Appendable out )
     {
         this( out, Version.XML_1_0 );
@@ -42,7 +61,6 @@ public class CharacterEncoder
     
     /**
      * Construct with defaults based on the XML version.
-     * @param version
      */
     public CharacterEncoder( Appendable out, Version version )
     {
@@ -104,7 +122,7 @@ public class CharacterEncoder
         return _outA;
     }
     
-    public Version version()
+    public final Version version()
     {
         return _version;
     }
@@ -134,8 +152,8 @@ public class CharacterEncoder
             }
             else if( c <= 0x1F ) { // Other than TAB, CR, LF
                 _outA.append( in, last, i );
-                handleSpecialChar
-                ( (c == 0x0) ? _modeCommentNUL : _modeCommentC0, c, i );
+                handleSpecialChar( (c == 0x0) ? _modeCommentNUL : 
+                                                _modeCommentC0, c, i );
                 last = ++i;
             }
             else if ( c >= 0x7F && c <= 0x9F && c != 0x85 ) { // NEL
@@ -149,7 +167,7 @@ public class CharacterEncoder
     }
     
     /**
-     * Encodes the special characters '&amp;' and '<' to "&amp;amp;" and
+     * Encodes the special characters '&amp;' and '&lt;' to "&amp;amp;" and
      * "&amp;lt;" and writes the results to out.
      * 
      * @throws IOException from Appendable out.
@@ -176,9 +194,10 @@ public class CharacterEncoder
     }
 
     /**
-     * Encodes the special characters '&amp;', '<' , and '"' to "&amp;amp;",
-     * "&amp;lt;", and "&amp;quot;" and writes the results to out. This
-     * assumes attribute values are surrounded in double quotes.
+     * Encodes the special characters '&amp;', '&lt;', and '"' to
+     * "&amp;amp;", "&amp;lt;", and "&amp;quot;" and writes the
+     * results to out. This assumes attribute values are surrounded in
+     * double quotes.
      * 
      * @throws IOException from append out.
      */
@@ -202,21 +221,21 @@ public class CharacterEncoder
         while( i < end ) {
             final char c = in.charAt( i );
 
-            if ( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
+            if( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
                 // ignore 
                 ++i;
             }
-            else if ( doEncodeQuote && c == '"' ) {
+            else if( doEncodeQuote && c == '"' ) {
                 _outA.append( in, last, i );
                 _outA.append( "&quot;" );
                 last = ++i;
             }
-            else if ( c == '<' ) {
+            else if( c == '<' ) {
                 _outA.append( in, last, i );
                 _outA.append( "&lt;" );
                 last = ++i;
             }
-            else if ( c == '&' ) {
+            else if( c == '&' ) {
                 _outA.append( in, last, i );
                 _outA.append( "&amp;" );
                 last = ++i;
@@ -226,7 +245,7 @@ public class CharacterEncoder
                 handleSpecialChar( (c == 0x0) ? _modeNUL : _modeC0, c, i );
                 last = ++i;
             }
-            else if ( c >= 0x7F && c <= 0x9F && c != 0x85 ) { // NEL
+            else if( c >= 0x7F && c <= 0x9F && c != 0x85 ) { // NEL
                 _outA.append( in, last, i );
                 handleSpecialChar( _modeC1, c, i );
                 last = ++i;
@@ -247,21 +266,21 @@ public class CharacterEncoder
         while( i < end ) {
             final char c = in.charAt( i );
 
-            if ( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
+            if( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
                 // ignore 
                 ++i;
             }
-            else if ( doEncodeQuote && c == '"' ) {
+            else if( doEncodeQuote && c == '"' ) {
                 _outW.write( in, last, i - last );
                 _outW.write( "&quot;" );
                 last = ++i;
             }
-            else if ( c == '<' ) {
+            else if( c == '<' ) {
                 _outW.write( in, last, i - last );
                 _outW.write( "&lt;" );
                 last = ++i;
             }
-            else if ( c == '&' ) {
+            else if( c == '&' ) {
                 _outW.write( in, last, i - last );
                 _outW.write( "&amp;" );
                 last = ++i;
@@ -271,7 +290,7 @@ public class CharacterEncoder
                 handleSpecialChar( (c == 0x0) ? _modeNUL : _modeC0, c, i );
                 last = ++i;
             }
-            else if ( c >= 0x7F && c <= 0x9F && c != 0x85 ) { // NEL
+            else if( c >= 0x7F && c <= 0x9F && c != 0x85 ) { // NEL
                 _outW.write( in, last, i - last );
                 handleSpecialChar( _modeC1, c, i );
                 last = ++i;
@@ -282,8 +301,8 @@ public class CharacterEncoder
     }
     
     private final void encodeArray( final char[] in,
-                                    int offset,
-                                    int length,
+                                    final int offset,
+                                    final int length,
                                     final boolean doEncodeQuote )
         throws IOException
     {
@@ -294,21 +313,21 @@ public class CharacterEncoder
         while( i < end ) {
             final char c = in[i];
 
-            if ( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
+            if( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
                 // ignore 
                 ++i;
             }
-            else if ( doEncodeQuote && c == '"' ) {
+            else if( doEncodeQuote && c == '"' ) {
                 _outW.write( in, last, i - last );
                 _outW.write( "&quot;" );
                 last = ++i;
             }
-            else if ( c == '<' ) {
+            else if( c == '<' ) {
                 _outW.write( in, last, i - last );
                 _outW.write( "&lt;" );
                 last = ++i;
             }
-            else if ( c == '&' ) {
+            else if( c == '&' ) {
                 _outW.write( in, last, i - last );
                 _outW.write( "&amp;" );
                 last = ++i;
@@ -318,7 +337,7 @@ public class CharacterEncoder
                 handleSpecialChar( (c == 0x0) ? _modeNUL : _modeC0, c, i );
                 last = ++i;
             }
-            else if ( c >= 0x7F && c <= 0x9F && c != 0x85 ) { // NEL
+            else if( c >= 0x7F && c <= 0x9F && c != 0x85 ) { // NEL
                 _outW.write( in, last, i - last );
                 handleSpecialChar( _modeC1, c, i );
                 last = ++i;
@@ -329,7 +348,9 @@ public class CharacterEncoder
     }
 
 
-    private final void handleSpecialChar( Mode mode, char c, int pos )
+    private final void handleSpecialChar( final Mode mode, 
+                                          final char c, 
+                                          final int pos )
         throws IOException
     {
         switch( mode ) {
@@ -365,7 +386,9 @@ public class CharacterEncoder
      * @param pos position index into the original input where c was found
      * @param out output Appendable on which to write replacement
      */
-    protected void replace( char c, int pos, Appendable out )
+    protected void replace( final char c, 
+                            final int pos, 
+                            final Appendable out )
         throws IOException
     {
         // Do nothing.

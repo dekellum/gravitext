@@ -1,53 +1,43 @@
+/*
+ * Copyright 2007 David Kellum
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.gravitext.xml.producer;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Produces well-formed XML documents from series of event/stream
- * style method calls.
- *
- * <p>The XML document is output to a supplied Appendable as it is being
- * produced by calls to the event methods.  Various
- * well-formed XML document constraints are guaranteed with an
- * IllegalStateException being thrown in the event of a violation. See
- * the <a href="http://www.w3.org/TR/REC-xml">XML 1.0
- * Specification</a> for details of these constraints.
- *
- * <p>All character data and attribute values are encoded as needed as
- * part of the corresponding event calls. This is done via methods in
- * the XML utility class.
- *
- * <p>Indentation for human readability is inserted into the output by
- * default. This can be turned off or otherwise adjusted with the
- * various set methods below after construction.  
+ * Internal implemetation of the XMLProducer.
  *
  * @author  David Kellum
  */
 final class XMLProducerImpl
 {
-    /**
-     * Construct given Appendable to use for output.
-     */
-    public XMLProducerImpl( CharacterEncoder encoder )
+    public XMLProducerImpl( final CharacterEncoder encoder )
     {
         _encoder = encoder;
         _out = encoder.output();
     }
        
-    /**
-     * Set the indentor to use.
-     */
-    public void setIndent( Indentor indentor )
+    public void setIndent( final Indentor indentor )
     {
         _indentor = indentor.clone();
     }
      
-    /**
-     * Put a XML declaration into the prolog with the specified
-     * encoding declaration before the document element is started.  
-     */
-    public void putXMLDeclaration( String encoding )
+    public void putXMLDeclaration( final String encoding )
         throws IOException
     {
         trans( State.XML_DECLARATION );
@@ -58,15 +48,9 @@ final class XMLProducerImpl
         _out.append( "\"?>" );
         newline(0);
     }
-    
-    // FIXME: encoding constants?
-    
-    /**
-     * Put a document type declaration (DTD reference) in prolog after
-     * any XML declartation and before the document element is
-     * started.  
-     */
-    public void putSystemDTD( String name, CharSequence uri ) 
+        
+    public void putSystemDTD( final String name, 
+                              final CharSequence uri ) 
         throws IOException
     {
         trans( State.DOCTYPE_DECLARATION );
@@ -78,19 +62,15 @@ final class XMLProducerImpl
         newline(0);
     }
     
-    public void putDTD( CharSequence dtd ) 
+    public void putDTD( final CharSequence dtd ) 
         throws IOException
     {
         trans( State.DOCTYPE_DECLARATION );
         _out.append( dtd );
         newline(0);
     }
-   
         
-    /**
-     * Put a start tag with the specified name.
-     */
-    public void startTag( Tag tag ) throws IOException
+    public void startTag( final Tag tag ) throws IOException
     {   
         closeTag();
 
@@ -99,7 +79,6 @@ final class XMLProducerImpl
             ( _state == State.COMMENT_INTERNAL ) ) {
             newline( _openTags.size() ); 
         }
-
        
         trans( State.START_TAG_OPEN );
         _out.append( tag.beginTag() );
@@ -108,77 +87,49 @@ final class XMLProducerImpl
         putNamespaceIfNotInScope( tag.namespace() );
     }
 
-    /**
-     * Put an attribute on previously started tag with specified name
-     * and value. Value will be encoded via XML.EncodeAttr() as
-     * necessary.
-     */
-    public void addAttr( Attribute attr, CharSequence value ) 
+    public void addAttr( final Attribute attr, 
+                         final CharSequence value, 
+                         final boolean encode ) 
         throws IOException
     {
         if( _state != State.START_TAG_OPEN ) {
             throw new IllegalStateException( 
-                "XMLProducer: Can only putAttribute() after putStartTag()." );
+                "XMLProducer: Can only addAttr() after startTag()." );
         }
         
         putNamespaceIfNotInScope( attr.namespace() );
         
         _out.append( attr.beginAttribute() );
-        _encoder.encodeAttrValue( value );
+
+        if( encode ) _encoder.encodeAttrValue( value );
+        else _out.append( value );
+
         _out.append( '"' );
     }
 
-    public void addAttrSafe( Attribute attr, String value ) 
-        throws IOException
-    {
-        if( _state != State.START_TAG_OPEN ) {
-            throw new IllegalStateException( 
-                "XMLProducer: Can only putAttribute() after putStartTag()." );
-        }
-        
-        putNamespaceIfNotInScope( attr.namespace() );
-        
-        _out.append( attr.beginAttribute() );
-        _out.append( value );
-        _out.append( '"' );
-    }
-
-    
-    public void addAttr( String name, CharSequence value ) 
+    public void addAttr( final String name, 
+                         final CharSequence value, 
+                         final boolean encode ) 
         throws IOException
     {
         if( _state != State.START_TAG_OPEN ) { 
             throw new IllegalStateException(
-                "XMLProducer: Can only putAttribute() after putStartTag()." ); 
+                "XMLProducer: Can only addAttr() after startTag()." );
         }
 
         _out.append( ' ' );
         _out.append( name );
         _out.append( "=\"" );
-        _encoder.encodeAttrValue( value );
+        if( encode ) _encoder.encodeAttrValue( value );
+        else _out.append( value );
         _out.append( '"' );
     }
     
-    public void addAttrSafe( String name, String value ) 
-        throws IOException
+    public void addNamespace( final Namespace ns ) throws IOException
     {
         if( _state != State.START_TAG_OPEN ) {
             throw new IllegalStateException( 
-                "XMLProducer: Can only putAttribute() after putStartTag()." );
-        }
-
-        _out.append( ' ' );
-        _out.append( name );
-        _out.append( "=\"" );
-        _out.append( value );
-        _out.append( '"' );
-    }
-   
-    public void addNamespace( Namespace ns ) throws IOException
-    {
-        if( _state != State.START_TAG_OPEN ) {
-            throw new IllegalStateException( 
-                "XMLProducer: Can only putNamespace() after putStartTag()." );
+                "XMLProducer: Can only addNamespace() after startTag()." );
         }
         _out.append( ns.beginDecl() );
         _encoder.encodeAttrValue( ns.nameIRI() );
@@ -187,31 +138,21 @@ final class XMLProducerImpl
         _nScopes.add( new NScope( ns, _openTags.size() - 1 ) );
     }
     
-    /**
-     * Put character data, encoded as necessary.
-     */
-    public void putChars( CharSequence data ) throws IOException
+    public void putChars( final CharSequence data, 
+                          final boolean encode ) 
+        throws IOException
     {
         // Test for empty to avoid non-canonical <t></t> instead of <t/>
         if( data.length() > 0 ) {
             closeTag();
             trans( State.CHARS );
-            _encoder.encodeCharData( data );
-        }
-    }
-
-    
-    public void putCharsSafe( String data ) throws IOException
-    {
-        // Test for empty to avoid non-canonical <t></t> instead of <t/>
-        if( data.length() > 0 ) {
-            closeTag();
-            trans( State.CHARS );
-            _out.append( data );
+            if( encode ) _encoder.encodeCharData( data );
+            else _out.append( data );
         }
     }
     
-    public void putComment( CharSequence comment ) throws IOException
+    public void putComment( final CharSequence comment ) 
+        throws IOException
     {
         closeTag(); 
 
@@ -231,20 +172,20 @@ final class XMLProducerImpl
     }
     
     /**
-     * Close a previously opened start tag.
+     * @param tag matching start tag or null to close last open tag.
      */
-    public void endTag( Tag tag ) throws IOException
+    public void endTag( final Tag tag ) throws IOException
     {
         if( _openTags.size() == 0 ) {
             throw new IllegalStateException( 
-                "XMLProducer: Attempt to end tag with no matching start tag." );
+            "XMLProducer: Attempt to endTag() with no matching startTag()." );
         }
 
         int depth = _openTags.size() - 1; 
         Tag openTag = _openTags.remove( depth );
         if( ( tag != null ) && ( tag != openTag ) ) {
             throw new IllegalStateException(
-                "XMLProducer: Attempt to end tag " + tag + " while " 
+                "XMLProducer: Attempt to endTag(" + tag + ") while tag " 
                 + openTag + " is open." );
         }
         
@@ -284,7 +225,7 @@ final class XMLProducerImpl
         COMMENT_END       
     }
     
-    /* Allowed state transitions TRANS[current][next]                     */
+    /* Allowed state transitions TRANS[current][next] */
     private static final boolean[][] ALLOWED_STATE_TRANSITIONS = {
     /*current | ------------------------------- next ------------------------------- |*/
     /*------- | BEGIN  XML    COMPRO DOCTPE START  COMINT ELMENT CHARS  END   COMEND |*/
@@ -302,7 +243,7 @@ final class XMLProducerImpl
 
     private static final class NScope
     {
-        NScope(final Namespace namespace, final int depth)
+        NScope( final Namespace namespace, final int depth )
         {
             this.namespace = namespace;
             this.depth = depth;
@@ -313,7 +254,8 @@ final class XMLProducerImpl
     }
 
 
-    private void putNamespaceIfNotInScope( Namespace ns ) throws IOException
+    private void putNamespaceIfNotInScope( final Namespace ns ) 
+        throws IOException
     {
         if( ns != null ) {
             int i = _nScopes.size();
@@ -332,12 +274,12 @@ final class XMLProducerImpl
         }
     }
 
-    private void newline( int level ) throws IOException
+    private void newline( final int level ) throws IOException
     {
         _indentor.indent( _out, level );
     }
 
-    private void trans( State next ) 
+    private void trans( final State next ) 
     {
         // Test state transition and throw exception if invalid.
 
