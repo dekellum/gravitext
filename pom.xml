@@ -86,6 +86,7 @@
   <build>
     <plugins>
       <plugin>
+        <!-- Parent settings -->
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
       </plugin>
@@ -100,7 +101,12 @@
         </configuration>
       </plugin>
       <plugin>
+        <!-- Parent settings -->
         <artifactId>maven-source-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <!-- Parent settings -->
+        <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

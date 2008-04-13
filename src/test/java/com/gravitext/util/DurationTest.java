@@ -16,15 +16,15 @@
 
 package com.gravitext.util;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.concurrent.TimeUnit;
 
-import com.gravitext.util.Duration;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-
-public class DurationTest extends TestCase
+public class DurationTest
 {
+    @Test
     public void test()
     {
         assertEquals( "1.235ms", 

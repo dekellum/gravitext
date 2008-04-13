@@ -16,14 +16,16 @@
 
 package com.gravitext.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.Random;
 
-import com.gravitext.util.Metric;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class MetricTest extends TestCase
+public class MetricTest
 {
+    @Test
     public void testPositives()
     {
         assertEquals( "999.9f",  Metric.format( 999.94e-15d ) );
@@ -53,6 +55,7 @@ public class MetricTest extends TestCase
         assertEquals( "1.000G",  Metric.format( 999.95e6d ) );        
     }
     
+    @Test
     public void testNegatives()
     {
         assertEquals( " -999f",  Metric.format( -999.4e-15d ) );
@@ -82,12 +85,14 @@ public class MetricTest extends TestCase
         assertEquals( "-1.00G",  Metric.format( -999.5e6d ) );        
     }
     
+    @Test
     public void test0()
     {
         assertEquals( " 0.000", Metric.format( 0.0d ) );
         assertEquals( " 0.000", Metric.format( 1e-18d ) );
     }
     
+    @Test
     public void testRandomSize()
     {
         Random r = new Random();
@@ -104,6 +109,7 @@ public class MetricTest extends TestCase
         }
     }
     
+    @Test
     public void testDifferences()
     {
         assertEquals( "   N/A", Metric.formatDifference( Double.NaN ) );
@@ -119,5 +125,4 @@ public class MetricTest extends TestCase
         assertEquals( "+1.48%", Metric.formatDifference( 0.01477d ) );
         assertEquals( "-1,000%", Metric.formatDifference( -9.996d ) );
     }
-    
 }
