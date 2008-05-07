@@ -46,8 +46,7 @@ public final class XMLProducer
     }
     
     /**
-     * Construct given Appendable to use for output and a default
-     * CharacterEncoder.
+     * Construct given CharacterEncoder to use for output.
      */
     public XMLProducer( final CharacterEncoder encoder )
     {
