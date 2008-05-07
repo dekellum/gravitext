@@ -33,8 +33,9 @@ public class CharacterEncoderTest extends TestCase
         StringBuilder out = new StringBuilder();
         CharacterEncoder enc = new CharacterEncoder( out );
         enc.encodeCharData
-            ( new StringBuilder().append( "<\" \t\n\r(c1:\u009A)&&" ) );
-        assertEquals( "&lt;\" \t\n\r(c1:&#x9a;)&amp;&amp;", out.toString() );
+            ( new StringBuilder().append( "><\" \t\n\r]]>(c1:\u009A)&&" ) );
+        assertEquals( "&gt;&lt;\" \t\n\r]]&gt;(c1:&#x9a;)&amp;&amp;", 
+                      out.toString() );
     }
     
     public void testAltInputTypes() throws IOException
@@ -42,9 +43,9 @@ public class CharacterEncoderTest extends TestCase
         StringWriter out = new StringWriter();
         CharacterEncoder enc = new CharacterEncoder( out );
         enc.encodeCharData
-            ( new StringBuilder().append( "<\" \t\n\r(c1:\u009A)&" ) );
+            ( new StringBuilder().append( ">\" \t\n\r>(c1:\u009A)&" ) );
         enc.encodeCharData( "& even & more &" );
-        assertEquals( "&lt;\" \t\n\r(c1:&#x9a;)&amp;" +
+        assertEquals( "&gt;\" \t\n\r>(c1:&#x9a;)&amp;" +
                       "&amp; even &amp; more &amp;",
                       out.toString() );
     }

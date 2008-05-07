@@ -235,6 +235,16 @@ public class CharacterEncoder
                 _outA.append( "&lt;" );
                 last = ++i;
             }
+            // Must encode '>' as "&gt;" when it appears in "]]>"
+            // Look back in input to see if required, but if at begining
+            // we must assume a prior putChars() included the ']]'.
+            else if( ( c == '>' ) && 
+                     ( ( i < 1 ) || ( in.charAt( i - 1 ) == ']' ) ) &&
+                     ( ( i < 2 ) || ( in.charAt( i - 2 ) == ']' ) ) ) {
+                _outA.append( in, last, i );
+                _outA.append( "&gt;" );
+                last = ++i;
+            }
             else if( c == '&' ) {
                 _outA.append( in, last, i );
                 _outA.append( "&amp;" );
@@ -278,6 +288,16 @@ public class CharacterEncoder
             else if( c == '<' ) {
                 _outW.write( in, last, i - last );
                 _outW.write( "&lt;" );
+                last = ++i;
+            }
+            // Must encode '>' as "&gt;" when it appears in "]]>"
+            // Look back in input to see if required, but if at begining
+            // we must assume a prior putChars() included the ']]'.
+            else if( ( c == '>' ) && 
+                     ( ( i < 1 ) || ( in.charAt( i - 1 ) == ']' ) ) &&
+                     ( ( i < 2 ) || ( in.charAt( i - 2 ) == ']' ) ) ) {
+                _outW.write( in, last, i - last );
+                _outW.write( "&gt;" );
                 last = ++i;
             }
             else if( c == '&' ) {
@@ -325,6 +345,16 @@ public class CharacterEncoder
             else if( c == '<' ) {
                 _outW.write( in, last, i - last );
                 _outW.write( "&lt;" );
+                last = ++i;
+            }
+            // Must encode '>' as "&gt;" when it appears in "]]>"
+            // Look back in input to see if required, but if at begining
+            // we must assume a prior putChars() included the ']]'.
+            else if( ( c == '>' ) && 
+                     ( ( i < 1 ) || ( in[ i - 1 ] == ']' ) ) &&
+                     ( ( i < 2 ) || ( in[ i - 2 ] == ']' ) ) ) {
+                _outW.write( in, last, i - last );
+                _outW.write( "&gt;" );
                 last = ++i;
             }
             else if( c == '&' ) {
