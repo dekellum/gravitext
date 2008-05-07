@@ -351,8 +351,8 @@ public class CharacterEncoder
             // Look back in input to see if required, but if at begining
             // we must assume a prior putChars() included the ']]'.
             else if( ( c == '>' ) && 
-                     ( ( i < 1 ) || ( in[ i - 1 ] == ']' ) ) &&
-                     ( ( i < 2 ) || ( in[ i - 2 ] == ']' ) ) ) {
+                     ( ( ( i - offset ) < 1 ) || ( in[ i - 1 ] == ']' ) ) &&
+                     ( ( ( i - offset ) < 2 ) || ( in[ i - 2 ] == ']' ) ) ) {
                 _outW.write( in, last, i - last );
                 _outW.write( "&gt;" );
                 last = ++i;
