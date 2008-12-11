@@ -23,6 +23,9 @@ import com.gravitext.concurrent.ConcurrentTester;
 import com.gravitext.concurrent.TestFactory;
 import com.gravitext.util.Metric;
 
+/**
+ * @deprecated
+ */
 public class PerformanceTester extends ConcurrentTester
 {
     /**

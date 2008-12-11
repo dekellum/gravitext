@@ -18,6 +18,9 @@ package com.gravitext.perftest;
 
 import com.gravitext.concurrent.TestFactory;
 
+/**
+ * @deprecated
+ */
 class Runner
 {
     Runner( TestFactory factory, int runCount, int iterations )

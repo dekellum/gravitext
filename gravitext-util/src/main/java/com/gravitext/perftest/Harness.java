@@ -30,6 +30,7 @@ import com.gravitext.reflect.BeanException;
  * execute this class (or the containing jar) without any arguments.
  *
  * @author David Kellum
+ * @deprecated
  */
 public class Harness
 {

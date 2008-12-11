@@ -18,6 +18,9 @@ package com.gravitext.perftest;
 
 import com.gravitext.concurrent.TestFactory;
 
+/**
+ * @deprecated
+ */
 class AdaptiveRunner extends Runner
 {
     AdaptiveRunner( TestFactory factory )
