@@ -28,7 +28,7 @@
   </licenses>
 
   <scm>
-    <developerConnection>scm:svn:svn://localhost/subversion.repo/src/gravitext-parent/trunk</developerConnection>
+    <developerConnection>scm:svn:svn://localhost/subversion.repo/src/gravitext/trunk/gravitext-parent</developerConnection>
   </scm>
 
   <distributionManagement>
