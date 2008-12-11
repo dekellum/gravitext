@@ -46,6 +46,7 @@ import java.util.Set;
  * @see KeySpace
  * @author David Kellum
  */
+@SuppressWarnings("unchecked")
 public final class ArrayHTMap
     extends AbstractMap<Key, Object>
     implements HTMap
@@ -92,7 +93,6 @@ public final class ArrayHTMap
         return prior;
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public Object put( Key key, Object value )
     {
@@ -115,14 +115,12 @@ public final class ArrayHTMap
         return cast( key, i );
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Object get( Object key )
     {
         return get( (Key) key );
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public boolean containsKey( Object key )
     {
@@ -150,7 +148,6 @@ public final class ArrayHTMap
         return prior;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Object remove( Object key )
     {
@@ -183,7 +180,6 @@ public final class ArrayHTMap
     }
 
    
-    @SuppressWarnings("unchecked")
     private <T> T cast( Key<T> key, int i )
     {
         return (T) _values[i];
@@ -230,7 +226,6 @@ public final class ArrayHTMap
             ArrayHTMap.this.clear();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean contains( Object e )
         {
@@ -241,7 +236,6 @@ public final class ArrayHTMap
                        value.equals( entry.getValue() ) );    
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean add( Entry<Key, Object> entry)
         {
@@ -250,7 +244,6 @@ public final class ArrayHTMap
                      true : ( ! prior.equals( entry.getValue() ) ) );
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean remove( Object e )
         {
@@ -330,7 +323,6 @@ public final class ArrayHTMap
             return _values[_index];
         }
         
-        @SuppressWarnings("unchecked")
         public Object setValue( Object value )
         {
             return ArrayHTMap.this.set( _key, value );

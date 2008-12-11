@@ -35,6 +35,7 @@ import java.util.Set;
  * @see Key
  * @author David Kellum
  */
+@SuppressWarnings("unchecked")
 public final class HashHTMap 
     extends HashMap<Key, Object>
     implements HTMap
@@ -273,7 +274,6 @@ public final class HashHTMap
         }
     }
     
-    @SuppressWarnings("unchecked")
     private <T> T cast( Key<T> key, Object value )
     {
         return (T) value;

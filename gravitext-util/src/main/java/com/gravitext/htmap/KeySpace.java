@@ -49,6 +49,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * 
  * @author David Kellum
  */
+@SuppressWarnings("unchecked")
 public final class KeySpace
 { 
     /**
