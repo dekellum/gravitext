@@ -52,7 +52,7 @@ public class TestExecutor
     public static long run( TestFactory factory, int runs, int threads )
     {
         TestExecutor exec = new TestExecutor( factory, runs, threads );
-        exec.setDoLatencyTiming( false );
+        exec.setDoPerRunTiming( false );
         return exec.runTest();
     }
     
@@ -67,12 +67,12 @@ public class TestExecutor
     }
     
     /**
-     * Set whether to do per-run latency timing.  This timing can be 
-     * costly for very fine grain test runs. 
+     * Set whether to do per-run latency timing.  This timing can skew  
+     * very fast test runs. 
      */
-    public void setDoLatencyTiming( boolean doTime )
+    public void setDoPerRunTiming( boolean doTime )
     {
-        _doLatency = doTime;
+        _doPerRunTiming = doTime;
     }
     
     /**
@@ -186,28 +186,30 @@ public class TestExecutor
         {
             try {
                 _barrier.await(); // Signal ready and wait
+                long count = 0;
+                long latency = 0;
+                final Stopwatch stime = 
+                    _doPerRunTiming ? null : new Stopwatch();
+                if( stime != null ) stime.start();
                 try {
                     int run;
-                    int count;
-                    final Stopwatch s = _doLatency ? new Stopwatch() : null;
+                    final Stopwatch rtime = 
+                        _doPerRunTiming ? new Stopwatch() : null;
                         
                     run_loop: 
                     while( _error == null ) {
 
                         // atomic increment run while run <= _runCount
                         while( true ) {
-                            count = _lastRun.get();
-                            run = count + 1;
+                            final int last = _lastRun.get();
+                            run = last + 1;
                             if( run > _runCount ) break run_loop; 
-                            if( _lastRun.compareAndSet( count, run ) ) break; 
+                            if( _lastRun.compareAndSet( last, run ) ) break; 
                         }
 
-                        if( s != null ) s.start();
-                        count = _ctest.runIteration( run );
-                        if( s != null ) s.stop();
-
-                        _resultSum.addAndGet( count );
-                        if( s != null ) _latencySum.addAndGet( s.delta() );
+                        if( rtime != null ) rtime.start();
+                        count += _ctest.runIteration( run );
+                        if( rtime != null ) latency += rtime.stop().delta();
                     }
                 }
                 catch( Throwable x ) {
@@ -216,6 +218,11 @@ public class TestExecutor
                     }
                 }
                 finally {
+                    if( stime != null ) latency = stime.stop().delta();
+                    _latencySum.addAndGet( latency );
+                    
+                    _resultSum.addAndGet( count );
+                    
                     _barrier.await();
                 }
             }
@@ -235,7 +242,7 @@ public class TestExecutor
     private final AtomicInteger _lastRun = new AtomicInteger( 0 );
     private final AtomicLong _resultSum = new AtomicLong( 0 );
     private final AtomicLong _latencySum = new AtomicLong( 0 );
-    private boolean _doLatency = true;
+    private boolean _doPerRunTiming = true;
     private final Stopwatch _totalRunTime = new Stopwatch();
     private final CyclicBarrier _barrier;
     private int _seed = FastRandom.generateSeed();

@@ -24,6 +24,7 @@ import com.gravitext.util.FastRandom;
  * the provided command line test Harness.
  * 
  * @author David Kellum
+ * @deprecated
  */
 public abstract class ConcurrentTest
     implements TestRunnable

@@ -1,0 +1,76 @@
+# -*- ruby -*-
+# FIXME: Apache license
+
+require 'rubygems'
+require 'hoe'
+
+$LOAD_PATH << './lib'
+
+ENV['NODOT'] = "no thank you"
+
+require 'gravitext-util/version' 
+
+jars = [ "gravitext-util-#{Gravitext::Util::VERSION}.jar" ]
+
+jar_files = jars.map { |jar| "lib/gravitext-util/#{jar}" }
+
+desc "Update the Manifest with actual jar"
+task :manifest do
+  out = File.new( 'Manifest.txt', 'w' ) 
+  begin
+    out.write <<END
+Manifest.txt
+README.txt
+History.txt
+Rakefile
+pom.xml
+lib/gravitext-util.rb
+lib/gravitext-util/version.rb
+END
+    out.puts jar_files
+  ensure
+    out.close
+  end
+end
+
+
+file :mvn => [ 'pom.xml' ] do
+  sh( 'mvn package' )
+end
+
+jars.each do |jar|
+  file "lib/gravitext-util/#{jar}" => [ :mvn ] do
+    cp_r( File.join( "target/", jar ), 'lib/gravitext-util' )
+  end
+end
+
+[ :gem, :test ].each { |t| task t => ( jar_files ) }
+
+task :mvn_clean do
+  rm_f( jar_files )
+  sh( 'mvn clean' )
+end
+task :clean => :mvn_clean 
+
+task :tag do
+  tag = "gravitext-util-#{Gravitext::Util::VERSION}"
+  svn_base = 'svn://localhost/subversion.repo/src/gems'
+  tag_url = "#{svn_base}/tags/#{tag}"
+
+  dname = File.dirname( __FILE__ )
+  dname = '.' if Dir.getwd == dname
+  stat = `svn status #{dname}`
+  stat.strip! if stat
+  if ( stat && stat.length > 0 )
+    $stderr.puts( "Resolve the following before tagging (svn status):" )
+    $stderr.puts( stat )
+  else
+    sh( "svn cp -m 'tag [#{tag}]' #{dname} #{tag_url}" )
+  end
+end
+
+hoe = Hoe.new( "gravitext-util", Gravitext::Util::VERSION ) do |p|
+  p.developer( "David Kellum", "dek-ruby@gravitext.com" )
+  p.rubyforge_name = "gravitext"
+  p.rdoc_pattern = /^(lib.*\.(rb|txt))|[^\/]*\.txt$/
+end
