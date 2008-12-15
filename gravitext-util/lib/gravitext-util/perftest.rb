@@ -1,13 +1,17 @@
 
-require 'gravitext-util/version'
-require 'ostruct'
+require 'gravitext-util'
+require 'gravitext-util/concurrent'
 
+require 'ostruct'
 require 'java'
 
 module Gravitext
 
+  # Concurrent performance testing facility
   module PerfTest
 
+    # Concurrent performance testing harness with support for adaptive
+    # warmup and comparison on multiple TestFactory instances.
     class Harness
       import 'com.gravitext.concurrent.TestExecutor'
       import 'com.gravitext.util.Metric'
@@ -38,12 +42,15 @@ module Gravitext
 
       # Run peformance stats are written via out.write (default $stdout)
       attr_accessor :out
+      
+      # Do per run timing for mean latency. (default: true)
+      attr_accessor :do_per_run_timing
 
       # Initialize given array of com.gravitext.concurrent.TestFactory
       # instances.
       def initialize( factories )
         @factories = factories
-        @thread_count = Java::java.lang.Runtime::runtime.available_processors
+        @thread_count = Concurrent::available_cores
 
         @warmup_exec_target = 8.0
         @warmup_total_target = 25
@@ -53,6 +60,7 @@ module Gravitext
         @final_runs = nil
         @final_exec_target = 10.0
         
+        @do_per_run_timing = true
         @out = $stdout
         @nwidth = ( factories.map { |f| f.name.length } << 4 ).max
       end
@@ -64,10 +72,11 @@ module Gravitext
         run_counts = if @final_runs
                        Array.new( @factories.size, @final_runs )
                      else
-                       @factories.map do |factory| 
+                       counts = @factories.map do |factory| 
                          exec = finals.detect { |e| e.factory == factory }
                          ( exec.mean_throughput * @final_exec_target ).to_i
                        end
+                       align_counts( counts )
                      end
         
         results = execute_comparisons( run_counts, @final_iterations )
@@ -94,6 +103,10 @@ module Gravitext
           print_separator unless first
 
           states,done = states.partition do |s|
+            
+            # Cleanup before each run
+            Java::java.lang.System::gc
+            Java::java.lang.Thread::yield
 
             runs = if s.prior
                      ( @warmup_exec_target * s.prior.runs_executed ) / 
@@ -186,7 +199,9 @@ module Gravitext
       end
 
       def create_executor( factory, runs )
-        TestExecutor.new( factory, runs, @thread_count )
+        executor = TestExecutor.new( factory, runs, @thread_count )
+        executor.do_per_run_timing = @do_per_run_timing
+        executor
       end
       
       def print_header
@@ -245,6 +260,22 @@ module Gravitext
           ( exec.mean_latency.seconds - p ) / p
         else
           NaN
+        end
+      end
+
+
+      def align_counts( counts )
+        mean = ( counts.inject { |sum,c| sum + c } ) / counts.size
+
+        # Round to 2-significant digits
+        f = 1
+        ( f *= 10 ) while ( mean / f ) > 100 
+        mean = ( mean.to_f / f ).round * f
+        
+        if ( mean.to_f / counts.min ) > 3.0
+          counts
+        else
+          Array.new( counts.size, mean ) 
         end
       end
 

@@ -15,14 +15,17 @@ require 'java'
 #  FastRandomPerfTest.new( mode )
 #end
 
-tests = [ com.gravitext.perftest.tests.EmptyPerfTest.new ]
+#tests.shift # remove first
 
-harness = Gravitext::PerfTest::Harness.new( tests )
+#tests = [ com.gravitext.perftest.tests.EmptyPerfTest.new ]
+#tests += tests
+
+#harness = Gravitext::PerfTest::Harness.new( tests )
 #puts( "Threads: #{harness.threads}" )
 
-harness.thread_count = 2
+# harness.thread_count = 2
 # harness.final_runs = 10000
-harness.execute
+#harness.execute
 
 
-
+# FIXME: convert to test

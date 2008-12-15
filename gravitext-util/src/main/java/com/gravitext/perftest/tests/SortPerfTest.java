@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.gravitext.concurrent.TestFactoryBase;
+import com.gravitext.concurrent.TestFactory;
 import com.gravitext.concurrent.TestRunnable;
 import com.gravitext.util.FastRandom;
 
@@ -29,15 +29,19 @@ import com.gravitext.util.FastRandom;
  * java.util.Collections sort.
  * @author David Kellum
  */
-public class SamplePerfTest extends TestFactoryBase
+public class SortPerfTest implements TestFactory
 {
+    public String name()
+    {
+        return "JavaSort";
+    }
+
     public TestRunnable createTestRunnable( final int seed )
     {
         return new TestRunnable() {
             final FastRandom _random = new FastRandom( seed );
             public int runIteration( int run )
             {
-                // A time consuming operation, such as:
                 int c = _random.nextInt( 10000 ) + 10;
                 List<Integer> numbers = new ArrayList<Integer>( c );
                 for( int i = 0; i < c; ++i ) {

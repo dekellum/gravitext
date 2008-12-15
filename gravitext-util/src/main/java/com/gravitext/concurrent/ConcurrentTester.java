@@ -26,6 +26,9 @@ package com.gravitext.concurrent;
 public class ConcurrentTester 
     extends TestExecutor
 {
+    /**
+     * @deprecated
+     */
     public static final class ConcurrentTestAdapter 
         implements TestFactory
     {

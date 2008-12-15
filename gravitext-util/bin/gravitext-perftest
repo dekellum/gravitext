@@ -1,0 +1,143 @@
+#!/usr/bin/env jruby
+
+$LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
+
+require 'gravitext-util'
+require 'gravitext-util/perftest'
+require 'gravitext-util/concurrent'
+require 'java'
+
+module TestCollection
+  include Gravitext
+  include Gravitext::Concurrent
+
+  import 'com.gravitext.util.perftests.FastRandomPerfTest'
+  import 'com.gravitext.htmap.perftests.HTMapPerfTest'
+  import 'com.gravitext.util.perftests.ResizableCharBufferWriterPerfTest'
+  import 'com.gravitext.perftest.tests.SortPerfTest'
+  import 'com.gravitext.perftest.tests.EmptyPerfTest'
+
+  def self.run
+    tests = TestCollection::lookup_factories( ARGV[0] || 'random' )
+
+    harness = PerfTest::Harness.new( tests )
+    harness.do_per_run_timing = false #FIXME
+
+    #puts( "Threads: #{harness.threads}" )
+
+    # harness.thread_count = 2
+    # harness.final_runs = 10000
+    harness.execute
+  end
+
+  def self.lookup_factories( name )
+    case name
+    when 'random'
+      tests = FastRandomPerfTest::Mode.values.map do |mode|
+        FastRandomPerfTest.new( mode )
+      end
+
+      btest = BlockTestFactory.new do |run,fr|
+        10_000.times do 
+          rand( 1000 )
+        end
+        rand( 3 )
+      end
+      btest.name = 'Ruby-Kernel.rand'
+      tests << btest
+
+      btest = BlockTestFactory.new do |run,random|
+        10_000.times do 
+          random.next_int( 1000 )
+        end
+        random.next_int( 3 )
+      end
+      btest.name = 'Ruby-FAST'
+      tests << btest
+
+      tests
+    when 'htmap'
+      HTMapPerfTest::TEST_CLASSES.map do |cls|
+        HTMapPerfTest.new( cls )
+      end
+    when 'buffer-writer'
+      ResizableCharBufferWriterPerfTest::TEST_CLASSES.map do |cls|
+        ResizableCharBufferWriterPerfTest.new( cls )
+      end
+    when 'empty'
+      btest = BlockTestFactory.new { 1 }
+      btest.name = 'RubyEmptyBlock'
+      [ EmptyPerfTest.new, REmptyTestFactory.new, btest ]
+    when 'sort'
+      btest = BlockTestFactory.new do
+        numbers = []
+        ( rand( 10000 ) + 10 ).times do
+          numbers << rand( 10000 )
+        end
+        numbers.sort!
+        numbers.first
+      end
+      btest.name = 'RubySort'
+      [ SortPerfTest.new, btest ]
+    end
+  end
+
+  class REmptyTestFactory
+    include Gravitext::Concurrent
+    include TestFactory
+    include TestRunnable
+
+    def name
+      'RubyEmpty'
+    end
+    
+    def create_test_runnable( seed )
+      self.class.new
+    end
+    
+    def run_iteration( run )
+      1
+    end
+  end
+
+  class RRandomTestFactory
+    include Gravitext::Concurrent
+    include TestFactory
+    include TestRunnable
+
+    def name
+      'RubyRandom'
+    end
+    
+    def create_test_runnable( seed )
+      self.class.new
+    end
+    
+    def run_iteration( run )
+      10_000.times do 
+        rand( 1000 )
+      end
+      rand( 3 )
+    end
+  end
+
+end
+
+TestCollection.run
+
+# if false
+#   import 'com.gravitext.xml.producer.perftests.PerfTestFactory'
+
+#   tests = PerfTestFactory::Serializer.values.map do |s|
+#     f = PerfTestFactory.new( s )
+#     f
+#   end
+
+# end
+
+
+
+
+
+
+

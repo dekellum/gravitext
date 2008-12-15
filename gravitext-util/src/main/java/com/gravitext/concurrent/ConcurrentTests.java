@@ -19,6 +19,7 @@ package com.gravitext.concurrent;
 /**
  * Static utility class for ConcurrentTest instances. 
  * @author David Kellum
+ * @deprecated Use TestExecutor instead
  */
 public final class ConcurrentTests
 {
@@ -33,7 +34,6 @@ public final class ConcurrentTests
      * @throws Error, for example, when jUnit assertions fail in the
      *         ConcurrentTest
      * @return the sum of result counts returned from {@code test.runTest()}
-     * @deprecated Use TestExecutor instead
      */
     public static long run( ConcurrentTest test, int runs, int threads )
     {
