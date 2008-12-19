@@ -2,30 +2,46 @@
 
 $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
 
-# require 'test/unit'
+require 'test/unit'
 
 require 'gravitext-util'
-
 require 'gravitext-util/perftest'
 
 require 'java'
 
-#import 'com.gravitext.util.perftests.FastRandomPerfTest'
-#tests = FastRandomPerfTest::Mode.values.map do |mode|
-#  FastRandomPerfTest.new( mode )
-#end
+require 'rubygems'
 
-#tests.shift # remove first
+require 'slf4j'
+require 'logback' #Or, turn off logging: require 'slf4j/nop'
+Logback.configure do
+  console = Logback::ConsoleAppender.new do |a|
+    a.layout = Logback::PatternLayout.new do |p|
+      p.pattern = "%-4r %-5level %logger{35} - %msg %ex%n"
+    end    
+  end
+  Logback.root.add_appender( console )
+  Logback.root.level = Logback::DEBUG
+end
 
-#tests = [ com.gravitext.perftest.tests.EmptyPerfTest.new ]
-#tests += tests
+class TestPerfTest < Test::Unit::TestCase
+  include Gravitext::PerfTest
 
-#harness = Gravitext::PerfTest::Harness.new( tests )
-#puts( "Threads: #{harness.threads}" )
+  def test_listener
+    factory = com.gravitext.perftest.tests.EmptyPerfTest.new
+    harness = Harness.new( [ factory ] )
+    harness.listener = LogListener.new( SLF4J[ 'TestPerfTest' ] )
 
-# harness.thread_count = 2
-# harness.final_runs = 10000
-#harness.execute
+    harness.warmup_exec_target = 0.25
+    harness.warmup_total_target = 0.5
+    harness.warmup_tolerance = 1.0
+    harness.final_exec_target = 0.25
+    harness.final_iterations = 2
+    
+    sum = harness.execute.first
+    assert_same( factory, sum.factory )
+    assert( sum.runs_executed > 0 )
+    assert( sum.duration.seconds > 0.0 )
+  end
 
+end
 
-# FIXME: convert to test

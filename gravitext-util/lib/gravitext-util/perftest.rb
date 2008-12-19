@@ -10,7 +10,7 @@ module Gravitext
   # Concurrent performance testing facility
   module PerfTest
 
-    module CalcUtil
+    module CalcUtil #:nodoc: all
 
       NaN = Java::java.lang.Double::NaN
 
@@ -157,8 +157,7 @@ module Gravitext
             s.prior = executor
             
             ( ( s.warm_time < @warmup_total_target ) ||
-              ( tchange < -@warmup_tolerance ) || 
-              ( tchange > @warmup_tolerance ) )
+              ( tchange.abs > @warmup_tolerance ) )
           end
           finals += done.map { |s| s.prior }          
           first = false
@@ -212,8 +211,7 @@ module Gravitext
 
         results.each do |runs|
           sum = OpenStruct.new
-          sum.factory            = OpenStruct.new
-          sum.factory.name       = runs.first.factory.name
+          sum.factory            = runs.first.factory
           sum.runs_target        = 0
           sum.duration           = 0.0
           sum.result_sum         = 0
@@ -259,13 +257,15 @@ module Gravitext
       end
       
       def begin( harness, factories )
-        @out << "Concurrent testing: #{harness.thread_count} threads.\n"
+        @out << "Concurrent testing: #{harness.thread_count} threads."
+        new_line
         @nwidth = ( factories.map { |f| f.name.length } << 4 ).max
       end
 
       def warmups_begin( harness )
-        @out << ( "Warmup min %ds (change tolerance: %.2f) per test:\n" %
+        @out << ( "Warmup min %ds (change tolerance: %.2f) per test:" %
                   [ harness.warmup_total_target, harness.warmup_tolerance ] )
+        new_line
         print_header
       end
 
@@ -282,12 +282,13 @@ module Gravitext
       end
 
       def warmups_end( final_executors )
-        @out << "\n"
+        new_line
       end
       
       def comparisons_begin( harness, run_counts )
-        @out << ( "Comparison runs (%d iterations):\n" % 
+        @out << ( "Comparison runs (%d iterations):" % 
                   [ harness.final_iterations ] )
+        new_line
         print_header
       end
 
@@ -311,8 +312,12 @@ module Gravitext
         end
       end
 
+      def new_line
+        @out << "\n"
+      end
+
       def print_header
-        @out << ( "%-#{@nwidth}s %-6s %-7s %-6s %8s %10s(%6s) %-9s (%6s)\n" %
+        @out << ( "%-#{@nwidth}s %-6s %-7s %-6s %8s %10s(%6s) %-9s (%6s)" %
                   [ "Test",
                     "Count",
                     "Time",
@@ -322,31 +327,67 @@ module Gravitext
                     "Change",
                     "~Latency",
                     "Change" ] )
+        new_line
         print_separator( '=' )
       end
 
       def print_separator( char = '-' )
-        @out << ( char * ( @nwidth + 69 ) + "\n" )
+        @out << ( char * ( @nwidth + 69 ) )
+        new_line
       end
 
 
-      def print_result_start( exec )
-        @out << ( "%-#{@nwidth}s %6s " % 
+      def print_result_start( exec, out = @out )
+        out << ( "%-#{@nwidth}s %6s " % 
                  [ exec.factory.name,
                    Metric::format( exec.runs_target ) ] )
       end
 
-      def print_result( exec, prior = nil )
-        @out << ( "%7s %6s %6s/r %6sr/s (%6s) %7s/r (%6s)\n" %
-                  [ exec.duration,
-                    Metric::format( exec.result_sum.to_f ),
-                    Metric::format( exec.result_sum.to_f / 
-                                    exec.runs_executed ),
-                    Metric::format( exec.mean_throughput ),
-                    Metric::format_difference( throughput_change(exec,prior) ),
-                    exec.mean_latency,
-                    Metric::format_difference( latency_change(exec,prior) ) ] )
+      def print_result( exec, prior = nil, out = @out )
+        out << ( "%7s %6s %6s/r %6sr/s (%6s) %7s/r (%6s)" %
+                 [ exec.duration,
+                   Metric::format( exec.result_sum.to_f ),
+                   Metric::format( exec.result_sum.to_f / 
+                                   exec.runs_executed ),
+                   Metric::format( exec.mean_throughput ),
+                   Metric::format_difference( throughput_change(exec,prior) ),
+                   exec.mean_latency,
+                   Metric::format_difference( latency_change(exec,prior) ) ] )
+        new_line
       end
+
+    end
+
+    # Derivation of PrintListener for consise debug log output
+    class LogListener < PrintListener
+
+      # Send <<() to log.debug
+      class LogWriter
+        def initialize( log )
+          @log = log
+        end
+        def <<( msg )
+          @log.debug( msg )
+        end
+      end
+
+      def initialize( logger )
+        super( LogWriter.new( logger ) )
+      end
+
+      alias :orig_result_start :print_result_start 
+      def print_result_start( exec ); end
+
+      # Print run start and result output on single log line
+      def print_result( exec, prior = nil )
+        line = ""
+        orig_result_start( exec, line )
+        super( exec, prior, line )
+        @out << line
+      end
+      
+      def new_line; end
+      def print_separator( char = '-' ); end
 
     end
 
