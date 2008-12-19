@@ -66,8 +66,9 @@ module Gravitext
       end
 
       def execute
+        @out.write( "Concurrent testing: #{@thread_count} threads.\n" )
+
         finals = warmup
-        @out.write("\n")
 
         run_counts = if @final_runs
                        Array.new( @factories.size, @final_runs )
@@ -86,6 +87,7 @@ module Gravitext
       end
       
       def warmup
+
         states = @factories.map do |factory|
           s = OpenStruct.new
           s.factory = factory
@@ -94,6 +96,8 @@ module Gravitext
           s
         end 
 
+        @out.write( "Warmup min %ds (change tolerance: %.2f) per test:\n" %
+                    [ @warmup_total_target, @warmup_tolerance ] )
         print_header
 
         first = true
@@ -132,13 +136,31 @@ module Gravitext
           finals += done.map { |s| s.prior }          
           first = false
         end
+        @out.write("\n")
         finals
+      end
+
+      def align_counts( counts )
+        mean = ( counts.inject { |sum,c| sum + c } ) / counts.size
+
+        # Round to 2-significant digits
+        f = 1
+        ( f *= 10 ) while ( mean / f ) > 100 
+        mean = ( mean.to_f / f ).round * f
+        
+        if ( mean.to_f / counts.min ) > 3.0
+          counts
+        else
+          Array.new( counts.size, mean ) 
+        end
       end
 
       def execute_comparisons( run_counts, iterations )
 
         results = Array.new( @factories.size ) { [] }
 
+        @out.write( "Comparison runs (%d iterations):\n" % 
+                    [ iterations ] )
         print_header
 
         iterations.times do |iteration|
@@ -260,22 +282,6 @@ module Gravitext
           ( exec.mean_latency.seconds - p ) / p
         else
           NaN
-        end
-      end
-
-
-      def align_counts( counts )
-        mean = ( counts.inject { |sum,c| sum + c } ) / counts.size
-
-        # Round to 2-significant digits
-        f = 1
-        ( f *= 10 ) while ( mean / f ) > 100 
-        mean = ( mean.to_f / f ).round * f
-        
-        if ( mean.to_f / counts.min ) > 3.0
-          counts
-        else
-          Array.new( counts.size, mean ) 
         end
       end
 

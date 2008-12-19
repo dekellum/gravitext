@@ -21,12 +21,10 @@ module TestCollection
     tests = TestCollection::lookup_factories( ARGV[0] || 'random' )
 
     harness = PerfTest::Harness.new( tests )
-    harness.do_per_run_timing = false #FIXME
-
-    #puts( "Threads: #{harness.threads}" )
-
+    # harness.do_per_run_timing = false #FIXME
     # harness.thread_count = 2
     # harness.final_runs = 10000
+
     harness.execute
   end
 
@@ -124,20 +122,3 @@ module TestCollection
 end
 
 TestCollection.run
-
-# if false
-#   import 'com.gravitext.xml.producer.perftests.PerfTestFactory'
-
-#   tests = PerfTestFactory::Serializer.values.map do |s|
-#     f = PerfTestFactory.new( s )
-#     f
-#   end
-
-# end
-
-
-
-
-
-
-
