@@ -10,11 +10,34 @@ module Gravitext
   # Concurrent performance testing facility
   module PerfTest
 
+    module CalcUtil
+
+      NaN = Java::java.lang.Double::NaN
+
+      def throughput_change( exec, prior = nil )
+        if prior
+          p = prior.mean_throughput
+          ( exec.mean_throughput - p ) / p
+        else
+          NaN
+        end
+      end
+
+      def latency_change( exec, prior = nil )
+        if prior
+          p = prior.mean_latency.seconds
+          ( exec.mean_latency.seconds - p ) / p
+        else
+          NaN
+        end
+      end
+    end
+
     # Concurrent performance testing harness with support for adaptive
     # warmup and comparison on multiple TestFactory instances.
     class Harness
+      include CalcUtil
       import 'com.gravitext.concurrent.TestExecutor'
-      import 'com.gravitext.util.Metric'
       import 'com.gravitext.util.Duration'
 
       # Number of threads to test with (default: available cores)
@@ -40,11 +63,15 @@ module Gravitext
       # Target duration of final comparison iterations in seconds (default: 10s)
       attr_accessor :final_exec_target
 
-      # Run peformance stats are written via out.write (default $stdout)
-      attr_accessor :out
+      # Test executation progress is sent to listener, see PrintListener.
+      attr_accessor :listener
       
       # Do per run timing for mean latency. (default: true)
       attr_accessor :do_per_run_timing
+
+      # Maximum difference in counts for final run counts to be
+      # alligned (default: 3.0)
+      attr_accessor :max_align_ratio
 
       # Initialize given array of com.gravitext.concurrent.TestFactory
       # instances.
@@ -59,14 +86,15 @@ module Gravitext
         @final_iterations = 3 
         @final_runs = nil
         @final_exec_target = 10.0
-        
+
+        @max_align_ratio = 3.0
         @do_per_run_timing = true
-        @out = $stdout
-        @nwidth = ( factories.map { |f| f.name.length } << 4 ).max
+
+        @listener = PrintListener.new
       end
 
       def execute
-        @out.write( "Concurrent testing: #{@thread_count} threads.\n" )
+        @listener.begin( self, @factories )
 
         finals = warmup
 
@@ -83,10 +111,13 @@ module Gravitext
         results = execute_comparisons( run_counts, @final_iterations )
         sums = sum_results( results ) if @final_iterations > 1
 
+        @listener.comparisons_end( self, sums )
         sums
       end
       
       def warmup
+
+        @listener.warmups_begin( self )
 
         states = @factories.map do |factory|
           s = OpenStruct.new
@@ -96,15 +127,11 @@ module Gravitext
           s
         end 
 
-        @out.write( "Warmup min %ds (change tolerance: %.2f) per test:\n" %
-                    [ @warmup_total_target, @warmup_tolerance ] )
-        print_header
-
         first = true
         finals = []
         until states.empty? do
 
-          print_separator unless first
+          @listener.warmup_next_series( self ) unless first
 
           states,done = states.partition do |s|
             
@@ -120,9 +147,9 @@ module Gravitext
                    end
 
             executor = create_executor( s.factory, runs.to_i )
-            print_result_start( executor )
+            @listener.warmup_start_run( executor )
             executor.run_test
-            print_result( executor, s.prior )
+            @listener.warmup_complete_run( executor, s.prior )
 
             # Test throughput change, and increment warm_time
             s.warm_time += executor.duration.seconds
@@ -136,7 +163,8 @@ module Gravitext
           finals += done.map { |s| s.prior }          
           first = false
         end
-        @out.write("\n")
+
+        @listener.warmups_end( finals )
         finals
       end
 
@@ -148,7 +176,7 @@ module Gravitext
         ( f *= 10 ) while ( mean / f ) > 100 
         mean = ( mean.to_f / f ).round * f
         
-        if ( mean.to_f / counts.min ) > 3.0
+        if ( mean.to_f / counts.min ) > @max_align_ratio
           counts
         else
           Array.new( counts.size, mean ) 
@@ -158,22 +186,20 @@ module Gravitext
       def execute_comparisons( run_counts, iterations )
 
         results = Array.new( @factories.size ) { [] }
-
-        @out.write( "Comparison runs (%d iterations):\n" % 
-                    [ iterations ] )
-        print_header
+        
+        @listener.comparisons_begin( self, run_counts )
 
         iterations.times do |iteration|
-          print_separator unless iteration.zero?
+          @listener.comparison_next_series( self ) unless iteration.zero?
 
           Java::java.lang.System::gc
           Java::java.lang.Thread::yield
 
           @factories.each_index do |f|
             executor = create_executor( @factories[f], run_counts[f] )
-            print_result_start( executor )
+            @listener.comparison_start_run( executor )
             executor.run_test
-            print_result( executor, results[0].last )
+            @listener.comparison_complete_run( executor, results[0].last )
             results[f] << executor
           end
         end
@@ -210,13 +236,7 @@ module Gravitext
 
           sums << sum
         end
-        
-        print_separator( '=' )
-        sums.each_index do |s|
-          print_result_start( sums[s] )
-          print_result( sums[s], ( sums.first unless s.zero? ) )
-        end
-        
+
         sums
       end
 
@@ -226,63 +246,106 @@ module Gravitext
         executor
       end
       
+    end
+
+    # Listen for various events from the Harness and print results to console
+    class PrintListener
+      include CalcUtil
+      import 'com.gravitext.util.Metric'
+
+      # Status is written via out << (default $stdout)
+      def initialize( out = $stdout )
+        @out = out
+      end
+      
+      def begin( harness, factories )
+        @out << "Concurrent testing: #{harness.thread_count} threads.\n"
+        @nwidth = ( factories.map { |f| f.name.length } << 4 ).max
+      end
+
+      def warmups_begin( harness )
+        @out << ( "Warmup min %ds (change tolerance: %.2f) per test:\n" %
+                  [ harness.warmup_total_target, harness.warmup_tolerance ] )
+        print_header
+      end
+
+      def warmup_start_run( executor )
+        print_result_start( executor )
+      end
+
+      def warmup_complete_run( executor, prior )
+        print_result( executor, prior )
+      end
+
+      def warmup_next_series( harness )
+        print_separator
+      end
+
+      def warmups_end( final_executors )
+        @out << "\n"
+      end
+      
+      def comparisons_begin( harness, run_counts )
+        @out << ( "Comparison runs (%d iterations):\n" % 
+                  [ harness.final_iterations ] )
+        print_header
+      end
+
+      def comparison_next_series( harness )
+        print_separator
+      end
+      
+      def comparison_start_run( executor )
+        print_result_start( executor )
+      end
+
+      def comparison_complete_run( executor, prior )
+        print_result( executor, prior )
+      end
+
+      def comparisons_end( harness, executor_sums )
+        print_separator( '=' )
+        executor_sums.each_index do |s|
+          print_result_start( executor_sums[s] )
+          print_result( executor_sums[s], ( executor_sums.first unless s.zero? ) )
+        end
+      end
+
       def print_header
-        @out.write( "%-#{@nwidth}s %-6s %-7s %-6s %8s %10s(%6s) %-9s (%6s)\n" %
-                    [ "Test",
-                      "Count",
-                      "Time",
-                      "R Sum",
-                      "~R Value",
-                      "Throughput",
-                      "Change",
-                      "~Latency",
-                      "Change" ] )
+        @out << ( "%-#{@nwidth}s %-6s %-7s %-6s %8s %10s(%6s) %-9s (%6s)\n" %
+                  [ "Test",
+                    "Count",
+                    "Time",
+                    "R Sum",
+                    "~R Value",
+                    "Throughput",
+                    "Change",
+                    "~Latency",
+                    "Change" ] )
         print_separator( '=' )
       end
 
       def print_separator( char = '-' )
-        @out.write( char * ( @nwidth + 69 ) + "\n" )
+        @out << ( char * ( @nwidth + 69 ) + "\n" )
       end
 
 
       def print_result_start( exec )
-        @out.write( "%-#{@nwidth}s %6s " % 
-                   [ exec.factory.name,
-                     Metric::format( exec.runs_target ) ] )
+        @out << ( "%-#{@nwidth}s %6s " % 
+                 [ exec.factory.name,
+                   Metric::format( exec.runs_target ) ] )
       end
 
       def print_result( exec, prior = nil )
-        @out.write( "%7s %6s %6s/r %6sr/s (%6s) %7s/r (%6s)\n" %
-                    [ exec.duration,
-                      Metric::format( exec.result_sum.to_f ),
-                      Metric::format( exec.result_sum.to_f / 
-                                      exec.runs_executed ),
-                      Metric::format( exec.mean_throughput ),
-                      Metric::format_difference( throughput_change( exec, 
-                                                                    prior ) ),
-                      exec.mean_latency,
-                      Metric::format_difference( latency_change( exec, 
-                                                                 prior ) ) ] )
-      end
-
-      NaN = Java::java.lang.Double::NaN
-
-      def throughput_change( exec, prior = nil )
-        if prior
-          p = prior.mean_throughput
-          ( exec.mean_throughput - p ) / p
-        else
-          NaN
-        end
-      end
-
-      def latency_change( exec, prior = nil )
-        if prior
-          p = prior.mean_latency.seconds
-          ( exec.mean_latency.seconds - p ) / p
-        else
-          NaN
-        end
+        @out << ( "%7s %6s %6s/r %6sr/s (%6s) %7s/r (%6s)\n" %
+                  [ exec.duration,
+                    Metric::format( exec.result_sum.to_f ),
+                    Metric::format( exec.result_sum.to_f / 
+                                    exec.runs_executed ),
+                    Metric::format( exec.mean_throughput ),
+                    Metric::format_difference( throughput_change(exec,prior) ),
+                    exec.mean_latency,
+                    Metric::format_difference( latency_change(exec,prior) ) ] )
       end
 
     end
