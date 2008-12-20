@@ -4,7 +4,7 @@ $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
 
 require 'test/unit'
 
-require 'gravitext-util/concurrent'
+require 'gravitext-util'
 
 require 'java'
 require 'thread'

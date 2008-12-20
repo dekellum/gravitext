@@ -4,7 +4,6 @@ $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
 
 require 'test/unit'
 
-require 'gravitext-util'
 require 'gravitext-util/perftest'
 
 require 'java'

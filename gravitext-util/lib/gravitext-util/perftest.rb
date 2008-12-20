@@ -1,6 +1,5 @@
 
 require 'gravitext-util'
-require 'gravitext-util/concurrent'
 
 require 'ostruct'
 require 'java'
@@ -263,7 +262,7 @@ module Gravitext
       end
 
       def warmups_begin( harness )
-        @out << ( "Warmup min %ds (change tolerance: %.2f) per test:" %
+        @out << ( "Warmup min %gs (change tolerance: %g) per test:" %
                   [ harness.warmup_total_target, harness.warmup_tolerance ] )
         new_line
         print_header

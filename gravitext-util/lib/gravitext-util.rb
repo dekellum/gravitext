@@ -8,4 +8,6 @@ module Gravitext
 
     import 'com.gravitext.util.FastRandom'
   end
+
+  require 'gravitext-util/concurrent'
 end
