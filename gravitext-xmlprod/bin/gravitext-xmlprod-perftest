@@ -1,0 +1,50 @@
+#!/usr/bin/env jruby
+
+$LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
+
+require 'rubygems'
+require 'gravitext-util/perftest'
+require 'gravitext-xmlprod'
+
+require 'java'
+
+module TestCollection
+  include Gravitext
+  include Gravitext::Concurrent
+
+  import 'com.gravitext.xml.producer.perftests.PerfTestFactory'
+  import 'com.gravitext.xml.producer.perftests.StringBufferEncodePerfTest'
+
+  def self.run
+    tests = TestCollection::lookup_factories( ARGV[0] || 'producer' )
+
+    harness = PerfTest::Harness.new( tests )
+    # harness.thread_count = 2
+    # harness.final_runs = 10000
+
+    harness.execute
+  end
+
+  def self.lookup_factories( name )
+    case name
+    when 'producer'
+      #FIXME: How to handle test only jars? Assembly needed?
+      require '~/.m2/repository/org/jdom/jdom/1.1/jdom-1.1.jar' 
+      tests = PerfTestFactory::Serializer.values.map do |s|
+        PerfTestFactory.new( s )
+      end
+      tests.each do |t|
+        #t.use_writer = false
+        #t.do_encode = true
+        #t.encoding = 'UTF-8'
+      end
+    when 'encode'
+      tests = Array.new(2) { StringBufferEncodePerfTest.new }
+      tests.zip( [ false, true ] ) { |test,b| test.use_char_buffer = b }
+      tests
+    end
+  end
+
+end
+
+TestCollection.run

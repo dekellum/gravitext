@@ -1,0 +1,79 @@
+# -*- ruby -*-
+# FIXME: Apache license
+
+require 'rubygems'
+require 'hoe'
+
+$LOAD_PATH << './lib'
+
+ENV['NODOT'] = "no thank you"
+
+require 'gravitext-xmlprod/version' 
+
+jars = [ "gravitext-xmlprod-#{Gravitext::XMLProd::VERSION}.jar" ]
+
+jar_files = jars.map { |jar| "lib/gravitext-xmlprod/#{jar}" }
+
+desc "Update the Manifest with actual jar"
+task :manifest do
+  out = File.new( 'Manifest.txt', 'w' ) 
+  begin
+    out.write <<END
+Manifest.txt
+README.txt
+History.txt
+Rakefile
+pom.xml
+bin/gravitext-xmlprod-perftest
+lib/gravitext-xmlprod.rb
+lib/gravitext-xmlprod/version.rb
+test/test_concurrent.rb
+END
+    out.puts jar_files
+  ensure
+    out.close
+  end
+end
+
+
+file :mvn => [ 'pom.xml' ] do
+  sh( 'mvn package' )
+end
+
+jars.each do |jar|
+  file "lib/gravitext-xmlprod/#{jar}" => [ :mvn ] do
+    cp_r( File.join( "target/", jar ), 'lib/gravitext-xmlprod' )
+  end
+end
+
+[ :gem, :test ].each { |t| task t => ( jar_files ) }
+
+task :mvn_clean do
+  rm_f( jar_files )
+  sh( 'mvn clean' )
+end
+task :clean => :mvn_clean 
+
+task :tag do
+  tag = "gravitext-xmlprod-#{Gravitext::XMLProd::VERSION}"
+  svn_base = 'svn://localhost/subversion.repo/src/gems'
+  tag_url = "#{svn_base}/tags/#{tag}"
+
+  dname = File.dirname( __FILE__ )
+  dname = '.' if Dir.getwd == dname
+  stat = `svn status #{dname}`
+  stat.strip! if stat
+  if ( stat && stat.length > 0 )
+    $stderr.puts( "Resolve the following before tagging (svn status):" )
+    $stderr.puts( stat )
+  else
+    sh( "svn cp -m 'tag [#{tag}]' #{dname} #{tag_url}" )
+  end
+end
+
+hoe = Hoe.new( "gravitext-xmlprod", Gravitext::XMLProd::VERSION ) do |p|
+  p.developer( "David Kellum", "dek-ruby@gravitext.com" )
+  p.rubyforge_name = "gravitext"
+  p.rdoc_pattern = /^(lib.*\.(rb|txt))|[^\/]*\.txt$/
+  p.extra_deps << [ 'gravitext-util', '~> 1.3' ]
+end

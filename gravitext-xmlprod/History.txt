@@ -1,0 +1,5 @@
+=== 1.2 / TBD
+
+* New gem packaging
+* FIXME: more
+
