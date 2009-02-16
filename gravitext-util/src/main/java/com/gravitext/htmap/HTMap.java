@@ -57,39 +57,6 @@ import java.util.Map;
  */
 @SuppressWarnings("unchecked")
 public interface HTMap 
-    extends Map<Key, Object>
+    extends Map<Key, Object>, HTAccess
 {
-    /**
-     * Associate the specified value with the specified key.
-     * @see Map#put(Object, Object)
-     * @param <T> the value type provided by the key
-     * @return the previous value associated with key, or null if no
-     * such value was present.
-     * @throws ClassCastException if value's runtime type is not
-     * assignable to {@code key.valueType()}.
-     * @throws NullPointerException if key is null, or if null values
-     * are not supported and value is null.
-     */
-    <T, V extends T> T set( Key<T> key, V value );
-    
-    /**
-     * Returns the value previously set with the specified key.
-     * 
-     * @see Map#get(Object)
-     * @param <T> the value type provided by the key
-     * @return the value associated with key, or null if no such value
-     * is present.
-     * @throws NullPointerException if key is null.
-     */
-    <T> T get( Key<T> key );
-    
-    /**
-     * Removes any value previously set with for the specified key.
-     * @see Map#remove(Object)
-     * @param <T> the value type provided by the key
-     * @return the previous value associated with key, or null if no
-     * such value was present.
-     * @throws NullPointerException if key is null.
-     */
-    <T> T remove( Key<T> key );
 }
