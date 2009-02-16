@@ -16,8 +16,6 @@
 
 package com.gravitext.htmap;
 
-import java.util.Set;
-
 /**
  * <b>H</b>eterogeneous <b>T</b>ype-safe key/value access interface. Keys are of
  * the generic type {@link Key Key&lt;T&gt;}, where T is a key-specific value
