@@ -4,7 +4,6 @@ $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
 
 require 'gravitext-util'
 require 'gravitext-util/perftest'
-require 'gravitext-util/concurrent'
 require 'java'
 
 module TestCollection
@@ -95,27 +94,6 @@ module TestCollection
     
     def run_iteration( run )
       1
-    end
-  end
-
-  class RRandomTestFactory
-    include Gravitext::Concurrent
-    include TestFactory
-    include TestRunnable
-
-    def name
-      'RubyRandom'
-    end
-    
-    def create_test_runnable( seed )
-      self.class.new
-    end
-    
-    def run_iteration( run )
-      10_000.times do 
-        rand( 1000 )
-      end
-      rand( 3 )
     end
   end
 
