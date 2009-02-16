@@ -6,5 +6,4 @@ pom.xml
 bin/gravitext-xmlprod-perftest
 lib/gravitext-xmlprod.rb
 lib/gravitext-xmlprod/version.rb
-test/test_concurrent.rb
 lib/gravitext-xmlprod/gravitext-xmlprod-1.2.jar

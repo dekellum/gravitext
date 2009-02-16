@@ -27,7 +27,6 @@ pom.xml
 bin/gravitext-xmlprod-perftest
 lib/gravitext-xmlprod.rb
 lib/gravitext-xmlprod/version.rb
-test/test_concurrent.rb
 END
     out.puts jar_files
   ensure

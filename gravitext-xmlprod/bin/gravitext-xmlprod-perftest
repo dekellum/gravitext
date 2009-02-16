@@ -20,7 +20,6 @@ module TestCollection
 
     harness = PerfTest::Harness.new( tests )
     # harness.thread_count = 2
-    # harness.final_runs = 10000
 
     harness.execute
   end
@@ -28,21 +27,28 @@ module TestCollection
   def self.lookup_factories( name )
     case name
     when 'producer'
+
       #FIXME: How to handle test only jars? Assembly needed?
       require '~/.m2/repository/org/jdom/jdom/1.1/jdom-1.1.jar' 
+
       tests = PerfTestFactory::Serializer.values.map do |s|
         PerfTestFactory.new( s )
       end
+
       tests.each do |t|
         #t.use_writer = false
         #t.do_encode = true
         #t.encoding = 'UTF-8'
       end
+
+      tests
+
     when 'encode'
       tests = Array.new(2) { StringBufferEncodePerfTest.new }
       tests.zip( [ false, true ] ) { |test,b| test.use_char_buffer = b }
       tests
     end
+
   end
 
 end
