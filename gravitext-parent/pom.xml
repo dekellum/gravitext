@@ -4,7 +4,7 @@
   <groupId>com.gravitext</groupId>
   <artifactId>gravitext-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.4-SNAPSHOT</version>
+  <version>1.4</version>
   <name>Gravitext Parent POM</name>
 
   <description>Gravitext OSS project parent.</description>
@@ -27,26 +27,19 @@
     </license>
   </licenses>
 
-  <scm>
-    <developerConnection>scm:svn:svn://localhost/subversion.repo/src/gravitext/trunk/gravitext-parent</developerConnection>
-  </scm>
-
   <distributionManagement>
     <repository>
-      <id>gravitext</id>
+      <id>gravitext-release</id>
       <name>Gravitext Repo</name>
-      <url>file:///home/david/repo/releases</url>
+      <url>file:///home/david/src/oss/releases</url>
       <layout>default</layout>
       <uniqueVersion>false</uniqueVersion>
     </repository>
-    <snapshotRepository>
-      <id>gravitext</id>
-      <name>Gravitext Repo</name>
-      <url>file:///home/david/repo/snapshots</url>
-      <layout>default</layout>
-      <uniqueVersion>true</uniqueVersion>
-    </snapshotRepository>
     <downloadUrl>http://gravitext.com/repo/releases</downloadUrl>
+    <site>
+      <id>gravitext-site</id>
+      <url>file:///home/david/src/oss/site/gravitext-parent</url>
+    </site>
   </distributionManagement>
 
   <dependencyManagement>
@@ -69,7 +62,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>0.9.13</version>
+        <version>0.9.14</version>
         <scope>runtime</scope>
         <optional>true</optional>
       </dependency>

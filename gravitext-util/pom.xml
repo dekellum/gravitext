@@ -15,7 +15,7 @@
     <developer>
       <id>david</id>
       <name>David Kellum</name>
-      <email>dek95@[org]</email>
+      <email>dek-oss@[org]</email>
       <organization>Gravitext</organization>
       <organizationUrl>http://gravitext.com</organizationUrl>
     </developer>
@@ -32,35 +32,16 @@
   <parent>
     <groupId>com.gravitext</groupId>
     <artifactId>gravitext-parent</artifactId>
-    <version>1.3</version>
+    <version>1.4</version>
     <relativePath>../gravitext-parent/pom.xml</relativePath>
   </parent>
 
-  <scm>
-    <developerConnection>scm:svn:svn://localhost/subversion.repo/src/gravitext-util/trunk</developerConnection>
-  </scm>
-
   <distributionManagement>
-    <repository>
-      <id>gravitext</id>
-      <name>Gravitext Repo</name>
-      <url>file:///home/david/repo/releases</url>
-      <layout>default</layout>
-      <uniqueVersion>false</uniqueVersion>
-    </repository>
-    <snapshotRepository>
-      <id>gravitext</id>
-      <name>Gravitext Repo</name>
-      <url>file:///home/david/repo/snapshots</url>
-      <layout>default</layout>
-      <uniqueVersion>true</uniqueVersion>
-    </snapshotRepository>
     <site>
-      <id>gravitext oss site</id>
-      <name>Gravitext OSS WebSite</name>
-      <url>file:///home/david/public_html/oss/gravitext-util</url>
+      <id>gravitext-site</id>
+      <url>file:///home/david/src/oss/site/gravitext-util</url>
     </site>
-    <downloadUrl>http://gravitext.com/repo</downloadUrl>
+    <downloadUrl>http://gravitext.com/repo/releases/gravitext-util</downloadUrl>
   </distributionManagement>
 
   <dependencies>

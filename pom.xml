@@ -8,6 +8,21 @@
   <version>1.0</version>
   <name>Gravitext Modules Root</name>
 
+  <distributionManagement>
+    <repository>
+      <id>gravitext-release</id>
+      <name>Gravitext Repo</name>
+      <url>file:///home/david/src/oss/releases</url>
+      <layout>default</layout>
+      <uniqueVersion>false</uniqueVersion>
+    </repository>
+    <site>
+      <id>gravitext-site</id>
+      <url>file:///home/david/src/oss/site/gravitext-root</url>
+    </site>
+    <downloadUrl>http://gravitext.com/repo/releases/gravitext-root</downloadUrl>
+  </distributionManagement>
+
   <modules>
     <module>gravitext-parent</module>
     <module>gravitext-util</module>
