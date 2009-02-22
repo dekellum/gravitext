@@ -16,6 +16,9 @@
 
 package com.gravitext.concurrent;
 
+/**
+ * Interface for factory of TestRunnable instances.
+ */
 public interface TestFactory
 {
     /**

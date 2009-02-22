@@ -17,14 +17,15 @@
 package com.gravitext.htmap;
 
 /**
- * <b>H</b>eterogeneous <b>T</b>ype-safe key/value access interface. Keys are of
- * the generic type {@link Key Key&lt;T&gt;}, where T is a key-specific value
- * type. The {@link #get get()} and {@link #remove remove()} methods are {@code
- * Key} type-safe overloads of the equivalent {@code Map} methods. A new
- * {@link #set set()} method is introduced which offers a compile-time type-safe
- * alternative to {@code Map.put()}. In this case an overload is not possible
- * because the erased signatures would be the same. The following code sample
- * shows the common usage pattern:
+ * <b>H</b>eterogeneous <b>T</b>ype-safe key/value access
+ * interface. Keys are of the generic type {@link Key Key&lt;T&gt;},
+ * where T is a key-specific value type. The {@link #get get()} and
+ * {@link #remove remove()} methods are {@code Key} type-safe
+ * overloads of the equivalent {@code java.util.Map} methods. A new
+ * {@link #set set()} method is introduced which offers a compile-time
+ * type-safe alternative to {@code Map.put()}. In this case
+ * an overload is not possible because the erased signatures would be
+ * the same. The following code sample shows the common usage pattern:
  * 
  * <p>The null key is not supported by this interface.</p>
  *
@@ -36,7 +37,7 @@ public interface HTAccess
 {
     /**
      * Associate the specified value with the specified key.
-     * @see Map#put(Object, Object)
+     * @see java.util.Map#put(Object, Object)
      * @param <T> the value type provided by the key
      * @return the previous value associated with key, or null if no
      * such value was present.
@@ -50,7 +51,7 @@ public interface HTAccess
     /**
      * Returns the value previously set with the specified key.
      * 
-     * @see Map#get(Object)
+     * @see java.util.Map#get(Object)
      * @param <T> the value type provided by the key
      * @return the value associated with key, or null if no such value
      * is present.
@@ -60,7 +61,7 @@ public interface HTAccess
     
     /**
      * Removes any value previously set with for the specified key.
-     * @see Map#remove(Object)
+     * @see java.util.Map#remove(Object)
      * @param <T> the value type provided by the key
      * @return the previous value associated with key, or null if no
      * such value was present.

@@ -1,5 +1,19 @@
 # -*- ruby -*-
-# FIXME: Apache license
+#--
+# Copyright (C) 2008 David Kellum
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you
+# may not use this file except in compliance with the License.  You
+# may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.  See the License for the specific language governing
+# permissions and limitations under the License.
+#++
 
 require 'rubygems'
 require 'hoe'
@@ -58,23 +72,16 @@ task :clean => :mvn_clean
 
 task :tag do
   tag = "gravitext-util-#{Gravitext::Util::VERSION}"
-  svn_base = 'svn://localhost/subversion.repo/src/gems'
-  tag_url = "#{svn_base}/tags/#{tag}"
-
   dname = File.dirname( __FILE__ )
   dname = '.' if Dir.getwd == dname
-  stat = `svn status #{dname}`
-  stat.strip! if stat
-  if ( stat && stat.length > 0 )
-    $stderr.puts( "Resolve the following before tagging (svn status):" )
-    $stderr.puts( stat )
-  else
-    sh( "svn cp -m 'tag [#{tag}]' #{dname} #{tag_url}" )
+  sh( "git status --only #{dname}" ) do |ok,res|
+    raise "Commit these changes before tagging." if ok #changes present
   end
+  sh %{git tag -s -f -m "tag [#{tag}]" "#{tag}"}
 end
 
 hoe = Hoe.new( "gravitext-util", Gravitext::Util::VERSION ) do |p|
-  p.developer( "David Kellum", "dek-ruby@gravitext.com" )
+  p.developer( "David Kellum", "dek-oss@gravitext.com" )
   p.rubyforge_name = "gravitext"
   p.rdoc_pattern = /^(lib.*\.(rb|txt))|[^\/]*\.txt$/
 end
