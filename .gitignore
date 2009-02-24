@@ -4,5 +4,6 @@
 /target
 **/target
 **/pkg
+**/doc
 *~
 **/lib/**/*.jar

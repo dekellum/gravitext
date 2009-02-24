@@ -1,7 +1,8 @@
 = gravitext-util
 
-* http://gravitext.com/oss/gravitext-util
 * http://github.com/dekellum/gravitext
+* http://rubyforge.org/projects/gravitext
+* http://gravitext.com/oss/gravitext-util
 
 == Description
 
@@ -23,7 +24,7 @@ A collection of core java utilities with ruby adapters for JRuby.
 
 * Java 1.5 or higher (no java dependencies outside of the JDK).
 
-* JRuby 1.x for ruby adaptions (Ruby standard library only).
+* JRuby 1.x for ruby adaptions (core only).
 
 == License
 

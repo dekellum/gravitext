@@ -1,7 +1,7 @@
-=== 1.3 / 2009-2-22
+=== 1.3 / 2009-2-23
 
 * New gem packaging.
-* Replaced java perftest harness with ruby test wiring.
+* Replaced java perftest harness with ruby test harness/wiring.
 * Split heterogeneous access methods from HTMap to HTAccess interface
   to enable generic filters and other consumers.
 * Non-checked exception version of Closeable interface.
