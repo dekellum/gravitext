@@ -17,12 +17,13 @@
 #++
 
 $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
-
-require 'rubygems'
-require 'gravitext-util/perftest'
 require 'gravitext-xmlprod'
 
 require 'java'
+require 'gravitext-xmlprod/jdom-1.1.jar' #test only.
+
+require 'rubygems'
+require 'gravitext-util/perftest'
 
 module TestCollection
   include Gravitext
@@ -44,10 +45,6 @@ module TestCollection
     case name
     when 'producer'
     
-      # FIXME: Testing with JDOM currently only works out of maven local repo
-      # Prime example of a case where auto-maven-jar to jem would help
-      require '~/.m2/repository/org/jdom/jdom/1.1/jdom-1.1.jar'
-
       tests = PerfTestFactory::Serializer.values.map do |s|
         PerfTestFactory.new( s )
       end

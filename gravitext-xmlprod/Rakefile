@@ -24,7 +24,8 @@ ENV['NODOT'] = "no thank you"
 
 require 'gravitext-xmlprod/version' 
 
-jars = [ "gravitext-xmlprod-#{Gravitext::XMLProd::VERSION}.jar" ]
+jars = [ "gravitext-xmlprod-#{Gravitext::XMLProd::VERSION}.jar",
+         "jdom-1.1.jar" ]
 
 jar_files = jars.map { |jar| "lib/gravitext-xmlprod/#{jar}" }
 
@@ -50,7 +51,9 @@ end
 
 
 file :mvn => [ 'pom.xml' ] do
-  sh( 'mvn package' )
+  sh( 'mvn package ' + 
+      'dependency:copy-dependencies -DincludeArtifactIds=jdom ' +
+      '-DoutputDirectory=target' )
 end
 
 jars.each do |jar|

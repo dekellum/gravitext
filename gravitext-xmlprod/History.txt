@@ -1,4 +1,4 @@
-=== 1.2 / 2009-2-22
+=== 1.2 / 2009-2-23
 
 * New gem packaging.
 * New gravitext-xmlprod-perftest replaces old java based harness for

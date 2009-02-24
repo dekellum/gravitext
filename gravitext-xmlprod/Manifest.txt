@@ -7,3 +7,4 @@ bin/gravitext-xmlprod-perftest
 lib/gravitext-xmlprod.rb
 lib/gravitext-xmlprod/version.rb
 lib/gravitext-xmlprod/gravitext-xmlprod-1.2.jar
+lib/gravitext-xmlprod/jdom-1.1.jar
