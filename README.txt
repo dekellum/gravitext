@@ -36,14 +36,19 @@ A collection of core java utilities with ruby adapters for JRuby.
 
  % git remote add rubyforge gitosis@rubyforge.org:gravitext.git
 
-Release a gem (via Hoe/Rakefile): 
-
-    VERSION=x.y.z jrake release publish_docs post_news
-
 Create package under gravitext project:
 
     (rubyforge login)
     rubyforge create_package gravitext <package-name>
+
+Release a gem (via Hoe/Rakefile): 
+
+    VERSION=x.y.z jrake release publish_docs post_news
+
+Upload docs to rubyforge:
+
+    rsync -auP --exclude '*~' www/ dekellum@rubyforge.org:/var/www/gforge-projects/gravitext
+
 
 === github
 
