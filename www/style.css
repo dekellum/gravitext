@@ -4,7 +4,7 @@ body  { font-family: Trebuchet MS, Lucida Grande, Tahoma, Verdana, Arial, sans-s
 
 div.h     { background: #111; margin: 0 -10px 0 -10px; }
 div.h img { float: left; padding: 10px 10px 0px 10px }
-div.t     { font-size: large; color: white; text-align:left; padding: 20px }
+div.t     { font-size: large; color: white; text-align:left; padding: 10px }
 div.t1    { font-size: x-large; }
 div.main { clear: both }
 
