@@ -12,15 +12,9 @@ require 'rubygems'
 
 require 'slf4j'
 require 'logback' #Or, turn off logging: require 'slf4j/nop'
-Logback.configure do
-  console = Logback::ConsoleAppender.new do |a|
-    a.layout = Logback::PatternLayout.new do |p|
-      p.pattern = "%-4r %-5level %logger{35} - %msg %ex%n"
-    end    
-  end
-  Logback.root.add_appender( console )
-  Logback.root.level = Logback::DEBUG
-end
+
+Logback.config_console
+Logback.root.level = Logback::DEBUG
 
 class TestPerfTest < Test::Unit::TestCase
   include Gravitext::PerfTest
@@ -35,7 +29,7 @@ class TestPerfTest < Test::Unit::TestCase
     harness.warmup_tolerance = 1.0
     harness.final_exec_target = 0.25
     harness.final_iterations = 2
-    
+
     sum = harness.execute.first
     assert_same( factory, sum.factory )
     assert( sum.runs_executed > 0 )
