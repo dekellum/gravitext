@@ -30,11 +30,11 @@ public class ResizableByteBuffer
      * Construct given initial capacity.
      */
     public ResizableByteBuffer( final int capacity )
-    {                                                                           
-        _b = new byte[capacity];                                                
-        _pos = 0;                                                               
-        _limit = capacity;                                                      
-    }                                        
+    {
+        _b = new byte[capacity];
+        _pos = 0;
+        _limit = capacity;
+    }
 
     /**
      * Put the byte value at the index position.
@@ -42,13 +42,13 @@ public class ResizableByteBuffer
      * underlying array.
      * @return This buffer.
      */
-    public final ResizableByteBuffer put( final int index, 
+    public final ResizableByteBuffer put( final int index,
                                           final byte value )
     {
         _b[ index ] = value;
         return this;
     }
-   
+
     /**
      * Put byte at the current position and advance. The
      * underlying buffer will be resized if needed.
@@ -70,7 +70,7 @@ public class ResizableByteBuffer
     {
         return put( value, 0, value.length );
     }
-   
+
 
     /**
      * Put the range [offset, offset+length) of the byte array value
@@ -78,7 +78,7 @@ public class ResizableByteBuffer
      * buffer will be resized if needed.
      * @return This buffer.
      */
-    public final ResizableByteBuffer put( byte[] value, 
+    public final ResizableByteBuffer put( byte[] value,
                                           int offset, int length )
     {
         requestCapacity( length );
@@ -86,7 +86,7 @@ public class ResizableByteBuffer
         _pos += length;
         return this;
     }
-   
+
     /**
      * Put the range [offset, offset+length) of the byte array value
      * at the index position.
@@ -94,15 +94,15 @@ public class ResizableByteBuffer
      * underlying array.
      * @return This buffer.
      */
-    public final ResizableByteBuffer put( final int index, 
-                                          final byte[] value, 
-                                          int offset, 
+    public final ResizableByteBuffer put( final int index,
+                                          final byte[] value,
+                                          int offset,
                                           int length )
     {
         System.arraycopy( value, offset, _b, index, length );
         return this;
     }
-    
+
     /**
      * Read from input stream to end-of-file and put into this buffer,
      * resizing as needed.
@@ -115,26 +115,26 @@ public class ResizableByteBuffer
     public final int putFromStream( final InputStream in,
                                     int maxLength,
                                     final int chunkSize )
-    	throws IOException
+        throws IOException
     {
         int len = 0;
-    	int start = _pos;
+        int start = _pos;
         int readLen;
-    	
+
         while( maxLength > 0 ) {
-            requestCapacity( Math.min( chunkSize, maxLength) );
+            requestCapacity( Math.min( chunkSize, maxLength ) );
 
             readLen = Math.min( _limit - _pos, maxLength );
             if( readLen <= 0 ) break;
 
-            len = in.read(_b, _pos, readLen);
-            if (len < 0) break;
-            
+            len = in.read( _b, _pos, readLen );
+            if( len < 0 ) break;
+
             _pos += len;
             maxLength -= len;
-    	}
+        }
 
-    	return ( _pos - start );
+        return ( _pos - start );
     }
 
     /**
@@ -144,7 +144,7 @@ public class ResizableByteBuffer
     {
         return _pos;
     }
-    
+
     /**
      * Set the position offset into the underlying buffer.
      */
@@ -157,22 +157,22 @@ public class ResizableByteBuffer
      * Insure that length additional capacity is available.
      */
     public final void requestCapacity( final int length )
-    {                                                                           
-        if( ( _pos + length ) > _limit ) {                                      
-                                                                                
-            int size = _limit;                                                  
+    {
+        if( ( _pos + length ) > _limit ) {
+
+            int size = _limit;
             if( size == 0 ) size = 1;
             size *= 2;
             if( size < ( _pos + length ) ) size = _pos + length;
 
-            byte[] b = new byte[ size ];                                        
-                                                                                
-            System.arraycopy( _b, 0, b, 0, _pos );                              
-                                                                                
-            _b = b;                                                             
-            _limit = size;                                                      
-        }                                                                       
-    }           
+            byte[] b = new byte[ size ];
+
+            System.arraycopy( _b, 0, b, 0, _pos );
+
+            _b = b;
+            _limit = size;
+        }
+    }
 
     /**
      * Returns a new ByteBuffer which wraps the underlying array from
@@ -180,11 +180,11 @@ public class ResizableByteBuffer
      * accessible underlying byte array may change the contents of
      * this buffer.
      */
-   public final ByteBuffer flipAsByteBuffer()
-    {                                                                           
-        return ByteBuffer.wrap( _b, 0, _pos );                         
-    }                                                                           
- 
+    public final ByteBuffer flipAsByteBuffer()
+    {
+        return ByteBuffer.wrap( _b, 0, _pos );
+    }
+
     private byte[] _b;
     private int _pos = 0;
     private int _limit = 0;
