@@ -1,4 +1,5 @@
 === 1.4.0 (TBD)
+* Added immutable public KeySpace.keys().
 * Added convenience methods KeySpace.createGeneric() and createListKey().
 * Use rdoc 2.4.3 and hoe 1.12.2 for build.
 
