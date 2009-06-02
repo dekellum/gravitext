@@ -6,7 +6,7 @@
 
 == Description
 
-A collection of core java utilities with ruby adapters for JRuby.  
+A collection of core java utilities with ruby adapters for JRuby.
 
 * A concurrent (thread safety) testing facility for java JUnit,
   ruby Test::Unit, or other test harnesses.
@@ -14,7 +14,8 @@ A collection of core java utilities with ruby adapters for JRuby.
 * A concurrent performance testing facility for java/JRuby with simple
   test wiring in ruby.
 
-* A Heterogeneous Type-safe Map implementation in java.
+* A Heterogeneous Type-safe Map implementation in java with dynamicly
+  generated ruby accessors.
 
 * A set of core java utility classes (resizable buffers, a stopwatch,
   SI unit formatting, fast random number generator), in support of the
@@ -22,9 +23,9 @@ A collection of core java utilities with ruby adapters for JRuby.
 
 == Dependencies
 
-* Java 1.5 or higher (no java dependencies outside of the JDK).
+* Java 1.5+ (no java dependencies outside of the JDK).
 
-* JRuby 1.x for ruby adaptions (core only).
+* JRuby 1.2+ for ruby adaptions.
 
 == License
 
