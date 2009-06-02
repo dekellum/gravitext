@@ -25,4 +25,5 @@ module Gravitext
   end
 
   require 'gravitext-util/concurrent'
+  require 'gravitext-util/unimap'
 end
