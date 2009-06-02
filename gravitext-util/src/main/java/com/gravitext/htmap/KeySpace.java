@@ -17,6 +17,7 @@
 package com.gravitext.htmap;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -156,10 +157,18 @@ public final class KeySpace
      */
     List<Key> keySequence()
     {
-        //FIXME: Make public and protect from writes?
         return _state.get().keySequence;
     }
 
+    /**
+     * Return the list of Keys in this KeySpace in the order they were
+     * created.  The index position of each key in the list will equal
+     * the key.id(). The returned list is an immutable snapshot.
+     */
+    public List<Key> keys()
+    {
+        return Collections.unmodifiableList( _state.get().keySequence );
+    }
 
     private final static class State
     {
