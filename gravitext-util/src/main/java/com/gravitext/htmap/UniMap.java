@@ -19,25 +19,26 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.Map.Entry;
 
+
 /**
- * Common use generic HTAccess container. Wraps an {@link ArrayHTMap} based on 
- * single static KEY_SPACE. The set/put methods are overridden to call 
- * remove(key) when passed a null value.
- * 
+ * Common use generic HTAccess container. Wraps an {@link ArrayHTMap}
+ * based on single static KEY_SPACE. The set/put methods are
+ * overridden to call remove(key) when passed a null value.
+ *
  * @author David Kellum
  */
-public final class UniMap 
+public final class UniMap
     implements HTAccess
 {
     public static final KeySpace KEY_SPACE = new KeySpace();
-   
+
     public UniMap()
     {
         _map = new ArrayHTMap( KEY_SPACE );
     }
-    
+
     /**
-     * Copy constructor, creates a shallow copy of other. 
+     * Copy constructor, creates a shallow copy of other.
      */
     public UniMap( UniMap other )
     {
@@ -53,7 +54,7 @@ public final class UniMap
     }
 
     /**
-     * {@inheritDoc}  In this implementation, if a null value is given then 
+     * {@inheritDoc}  In this implementation, if a null value is given then
      * the key is removed.
      */
     public <T, V extends T> T set( Key<T> key, V value )
@@ -67,7 +68,7 @@ public final class UniMap
     }
 
     /**
-     * {@inheritDoc}  In this implementation, if a null value is given then 
+     * {@inheritDoc}  In this implementation, if a null value is given then
      * the key is removed.
      */
     public Object put( Key<?> key, Object value )
@@ -79,7 +80,7 @@ public final class UniMap
             return remove( key );
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -89,13 +90,13 @@ public final class UniMap
     }
 
     /**
-     * Return a shallow copy of this OpenMap.
+     * Return a shallow copy of this UniMap.
      */
     public UniMap clone()
     {
         return new UniMap( this );
     }
-    
+
     /**
      * @see com.gravitext.htmap.ArrayHTMap#clear()
      */
