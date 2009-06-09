@@ -36,7 +36,7 @@ import java.util.Set;
  * @author David Kellum
  */
 @SuppressWarnings("unchecked")
-public final class HashHTMap 
+public class HashHTMap 
     extends HashMap<Key, Object>
     implements HTMap
 {
