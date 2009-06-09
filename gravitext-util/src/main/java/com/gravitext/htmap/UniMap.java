@@ -16,8 +16,8 @@
 package com.gravitext.htmap;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 
 /**
@@ -28,7 +28,7 @@ import java.util.Map.Entry;
  * @author David Kellum
  */
 public final class UniMap
-    implements HTAccess
+    implements HTAccess, Map<Key,Object>
 {
     public static final KeySpace KEY_SPACE = new KeySpace();
 
@@ -54,6 +54,14 @@ public final class UniMap
     }
 
     /**
+     * @see com.gravitext.htmap.ArrayHTMap#get(Object)
+     */
+    public Object get( Object key )
+    {
+        return _map.get( key );
+    }
+    
+    /**
      * {@inheritDoc}  In this implementation, if a null value is given then
      * the key is removed.
      */
@@ -71,7 +79,8 @@ public final class UniMap
      * {@inheritDoc}  In this implementation, if a null value is given then
      * the key is removed.
      */
-    public Object put( Key<?> key, Object value )
+    @SuppressWarnings("unchecked")
+    public Object put( Key key, Object value )
     {
         if( value != null ) {
             return _map.put( key, value );
@@ -147,7 +156,6 @@ public final class UniMap
     }
 
     /**
-     * @return
      * @see java.util.AbstractMap#isEmpty()
      */
     public boolean isEmpty()
@@ -167,9 +175,10 @@ public final class UniMap
     /**
      * Merge all key/values from other to this.
      */
-    public void merge( UniMap other )
+    @SuppressWarnings("unchecked")
+    public void putAll( Map<? extends Key, ? extends Object> other )
     {
-        _map.putAll( other._map );
+        _map.putAll( other );
     }
 
     /**
@@ -205,4 +214,5 @@ public final class UniMap
     }
 
     private final ArrayHTMap _map;
+
 }
