@@ -47,7 +47,7 @@ import java.util.Set;
  * @author David Kellum
  */
 @SuppressWarnings("unchecked")
-public final class ArrayHTMap
+public class ArrayHTMap
     extends AbstractMap<Key, Object>
     implements HTMap
 {
