@@ -23,9 +23,11 @@ A collection of core java utilities with ruby adapters for JRuby.
 
 == Dependencies
 
-* Java 1.5+ (no java dependencies outside of the JDK).
+* Java 1.5+
+* JRuby 1.1.6+
+* slf4j[http://rjack.rubyforge.org/slf4j] and
+  logback[http://rjack.rubyforge.org/logback] (rjack gems) for testing only.
 
-* JRuby 1.2+ for ruby adaptions.
 
 == License
 
