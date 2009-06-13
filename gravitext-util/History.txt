@@ -3,6 +3,7 @@
 * ArrayHTMap and HashHTMap are no longer final (supports UniMap).
 * Added immutable public KeySpace.keys().
 * Added convenience methods KeySpace.createGeneric() and createListKey().
+* Added explicit dev dependencies for slf4j and logback.
 * Use rdoc 2.4.3 and hoe 1.12.2 for build.
 
 === 1.3 (2009-2-23)
