@@ -55,7 +55,6 @@ import java.util.Map;
  * @see KeySpace
  * @author David Kellum
  */
-@SuppressWarnings("unchecked")
 public interface HTMap 
     extends Map<Key, Object>, HTAccess
 {
