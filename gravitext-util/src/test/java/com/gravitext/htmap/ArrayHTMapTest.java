@@ -31,7 +31,6 @@ import com.gravitext.htmap.KeySpace;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-@SuppressWarnings("unchecked")
 public class ArrayHTMapTest
 {
     @Test

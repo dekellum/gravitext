@@ -31,7 +31,6 @@ import com.gravitext.htmap.KeySpace;
  * ArrayHTMap performance test.
  * @author David Kellum
  */
-@SuppressWarnings("unchecked")
 public class HTMapPerfTest implements TestFactory
 {
     public static final Class<?>[] TEST_CLASSES = new Class<?>[] {
