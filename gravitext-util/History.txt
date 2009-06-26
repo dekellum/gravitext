@@ -3,6 +3,7 @@
 * ArrayHTMap and HashHTMap are no longer final (supports UniMap).
 * Added immutable public KeySpace.keys().
 * Added convenience methods KeySpace.createGeneric() and createListKey().
+* Added URL64 encoder/decoder utility.
 * Added explicit dev dependencies for slf4j and logback.
 * Use rdoc 2.4.3 and hoe 1.12.2 for build.
 
@@ -14,7 +15,8 @@
 * Non-checked exception version of Closeable interface.
 
 === 1.2 (2008-4-28)
-* Added ResizableByteBuffer, ResizableCharBuffer, ResizableCharBufferWriter classes.
+* Added ResizableByteBuffer, ResizableCharBuffer,
+  ResizableCharBufferWriter classes.
 
 === 1.1 (2007-7-15)
 * First public release.
