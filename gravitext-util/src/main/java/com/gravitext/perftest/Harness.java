@@ -38,14 +38,13 @@ public class Harness
     {
         new Harness().run( args );
     }
-    
-   
+
     public void run( String[] args ) throws Exception
     {
         processArgs( args );
-        
+
         System.out.println( "Testing with (-c)oncurrency: " + _threadCount );
-                           
+
         if( _verbose ) {
             runVerbose();
         }
@@ -62,12 +61,12 @@ public class Harness
         warmup();
         runComparisons();
     }
-    
+
     public void setThreadCount( int threads )
     {
         _threadCount = threads;
     }
-    
+
     /**
      * Run the warmup iterations
      */
@@ -105,7 +104,7 @@ public class Harness
         }
 
         if( _compCount == 0 ) {
-            _compCount = (int) Math.min( _compTarget    * maxTP, 
+            _compCount = (int) Math.min( _compTarget    * maxTP,
                                          _compTargetMax * minTP );
         }
     }
@@ -117,7 +116,7 @@ public class Harness
     {
         System.out.println( "\n==== Comparison Runs :" );
         System.out.print( PerformanceTester.header() );
-        
+
         ArrayList<Runner> comps = new ArrayList<Runner>();
         for( TestFactory t : _instances ) {
             Runner r = new Runner( t, _compCount, _compIterations );
@@ -136,7 +135,7 @@ public class Harness
             }
         }
     }
-    
+
     /**
      * Run verbose single execution.
      * @throws Exception
@@ -146,28 +145,27 @@ public class Harness
         boolean wrap = ( _instances.size() > 1 );
         for( TestFactory t : _instances ) {
 
-            if( wrap ) System.out.println( 
+            if( wrap ) System.out.println(
                        "---- " + t.getClass().getName() + " ----" );
 
             t.createTestRunnable( 33 ).runIteration( 1 );
-            
+
             if( wrap ) System.out.println();
         }
     }
 
-    
-    private void processArgs( String[] args ) 
-        throws ClassNotFoundException, 
-               InstantiationException, 
+    private void processArgs( String[] args )
+        throws ClassNotFoundException,
+               InstantiationException,
                IllegalAccessException,
                BeanException
     {
-        int i = 0;  
+        int i = 0;
         char flag = 0;
         ArrayList<String> commonArgs = new ArrayList<String>();
 
         TestFactory lastTest = null;
-        
+
         while( i < args.length ) {
 
             if( args[i].startsWith("--") ) {
@@ -195,13 +193,13 @@ public class Harness
                 Class<? extends TestFactory> ctClass =
                     Class.forName( args[i] ).asSubclass( TestFactory.class );
                 lastTest = ctClass.newInstance();
-                
+
                 if( _verbose ) setVerbose( lastTest );
-                
+
                 for( String arg : commonArgs ) {
                     applyArgument( lastTest, arg );
                 }
-                
+
                 _instances.add( lastTest );
             }
             i++;
@@ -220,8 +218,7 @@ public class Harness
         }
     }
 
-
-    private void applyArgument( Object bean, String argument ) 
+    private void applyArgument( Object bean, String argument )
         throws BeanException
     {
         Matcher m = ARG_PATTERN.matcher( argument );
@@ -238,12 +235,12 @@ public class Harness
         }
     }
 
-    private static final Pattern ARG_PATTERN = 
+    private static final Pattern ARG_PATTERN =
         Pattern.compile( "^\\-\\-([^=\\s]+)(=(.+))?$" );
-    
+
     private void usage()
     {
-        System.err.println( 
+        System.err.println(
     "Usage: " + getClass().getName() + " [-c] [-w] [-r] [-v]\n" +
     "       [--globalProp[=value]]... [<TestClass> --prop[=value]...] ... \n" +
     " -c threads : thread count.\n" +
@@ -260,15 +257,14 @@ public class Harness
 
     private int    _warmCount      = 0;
     private int    _warmIterations = 3;
-    
+
     private int    _compCount      = 0;
     private int    _compIterations = 3;
     private double _compTarget     = 10.0d; //seconds
     private double _compTargetMax  = 60.0d; //seconds
-    
+
     private boolean _verbose       = false;
-        
+
     private List<TestFactory> _instances =
         new ArrayList<TestFactory>();
 }
-    

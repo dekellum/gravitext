@@ -55,9 +55,9 @@ public class PerformanceTester extends ConcurrentTester
                   "Change",
                   "~Latency",
                   "Change" );
-        o.append( "---------------------------------------------" + 
+        o.append( "---------------------------------------------" +
                   "--------------------------------------------\n" );
-        
+
         return o;
     }
 
@@ -73,11 +73,11 @@ public class PerformanceTester extends ConcurrentTester
     public double throughputChange( ConcurrentTester prior )
     {
         if( prior == null ) return Double.NaN;
-        
+
         double c = meanThroughput();
         double p = prior.meanThroughput();
-        
-        return ( ( c - p ) / p );     
+
+        return ( ( c - p ) / p );
     }
 
     public double latencyChange( ConcurrentTester prior )
@@ -85,8 +85,8 @@ public class PerformanceTester extends ConcurrentTester
         if( prior == null ) return Double.NaN;
         double c = meanLatency().seconds();
         double p = prior.meanLatency().seconds();
-        
-        return ( ( c - p ) / p );        
+
+        return ( ( c - p ) / p );
     }
 
     public CharSequence formatResults( ConcurrentTester prior )
@@ -98,7 +98,7 @@ public class PerformanceTester extends ConcurrentTester
                   Metric.format( (double) resultSum() ),
                   Metric.format( (double) resultSum() / runsExecuted() ),
                   Metric.format( meanThroughput() ),
-                  Metric.formatDifference( throughputChange( prior ) ),     
+                  Metric.formatDifference( throughputChange( prior ) ),
                   meanLatency(),
                   Metric.formatDifference( latencyChange( prior ) ) );
         return o;

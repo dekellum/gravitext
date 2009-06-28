@@ -17,7 +17,7 @@
 package com.gravitext.reflect;
 
 /**
- * Checked exception for various BeanAccessor errors. 
+ * Checked exception for various BeanAccessor errors.
  * @author David Kellum
  */
 public class BeanException extends Exception

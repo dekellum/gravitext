@@ -28,7 +28,6 @@ A collection of core java utilities with ruby adapters for JRuby.
 * slf4j[http://rjack.rubyforge.org/slf4j] and
   logback[http://rjack.rubyforge.org/logback] (rjack gems) for testing only.
 
-
 == License
 
 Copyright (C) 2007-2009 David Kellum

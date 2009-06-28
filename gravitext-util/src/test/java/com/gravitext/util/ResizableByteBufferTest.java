@@ -23,7 +23,7 @@ import java.nio.ByteBuffer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class ResizableByteBufferTest 
+public class ResizableByteBufferTest
 {
 
     @Test
@@ -34,8 +34,7 @@ public class ResizableByteBufferTest
         assertEquals( 4, buffer.position() );
         assertBuffer( "spam", buffer );
     }
-    
-    
+
     @Test
     public void putFromStreamTwice() throws IOException
     {
@@ -45,12 +44,12 @@ public class ResizableByteBufferTest
         assertEquals( 3, buffer.position() );
         assertBuffer( "dog", buffer );
         assertEquals( 1, bytes.available() );
-        
+
         buffer.putFromStream( createStream( " food" ), 5, 12 );
         assertEquals( 8, buffer.position() );
         assertBuffer( "dog food", buffer );
     }
-    
+
     @Test
     public void putZeroLengthStream() throws IOException
     {
@@ -61,15 +60,15 @@ public class ResizableByteBufferTest
         buffer.putFromStream( bytes, 3, 0 );
         buffer.putFromStream( bytes, 0, 3 );
         buffer.putFromStream( bytes, 0, 0 );
-        
+
         assertEquals( 0, buffer.position() );
         assertEquals( "never used".length(), bytes.available() );
     }
 
-    private void assertBuffer( String expected, ResizableByteBuffer buffer ) 
+    private void assertBuffer( String expected, ResizableByteBuffer buffer )
     {
         ByteBuffer out = buffer.flipAsByteBuffer();
-        
+
         assertEquals( expected,
                       new String( out.array(),
                                   out.arrayOffset() + out.position(),
@@ -78,7 +77,7 @@ public class ResizableByteBufferTest
 
     private ByteArrayInputStream createStream( String text )
     {
-        ByteArrayInputStream bytes = 
+        ByteArrayInputStream bytes =
             new ByteArrayInputStream( text.getBytes() );
         return bytes;
     }

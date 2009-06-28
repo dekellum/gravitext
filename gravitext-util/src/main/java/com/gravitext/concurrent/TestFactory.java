@@ -25,9 +25,9 @@ public interface TestFactory
      * Return name of this factory, suitable for reporting the test variation.
      */
     String name();
-    
+
     /**
-     * Create a TestRunnable instance to be used by a single test thread. 
+     * Create a TestRunnable instance to be used by a single test thread.
      */
     TestRunnable createTestRunnable( int seed );
 }

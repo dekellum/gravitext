@@ -7,7 +7,6 @@ import java.nio.CharBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import junit.framework.TestCase;
 
 public class CharacterEncoderTest extends TestCase
@@ -22,7 +21,7 @@ public class CharacterEncoderTest extends TestCase
     }
 
     public void testDefaultAttrValue() throws IOException
-    {        
+    {
         StringBuilder out = new StringBuilder();
         CharacterEncoder enc = new CharacterEncoder( out );
         enc.encodeAttrValue( "<\"" );
@@ -30,13 +29,13 @@ public class CharacterEncoderTest extends TestCase
     }
 
     public void testWriterAttrValue() throws IOException
-    {        
+    {
         StringWriter out = new StringWriter();
         CharacterEncoder enc = new CharacterEncoder( out );
         enc.encodeAttrValue( "<\"" );
         assertEquals( "&lt;&quot;", out.toString() );
     }
-    
+
     public void testEncodeSamples() throws IOException
     {
         for( String[] test : ENCODE_SAMPLES ) {
@@ -59,7 +58,7 @@ public class CharacterEncoderTest extends TestCase
             _log.debug( "Expected:", e );
         }
     }
-    
+
     public void testComentError() throws IOException
     {
         StringBuilder out = new StringBuilder();
@@ -72,7 +71,7 @@ public class CharacterEncoderTest extends TestCase
             _log.debug( "Expected:", e );
         }
     }
-    
+
     public void testComentError2() throws IOException
     {
         StringBuilder out = new StringBuilder();
@@ -85,11 +84,11 @@ public class CharacterEncoderTest extends TestCase
             _log.debug( "Expected:", e );
         }
     }
-    
+
     public void testReplaceAttrValue() throws IOException
-    {        
+    {
         StringBuilder out = new StringBuilder();
-        CharacterEncoder enc = new CharacterEncoder( out ) 
+        CharacterEncoder enc = new CharacterEncoder( out )
         {
             @Override
             protected void replace( char c, int pos, Appendable out )
@@ -105,7 +104,7 @@ public class CharacterEncoderTest extends TestCase
         enc.encodeAttrValue( "\u0001\u0000<\"\u0084" );
         assertEquals( "XX&lt;&quot;X", out.toString() );
     }
-    
+
     private CharSequence asBuffer( String in )
     {
         CharBuffer buffer = CharBuffer.allocate( in.length() + 2 );
@@ -118,7 +117,7 @@ public class CharacterEncoderTest extends TestCase
 
     private CharSequence asSequence( String in )
     {
-        return ( new StringBuilder().append( in ) ); 
+        return ( new StringBuilder().append( in ) );
     }
 
     private String encodeAppendable( CharSequence in ) throws IOException
@@ -136,7 +135,7 @@ public class CharacterEncoderTest extends TestCase
         enc.encodeCharData( in );
         return out.toString();
     }
-    
+
     private static final String[][] ENCODE_SAMPLES = {
         { "", "" },
         { "noop", "noop" },
@@ -151,6 +150,6 @@ public class CharacterEncoderTest extends TestCase
         { "\u009A", "&#x9a;" },
         { "\t\n\r", "\t\n\r" },
         { "&remainder", "&amp;remainder" } };
-   
+
     private Logger _log = LoggerFactory.getLogger( getClass() );
 }

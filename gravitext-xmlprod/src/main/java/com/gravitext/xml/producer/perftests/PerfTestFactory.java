@@ -14,9 +14,9 @@ public class PerfTestFactory implements TestFactory
 
     public PerfTestFactory( Serializer serializer )
     {
-        _serializer = serializer; 
+        _serializer = serializer;
     }
-    
+
     public String name()
     {
         return _serializer.toString();
@@ -31,25 +31,24 @@ public class PerfTestFactory implements TestFactory
     {
         _encoding = encoding;
     }
-    
+
     public void setVerbose( boolean doVerbose )
     {
         _doVerbose = doVerbose;
     }
-    
+
     public void setUseWriter( boolean useWriter )
     {
         _useWriter = useWriter;
     }
-    
-    
+
     public TestRunnable createTestRunnable( int seed )
     {
         SerializePerfTest r = null;
         switch( _serializer ) {
-        case JAXP:    r = new JaxpPerfTest(); break; 
+        case JAXP:    r = new JaxpPerfTest(); break;
         case JDOM:    r = new JDomPerfTest(); break;
-        case STAX:    r = new StaxPerfTest(); break;        
+        case STAX:    r = new StaxPerfTest(); break;
         case XMLPROD: r = new ProducerPerfTest();
         }
 
@@ -59,14 +58,14 @@ public class PerfTestFactory implements TestFactory
         r.setDoEncode( _doEncode );
 
         r.setSeed( seed );
-        
+
         return r;
     }
-    
+
     private boolean _doVerbose   = false;
     private boolean _useWriter   = true;
     private boolean _doEncode = false;
     private String _encoding = "ISO-8859-1";
-    
+
     private final Serializer _serializer;
 }

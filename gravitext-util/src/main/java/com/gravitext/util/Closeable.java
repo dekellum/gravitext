@@ -19,9 +19,9 @@ package com.gravitext.util;
 /**
  * Interface for resources which must be closed once they are done being used.
  * Unlike {@link java.io.Closeable}, close does not throw a checked exception,
- * as failing to close one resource should not prevent attempting to 
+ * as failing to close one resource should not prevent attempting to
  * close the next. Implementers should instead log errors during close.
- * 
+ *
  * @author David Kellum
  */
 public interface Closeable

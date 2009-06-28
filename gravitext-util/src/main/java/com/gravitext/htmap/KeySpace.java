@@ -112,7 +112,6 @@ public final class KeySpace
         return (Key<List<T>>) createGeneric( name, List.class );
     }
 
-
     /**
      * Get Key by name.
      * @return the key, or null if no such key by this name was

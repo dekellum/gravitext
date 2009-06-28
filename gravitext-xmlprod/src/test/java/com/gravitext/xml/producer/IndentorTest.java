@@ -18,7 +18,7 @@ public class IndentorTest extends TestCase
         assertFalse( Indentor.COMPRESSED.isLineBreak() );
         assertFalse(           new Indentor("X").isLineBreak() );
     }
-    
+
     public void testLargeIndent() throws IOException
     {
         Indentor i = new Indentor("12");
@@ -32,7 +32,7 @@ public class IndentorTest extends TestCase
         i.indent( b, 67 );
         assertEquals( 2 * 67 + 1, b.length() );
     }
-    
+
     public void testCompressed() throws IOException
     {
         Indentor i = Indentor.COMPRESSED;
@@ -40,7 +40,7 @@ public class IndentorTest extends TestCase
         i.indent( b, 3 );
         assertEquals( "", b.toString() );
     }
-    
+
     public void testLineBreaks() throws IOException
     {
         Indentor i = Indentor.LINE_BREAK;
@@ -48,5 +48,5 @@ public class IndentorTest extends TestCase
         i.indent( b, 3 );
         assertEquals( "\n", b.toString() );
     }
-     
+
 }

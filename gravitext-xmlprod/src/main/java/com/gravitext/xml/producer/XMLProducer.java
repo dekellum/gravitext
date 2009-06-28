@@ -19,17 +19,17 @@ package com.gravitext.xml.producer;
 import java.io.IOException;
 
 /**
- * Produces well-formed XML documents from a series of event methods. 
+ * Produces well-formed XML documents from a series of event methods.
  *
  * <p>The XML document is output to a supplied Appendable as it is
  * produced.  XML well-formed document constraints are enforced with a
- * IllegalStateException thrown from event methods.  See the 
+ * IllegalStateException thrown from event methods.  See the
  * <a href="http://www.w3.org/TR/xml11/">XML 1.1 Specification</a> for
  * details of these constraints.</p>
  *
  * <p>Character data and attribute values are encoded as needed by the
  * supplied or constructed {@link CharacterEncoder}.  Indention or
- * "pretty printing" of the output is supported by a set 
+ * "pretty printing" of the output is supported by a set
  * {@link Indentor}.</p>
  *
  * @author David Kellum
@@ -44,7 +44,7 @@ public final class XMLProducer
     {
         _impl = new XMLProducerImpl( new CharacterEncoder( out ) );
     }
-    
+
     /**
      * Construct given CharacterEncoder to use for output.
      */
@@ -52,9 +52,9 @@ public final class XMLProducer
     {
         _impl = new XMLProducerImpl( encoder );
     }
-   
+
     /**
-     * Set the Indentor to use. The default is 
+     * Set the Indentor to use. The default is
      * {@link Indentor#LINE_BREAK}.
      */
     public XMLProducer setIndent( final Indentor indentor )
@@ -62,12 +62,12 @@ public final class XMLProducer
         _impl.setIndent( indentor );
         return this;
     }
-        
+
     /**
      * Put a XML declaration in the prolog, with the specified
      * encoding declaration, before the document element is started.
      */
-    public XMLProducer putXMLDeclaration( final String encoding ) 
+    public XMLProducer putXMLDeclaration( final String encoding )
         throws IOException
     {
         _impl.putXMLDeclaration( encoding );
@@ -79,14 +79,14 @@ public final class XMLProducer
      * the prolog after any XML declaration and before the document
      * element is started.
      */
-    public XMLProducer putSystemDTD( final String name, 
+    public XMLProducer putSystemDTD( final String name,
                                      final CharSequence uri )
         throws IOException
     {
         _impl.putSystemDTD( name, uri );
         return this;
     }
-    
+
     /**
      * Put a complete {@code &lt;!DOCTYPE[...]>} declaration in the
      * prolog after any XML declaration and before the document
@@ -121,8 +121,8 @@ public final class XMLProducer
      *         underlying CharacterEncoder.
      * @throws IOException from the underlying Appendable.
      */
-    public XMLProducer addAttr( final Attribute attr, 
-                                final CharSequence value ) 
+    public XMLProducer addAttr( final Attribute attr,
+                                final CharSequence value )
         throws IOException
     {
         _impl.addAttr( attr, value, true );
@@ -136,8 +136,8 @@ public final class XMLProducer
      * @throws IllegalStateException if not called after startTag().
      * @throws IOException from the underlying Appendable.
      */
-    public XMLProducer addAttr( final Attribute attr, 
-                                final short value ) 
+    public XMLProducer addAttr( final Attribute attr,
+                                final short value )
         throws IOException
     {
         _impl.addAttr( attr, Short.toString( value ), false );
@@ -151,14 +151,14 @@ public final class XMLProducer
      * @throws IllegalStateException if not called after startTag().
      * @throws IOException from the underlying Appendable.
      */
-    public XMLProducer addAttr( final Attribute attr, 
-                                final int value ) 
+    public XMLProducer addAttr( final Attribute attr,
+                                final int value )
         throws IOException
     {
         _impl.addAttr( attr, Integer.toString( value ), false );
         return this;
     }
-    
+
     /**
      * Put attribute with long value on previous start tag. It is
      * the callers responsibility to avoid writing the same attribute
@@ -166,14 +166,14 @@ public final class XMLProducer
      * @throws IllegalStateException if not called after startTag().
      * @throws IOException from the underlying Appendable.
      */
-    public XMLProducer addAttr( final Attribute attr, 
-                                final long value ) 
+    public XMLProducer addAttr( final Attribute attr,
+                                final long value )
         throws IOException
     {
         _impl.addAttr( attr, Long.toString( value ), false );
         return this;
     }
-    
+
     /**
      * Put attribute with Enum.name() value on previous start tag. It
      * is the callers responsibility to avoid writing the same
@@ -181,14 +181,14 @@ public final class XMLProducer
      * @throws IllegalStateException if not called after startTag().
      * @throws IOException from the underlying Appendable.
      */
-    public XMLProducer addAttr( final Attribute attr, 
-                                final Enum<?> value ) 
+    public XMLProducer addAttr( final Attribute attr,
+                                final Enum<?> value )
         throws IOException
     {
         _impl.addAttr( attr, value.name(), false );
         return this;
     }
- 
+
     /**
      * Put default namespace attribute name with value on previous
      * start tag. The value will be encoded as necessary.  It is the
@@ -199,7 +199,7 @@ public final class XMLProducer
      *         underlying CharacterEncoder.
      * @throws IOException from the underlying Appendable.
      */
-    public XMLProducer addAttr( final String name, 
+    public XMLProducer addAttr( final String name,
                                 final CharSequence value )
         throws IOException
     {
@@ -214,14 +214,14 @@ public final class XMLProducer
      * @throws IllegalStateException if not called after startTag().
      * @throws IOException from the underlying Appendable.
      */
-    public XMLProducer addAttr( final String name, 
-                                final short value ) 
+    public XMLProducer addAttr( final String name,
+                                final short value )
         throws IOException
     {
         _impl.addAttr( name, Short.toString( value ), false );
         return this;
     }
-   
+
     /**
      * Put default namespace attribute name with short value on
      * previous start tag. It is the callers responsibility to avoid
@@ -229,8 +229,8 @@ public final class XMLProducer
      * @throws IllegalStateException if not called after startTag().
      * @throws IOException from the underlying Appendable.
      */
-    public XMLProducer addAttr( final String name, 
-                                final int value ) 
+    public XMLProducer addAttr( final String name,
+                                final int value )
         throws IOException
     {
         _impl.addAttr( name, Integer.toString( value ), false );
@@ -244,14 +244,14 @@ public final class XMLProducer
      * @throws IllegalStateException if not called after startTag().
      * @throws IOException from the underlying Appendable.
      */
-    public XMLProducer addAttr( final String name, 
-                                final long value ) 
+    public XMLProducer addAttr( final String name,
+                                final long value )
         throws IOException
     {
         _impl.addAttr( name, Long.toString( value ), false );
         return this;
     }
-    
+
     /**
      * Put default namespace attribute name with Enum.name() value on
      * previous start tag. It is the callers responsibility to avoid
@@ -259,14 +259,14 @@ public final class XMLProducer
      * @throws IllegalStateException if not called after startTag().
      * @throws IOException from the underlying Appendable.
      */
-    public XMLProducer addAttr( final String name, 
-                                final Enum<?> value ) 
+    public XMLProducer addAttr( final String name,
+                                final Enum<?> value )
         throws IOException
     {
         _impl.addAttr( name, value.name(), false );
         return this;
     }
-    
+
     /**
      * Put Namespace on previous start tag.  Any subsequent attributes
      * or tags of this namespace within the same scope will avoid
@@ -278,13 +278,13 @@ public final class XMLProducer
      *         underlying CharacterEncoder.
      * @throws IOException from the underlying Appendable.
      */
-    public XMLProducer addNamespace( final Namespace ns ) 
+    public XMLProducer addNamespace( final Namespace ns )
         throws IOException
     {
         _impl.addNamespace( ns );
         return this;
     }
-    
+
     /**
      * Put character data into previously started element. The text
      * will be encoded as necessary.  The putChars() methods may be
@@ -295,13 +295,13 @@ public final class XMLProducer
      *         underlying CharacterEncoder.
      * @throws IOException from the underlying Appendable.
      */
-    public XMLProducer putChars( final CharSequence text ) 
+    public XMLProducer putChars( final CharSequence text )
         throws IOException
     {
         _impl.putChars( text, true );
         return this;
     }
-    
+
     /**
      * Put short value as character data into previously started
      * element. The putChars() methods may be called repeatedly.
@@ -314,7 +314,7 @@ public final class XMLProducer
         _impl.putChars( Short.toString( value ), false );
         return this;
     }
-    
+
     /**
      * Put integer value as character data into previously started
      * element. The putChars() methods may be called repeatedly.
@@ -327,7 +327,7 @@ public final class XMLProducer
         _impl.putChars( Integer.toString( value ), false );
         return this;
     }
-    
+
     /**
      * Put long value as character data into previously started
      * element. The putChars() methods may be called repeatedly.
@@ -340,7 +340,7 @@ public final class XMLProducer
         _impl.putChars( Long.toString( value ), false );
         return this;
     }
-    
+
     /**
      * Put Enum.name() value as character data into previously started
      * element. The putChars() methods may be called repeatedly.
@@ -360,7 +360,7 @@ public final class XMLProducer
      * @throws IllegalStateException if there is no matching open tag.
      * @throws IOException from the underlying Appendable.
      */
-    public XMLProducer endTag( final Tag tag ) 
+    public XMLProducer endTag( final Tag tag )
         throws IOException
     {
         _impl.endTag( tag );
@@ -377,16 +377,16 @@ public final class XMLProducer
         _impl.endTag( null );
         return this;
     }
-   
+
     /**
-     * Put comment at the current location. 
+     * Put comment at the current location.
      * @throws IllegalStateException if a comment can't be written
      *         at this location in the document.
      * @throws CharacterEncodeException (an IOException) from the
      *         underlying CharacterEncoder.
      * @throws IOException from the underlying Appendable.
      */
-     public XMLProducer putComment( final CharSequence comment ) 
+     public XMLProducer putComment( final CharSequence comment )
         throws IOException
     {
         _impl.putComment( comment );

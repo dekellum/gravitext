@@ -17,37 +17,37 @@
 package com.gravitext.concurrent;
 
 /**
- * Runs a ConcurrentTest instance with a specified number of threads and 
+ * Runs a ConcurrentTest instance with a specified number of threads and
  * iterations.
  * @see ConcurrentTests#run
  * @author David Kellum
  * @deprecated Use TestExecutor instead
  */
-public class ConcurrentTester 
+public class ConcurrentTester
     extends TestExecutor
 {
     /**
      * @deprecated
      */
-    public static final class ConcurrentTestAdapter 
+    public static final class ConcurrentTestAdapter
         implements TestFactory
     {
-    
+
         public ConcurrentTestAdapter( ConcurrentTest test )
         {
             _test = test;
         }
-    
+
         public TestRunnable createTestRunnable( int seed )
         {
             return _test;
         }
-    
+
         public String name()
         {
             return _test.getClass().getSimpleName();
         }
-    
+
         private final ConcurrentTest _test;
     }
 
@@ -57,7 +57,7 @@ public class ConcurrentTester
      * @param threads the number of threads to concurrently run the test
      */
     public ConcurrentTester( ConcurrentTest ctest,
-                             int runs, 
+                             int runs,
                              int threads )
     {
         super( new ConcurrentTestAdapter( ctest ), runs, threads );

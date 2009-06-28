@@ -29,30 +29,30 @@ public final class Attribute
     {
         this( name, null );
     }
-    
+
     /**
      * Construct with name and namespace.
      */
     public Attribute( final String name, final Namespace ns )
     {
         if( name == null ) throw new NullPointerException( "name" );
-        
+
         if( name.length() == 0 ) {
             throw new IllegalArgumentException( "Name must be non-empty." );
         }
-        
+
         //FIXME: Test other attribute name validations here.
-        
+
         _name = name;
         _namespace = ns;
-        
+
         StringBuilder qName = new StringBuilder(64);
         qName.append( ' ' ); //Note leading space.
         if( ( _namespace != null ) && (! _namespace.isDefault() ) ) {
             qName.append( _namespace.prefix() ).append( ':' );
         }
         qName.append( _name ).append( "=\"" );
-        
+
         _beginAttribute = qName.toString();
     }
 
@@ -60,7 +60,7 @@ public final class Attribute
     {
         return _name;
     }
-    
+
     /**
      * Returns the Namespace associated with this Tag or null if no
      * Namespace was specified on construction.
@@ -74,7 +74,7 @@ public final class Attribute
     {
         return _beginAttribute;
     }
-    
+
     private final String _name;
     private final Namespace _namespace;
 

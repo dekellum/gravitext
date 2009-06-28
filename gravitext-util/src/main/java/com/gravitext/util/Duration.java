@@ -36,19 +36,19 @@ public final class Duration
         case MICROSECONDS: s /= 1e6d; break;
         case MILLISECONDS: s /= 1e3d; break;
         case SECONDS:                 break;
-        
-        //FIXME: These were added in JDK 1.6 but we don't want that 
+
+        //FIXME: These were added in JDK 1.6 but we don't want that
         //dependency yet.
         //case MINUTES:      s *= 60d; break;
         //case HOURS:        s *= 60d * 60d; break;
         //case DAYS:         s *= 60d * 60d * 24d; break;
-        
+
         default: throw new IllegalArgumentException( "Unknown: "+ unit );
         }
 
         _seconds = s;
     }
-    
+
     /**
      * Construct given a double value in seconds.
      */
@@ -56,7 +56,7 @@ public final class Duration
     {
         _seconds = seconds;
     }
-    
+
     /**
      * Return duration as a double value in seconds.
      */
@@ -64,7 +64,7 @@ public final class Duration
     {
         return _seconds;
     }
-    
+
     /**
      * Return a new duration from this duration divided by the
      * specified divisor.
@@ -73,7 +73,7 @@ public final class Duration
     {
         return new Duration ( _seconds / divisor );
     }
-    
+
     /**
      * Return a String representation of this duration using the most
      * appropriate unit suffix (ex: s ms µs ns) and seven total

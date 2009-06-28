@@ -34,18 +34,18 @@ class Runner
     void run( PerformanceTester prior )
     {
         if( prior == null ) prior = _prior;
-        
-        PerformanceTester tester = 
+
+        PerformanceTester tester =
             new PerformanceTester( _factory, _runCount, _threadCount );
-        
+
         if( _fixedSeed ) tester.setSeed( 7936 * ( _iterations + 1234 ) );
-            
+
         System.out.print( tester.formatStartLine() );
         tester.runTest();
         System.out.print( tester.formatResults( prior ) );
 
         _prior = tester;
-        
+
         --_iterations;
     }
 
@@ -54,21 +54,21 @@ class Runner
         return ( _iterations > 0 );
     }
 
-    PerformanceTester prior() 
+    PerformanceTester prior()
     {
         return _prior;
     }
-    
+
     void setThreadCount( int count )
     {
         _threadCount = count;
     }
-    
+
     protected Runner( TestFactory factory )
     {
         _factory = factory;
     }
-    
+
     protected final TestFactory _factory;
     protected int _runCount = 1;
     protected PerformanceTester _prior = null;
