@@ -50,11 +50,11 @@ public class MetricTest
         assertEquals( "99,999",  Metric.format( 99999.4d ) );
         assertEquals( "100.0k",  Metric.format( 99999.5d ) );
         assertEquals( "999.9k",  Metric.format( 999.94e3d ) );
-        assertEquals( "1.000M",  Metric.format( 999.95e3d ) );        
+        assertEquals( "1.000M",  Metric.format( 999.95e3d ) );
         assertEquals( "999.9M",  Metric.format( 999.94e6d ) );
-        assertEquals( "1.000G",  Metric.format( 999.95e6d ) );        
+        assertEquals( "1.000G",  Metric.format( 999.95e6d ) );
     }
-    
+
     @Test
     public void testNegatives()
     {
@@ -80,23 +80,23 @@ public class MetricTest
         assertEquals( "-99.9k",  Metric.format( -99940d ) );
         assertEquals( " -100k",  Metric.format( -99950d ) );
         assertEquals( " -999k",  Metric.format( -999.4e3d ) );
-        assertEquals( "-1.00M",  Metric.format( -999.5e3d ) );        
+        assertEquals( "-1.00M",  Metric.format( -999.5e3d ) );
         assertEquals( " -999M",  Metric.format( -999.4e6d ) );
-        assertEquals( "-1.00G",  Metric.format( -999.5e6d ) );        
+        assertEquals( "-1.00G",  Metric.format( -999.5e6d ) );
     }
-    
+
     @Test
     public void test0()
     {
         assertEquals( " 0.000", Metric.format( 0.0d ) );
         assertEquals( " 0.000", Metric.format( 1e-18d ) );
     }
-    
+
     @Test
     public void testRandomSize()
     {
         Random r = new Random();
-        
+
         StringBuilder b = new StringBuilder(6);
         for( int i = 1; i < 1000; ++i ) {
             b.setLength( 0 );
@@ -108,17 +108,17 @@ public class MetricTest
             }
         }
     }
-    
+
     @Test
     public void testDifferences()
     {
         assertEquals( "   N/A", Metric.formatDifference( Double.NaN ) );
-        
+
         assertEquals( "2.100x", Metric.formatDifference( 1.1d ) );
         assertEquals( "50.33x", Metric.formatDifference( 49.33d ) );
         assertEquals( "101.6x", Metric.formatDifference( 100.6d ) );
         assertEquals( "10,000x", Metric.formatDifference( 9998.5d ) );
-        
+
         assertEquals( "-23.0%", Metric.formatDifference( -0.23d ) );
         assertEquals( " -200%", Metric.formatDifference( -2d ) );
         assertEquals( "+13.2%", Metric.formatDifference( 0.1324d ) );

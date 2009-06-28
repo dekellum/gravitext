@@ -21,9 +21,9 @@ import java.nio.CharBuffer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class ResizableCharBufferWriterTest 
+public class ResizableCharBufferWriterTest
 {
-    
+
     @Test
     public void write()
     {
@@ -37,8 +37,8 @@ public class ResizableCharBufferWriterTest
         writer.write( text.toCharArray(), 11, 8 );
         assertBuffer( text, rb );
     }
-    
-    private void assertBuffer( String expected, ResizableCharBuffer buffer ) 
+
+    private void assertBuffer( String expected, ResizableCharBuffer buffer )
     {
         CharBuffer out = buffer.flipAsCharBuffer();
         assertEquals( expected, out.toString() );

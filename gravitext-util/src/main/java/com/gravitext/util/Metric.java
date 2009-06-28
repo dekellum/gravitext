@@ -26,7 +26,7 @@ import java.text.NumberFormat;
  */
 public final class Metric
 {
-    
+
     /**
      * Write formatted value to out, using six total characters and
      * the most appropriate metric unit suffix.  Metric suffixes in
@@ -36,10 +36,10 @@ public final class Metric
      * value may be left padded with a space: (ex: " 1.000").
      */
     public static void format( double value, StringBuilder out )
-    {     
+    {
         char p = 0;
         double v = value;
-        
+
         for( Range r : RANGES ) {
             if( v >= r.pos || v <= r.neg ) {
                 p = r.postfix;
@@ -50,25 +50,25 @@ public final class Metric
 
         int fdigits = 3;
         if( v >= 0.0d ) {
-            if( p == 0 ) { // 99,999 9,999 999.99, 99.999, 9.999 
+            if( p == 0 ) { // 99,999 9,999 999.99, 99.999, 9.999
                 if      ( v >= 999.995 ) fdigits = 0;
-                else if ( v >= 99.9995 ) fdigits = 2;           
+                else if ( v >= 99.9995 ) fdigits = 2;
             }
             else { //9,999x, 999.9x, 99.99x, 9.999x
                 if      ( v >= 999.95 ) fdigits = 0;
-                else if ( v >= 99.995 ) fdigits = 1;           
+                else if ( v >= 99.995 ) fdigits = 1;
                 else if ( v >= 9.995 )  fdigits = 2;
             }
         }
         else {
-            if( p == 0 ) { // -9,999 -999.9, -99.99 -9.999 
+            if( p == 0 ) { // -9,999 -999.9, -99.99 -9.999
                 if      ( v <= -999.95 ) fdigits = 0;
                 else if ( v <= -99.995 ) fdigits = 1;
-                else if ( v <= -9.9995 ) fdigits = 2;           
+                else if ( v <= -9.9995 ) fdigits = 2;
             }
             else { //-999x, -99.9x, -9.99x
                 if      ( v <= -99.95 ) fdigits = 0;
-                else if ( v <= -9.995 ) fdigits = 1;           
+                else if ( v <= -9.995 ) fdigits = 1;
                 else fdigits = 2;
             }
         }
@@ -77,7 +77,7 @@ public final class Metric
         f.setMinimumFractionDigits( fdigits );
         f.setMaximumFractionDigits( fdigits );
         f.setGroupingUsed( true );
-        
+
         String vf = f.format( v );
 
         if( vf.length() == ( (p == 0) ? 5 : 4 ) ) out.append( ' ' );
@@ -104,32 +104,32 @@ public final class Metric
             out.append( "   N/A" );
             return;
         }
-        
+
         double r = value;
         char symbol;
         int fdigits = 3;
         if( r > 1.0d ) {
             r += 1.0d;
             if      ( r >= 999.95 ) fdigits = 0;
-            else if ( r >= 99.995 ) fdigits = 1;           
+            else if ( r >= 99.995 ) fdigits = 1;
             else if ( r >=  9.995 ) fdigits = 2;
             symbol = 'x';
         }
         else {
             r *= 100d;
-            if      ( r >= 99.995 ) fdigits = 0;           
+            if      ( r >= 99.995 ) fdigits = 0;
             else if ( r >=  9.995 ) fdigits = 1;
             else if ( r <= -99.95 ) fdigits = 0;
             else if ( r <= -9.995 ) fdigits = 1;
             else fdigits = 2;
             symbol = '%';
         }
-                
+
         NumberFormat f = NumberFormat.getNumberInstance();
         f.setMinimumFractionDigits( fdigits );
         f.setMaximumFractionDigits( fdigits );
         f.setGroupingUsed( true );
-        
+
         if( r > 0d && symbol == '%' ) out.append('+');
         String vf = f.format( r );
         int flen = vf.length();
@@ -137,8 +137,8 @@ public final class Metric
         out.append( vf );
         out.append( symbol );
     }
-    
-    /** 
+
+    /**
      * Return formatted value as String using six characters and the
      * most appropriate metric suffix.
      * @see #format(double, StringBuilder)
@@ -150,7 +150,7 @@ public final class Metric
         return b.toString();
     }
 
-    /** 
+    /**
      * Return formatted difference value as String using six
      * characters.
      * @see #formatDifference(double, StringBuilder)
@@ -162,7 +162,7 @@ public final class Metric
         return b.toString();
     }
 
-    private static final class Range 
+    private static final class Range
     {
         Range( double pos, double neg, double fac, char postfix )
         {
@@ -174,10 +174,10 @@ public final class Metric
 
         double pos;
         double neg;
-        double fac; 
+        double fac;
         char postfix;
     }
-    
+
     private static final Range[] RANGES = new Range[] {
         new Range(   999.95e12d,  -999.5e12d,  1e-15d, 'P' ),
         new Range(   999.95e9d,   -999.5e9d,   1e-12d, 'T' ),

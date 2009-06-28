@@ -12,7 +12,7 @@ directories.
 
 === gravitext-util
 
-A collection of core java utilities with ruby adapters for JRuby.  
+A collection of core java utilities with ruby adapters for JRuby.
 
 * A concurrent (thread safety) testing facility for java JUnit,
   ruby Test::Unit, or other test harnesses.
@@ -41,7 +41,7 @@ Create package under gravitext project:
     (rubyforge login)
     rubyforge create_package gravitext <package-name>
 
-Release a gem (via Hoe/Rakefile): 
+Release a gem (via Hoe/Rakefile):
 
     VERSION=x.y.z jrake release publish_docs post_news
 
@@ -49,10 +49,9 @@ Upload docs to rubyforge:
 
     rsync -auP --exclude '*~' www/ dekellum@rubyforge.org:/var/www/gforge-projects/gravitext
 
-
 === github
 
- % git remote add origin git@github.com:dekellum/gravitext.git 
+ % git remote add origin git@github.com:dekellum/gravitext.git
 
 == License
 

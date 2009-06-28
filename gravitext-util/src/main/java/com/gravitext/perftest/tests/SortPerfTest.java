@@ -48,10 +48,10 @@ public class SortPerfTest implements TestFactory
                     numbers.add( _random.nextInt( 10000 ) );
                 }
                 Collections.sort( numbers );
-                
+
                 return numbers.get( 0 ); // return lowest
             }
-            
+
         };
     }
 }

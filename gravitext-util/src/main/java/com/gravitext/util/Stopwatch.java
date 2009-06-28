@@ -38,7 +38,7 @@ public final class Stopwatch implements Runnable
 
     /**
      * Start by setting the start time to the current time.
-     * @return this Stopwatch 
+     * @return this Stopwatch
      */
     public Stopwatch start()
     {
@@ -49,13 +49,13 @@ public final class Stopwatch implements Runnable
         _start = System.nanoTime();
         return this;
     }
-    
+
     /**
      * Stop by setting the stop time to the current time.
-     * @return this Stopwatch 
+     * @return this Stopwatch
      */
     public Stopwatch stop()
-    {   
+    {
         if( ! _running ) {
             throw new IllegalStateException( "Stopwatch not started." );
         }
@@ -64,7 +64,7 @@ public final class Stopwatch implements Runnable
         return this;
     }
 
-    /** 
+    /**
      * Toggles between start/stop states.  If not started, starts the
      * stopwatch.  If already started, stops the stopwatch.
      */
@@ -98,9 +98,9 @@ public final class Stopwatch implements Runnable
         if( _running ) {
             throw new IllegalStateException( "Stopwatch not stopped" );
         }
-        return ( _end - _start ); 
+        return ( _end - _start );
     }
-    
+
     private boolean _running = false;
     private long _start = 0;
     private long _end = 0;

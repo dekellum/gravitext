@@ -27,7 +27,7 @@ public class DurationTest
     @Test
     public void test()
     {
-        assertEquals( "1.235ms", 
+        assertEquals( "1.235ms",
                       new Duration( 1234567, TimeUnit.NANOSECONDS )
                           .toString() );
         assertEquals( " 1,235s",
@@ -37,8 +37,8 @@ public class DurationTest
         assertEquals( "12.345s",
                 new Duration( 12345, TimeUnit.MILLISECONDS )
                     .toString() );
-        
-        assertEquals( "7.000ns", 
+
+        assertEquals( "7.000ns",
                       new Duration( 7, TimeUnit.NANOSECONDS ).toString() );
         assertEquals( "5.000ms",
                       new Duration( 5000000000000000000L,

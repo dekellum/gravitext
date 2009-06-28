@@ -52,7 +52,6 @@ END
   end
 end
 
-
 file :mvn => [ 'pom.xml' ] do
   sh( 'mvn package' )
 end

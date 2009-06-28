@@ -24,44 +24,44 @@ import com.gravitext.concurrent.TestRunnable;
 import com.gravitext.util.FastRandom;
 import com.gravitext.xml.producer.CharacterEncoder;
 
-public class StringBufferEncodePerfTest 
-    extends OutputPerfTest 
+public class StringBufferEncodePerfTest
+    extends OutputPerfTest
     implements TestFactory
 {
     public String name()
     {
         return ( _useCharBuffer ? "Encoder-CharBuffer" : "Encoder-String" );
     }
-    
+
     public TestRunnable createTestRunnable( final int seed )
     {
         return new Runner( seed );
     }
-       
+
     private final class Runner implements TestRunnable
     {
-        public Runner( int seed ) 
+        public Runner( int seed )
         {
             _rnd = new FastRandom( seed );
         }
-        
+
         public int runIteration( int run ) throws IOException
-        {   
+        {
             final TestOutput out = new TestOutput();
-            
-            final CharacterEncoder encoder = 
+
+            final CharacterEncoder encoder =
                 new CharacterEncoder( out.getWriter() );
-            
+
             final boolean useCharBuffer = _useCharBuffer;
-        
+
             for( int t = _rnd.nextInt( 50 ) + 51; t > 0; --t ) {
-                int length = ( ( _rnd.nextInt( 5 ) + 1 ) * 
-                               ( _rnd.nextInt( 10 ) + 1 ) * 
+                int length = ( ( _rnd.nextInt( 5 ) + 1 ) *
+                               ( _rnd.nextInt( 10 ) + 1 ) *
                                ( _rnd.nextInt( 20 ) + 1 ) +
                                _rnd.nextInt( 40 ) );
-        
+
                 int offset = _rnd.nextInt( CHAR_DATA.length - length );
-        
+
                 CharSequence cs;
                 if( useCharBuffer ) {
                     cs = CharBuffer.wrap( CHAR_DATA, offset, length );
@@ -69,20 +69,20 @@ public class StringBufferEncodePerfTest
                 else {
                     cs = new String( CHAR_DATA, offset, length );
                 }
-        
-                encoder.encodeCharData( cs ); 
+
+                encoder.encodeCharData( cs );
             }
-            
+
             out.flush();
-        
+
             if( _doVerbose ) out.print();
-        
+
             return out.size();
         }
-        
+
         private final FastRandom _rnd;
     }
-    
+
     public void setVerbose( boolean doVerbose )
     {
         _doVerbose = doVerbose;
@@ -93,13 +93,12 @@ public class StringBufferEncodePerfTest
         _useCharBuffer = useCharBuffer;
     }
 
-
     private boolean _doVerbose   = false;
-   
+
     private boolean _useCharBuffer = true;
-    
+
     private static final char[] CHAR_DATA; //10000 bytes minimum
-    
+
     static {
         StringBuilder b = new StringBuilder( 11000 );
         FastRandom random = new FastRandom( 1 );
@@ -112,7 +111,7 @@ public class StringBufferEncodePerfTest
             }
 
         }
-        CHAR_DATA = b.toString().toCharArray();    
+        CHAR_DATA = b.toString().toCharArray();
     }
 
 }

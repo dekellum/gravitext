@@ -25,7 +25,7 @@ import org.junit.Test;
 public class BeanAccessorTest
 {
     @Test
-    public void testPrimativeTypeAssignable() 
+    public void testPrimativeTypeAssignable()
     {
         // Testing JDK behavior
         assertTrue( Boolean.TYPE.isAssignableFrom( Boolean.TYPE ) );
@@ -33,31 +33,31 @@ public class BeanAccessorTest
     }
 
     @Test
-    public void testSetPropertyString() 
+    public void testSetPropertyString()
         throws BeanException
     {
         BeanB bean = new BeanB();
         BeanAccessor accessor = new BeanAccessor( bean );
-        
+
         accessor.setProperty( "integer", "-45" );
         assertEquals( -45, bean.getInteger() );
-        
+
         accessor.setProperty( "enum", "VALUE2" );
         assertEquals( SomeEnum.VALUE2, bean.getEnum() );
-        
+
         accessor.setProperty( "bool", "True"  );
         assertTrue( bean.isBool() );
-        
+
         accessor.setProperty( "bool", "False"  );
         assertFalse( bean.isBool() );
-        
+
         accessor.setProperty( "char", "A" );
         assertEquals( 'A', bean.getChar() );
-        
+
     }
-    
+
     @Test
-    public void testSetPropertyNumber() 
+    public void testSetPropertyNumber()
         throws BeanException
     {
         BeanB bean = new BeanB();
@@ -65,40 +65,40 @@ public class BeanAccessorTest
 
         accessor.setProperty( "integer", 1 );
         assertEquals( 1, bean.getInteger() );
-        
+
         accessor.setProperty( "integer", 2.0f );
         assertEquals( 2, bean.getInteger() );
     }
 
     @Test
-    public void testSetPropertyAssignable() 
+    public void testSetPropertyAssignable()
         throws BeanException
-    {   
+    {
         BeanB bean = new BeanB();
         BeanAccessor accessor = new BeanAccessor( bean );
 
         accessor.setProperty( "string", "value" );
         assertEquals( "value", bean.getString() );
-        
+
         StringBuilder sb = new StringBuilder();
         sb.append( "cvalue" );
         accessor.setProperty( "chars", sb );
         assertEquals( "cvalue", bean.getChars().toString() );
-        
+
         accessor.setProperty( "string", sb );
         assertEquals( "cvalue", bean.getString() );
 
         accessor.setProperty( "string", null );
         assertNull( bean.getString() );
-        
+
         Foo foo = new Foo();
         accessor.setProperty( "foo", foo );
         assertEquals( foo, bean.getFoo() );
-        
+
         accessor.setProperty( "foo", null );
         assertNull( bean.getFoo() );
     }
-    
+
     @Test
     public void testNullPrimativeError()
     {
@@ -113,17 +113,16 @@ public class BeanAccessorTest
             //System.out.println( "Excepted: " + x );
         }
     }
-    
 
     private enum SomeEnum {
         VALUE1,
         VALUE2
     }
-    
+
     private class Foo {
     }
-    
-    private class BeanA 
+
+    private class BeanA
     {
         public SomeEnum getEnum()
         {
@@ -134,7 +133,7 @@ public class BeanAccessorTest
         {
             _enum = val;
         }
-        
+
         public int getInteger()
         {
             return _integer;
@@ -163,17 +162,17 @@ public class BeanAccessorTest
         {
             _char = c;
         }
-        
+
         private SomeEnum _enum = SomeEnum.VALUE1;
         private int _integer = -1;
         private boolean _bool = false;
-        private char _char = '!'; 
- 
+        private char _char = '!';
+
     }
-    
-    private class BeanB extends BeanA 
+
+    private class BeanB extends BeanA
     {
-        
+
         public CharSequence getChars()
         {
             return _chars;
@@ -182,7 +181,7 @@ public class BeanAccessorTest
         {
             _chars = chars;
         }
-        
+
         public String getString()
         {
             return _string;

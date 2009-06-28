@@ -5,8 +5,8 @@ package com.gravitext.concurrent;
  * {@link TestFactory} and run by a single test thread. Thus
  * {@link #runIteration } may access class variables without synchronizing. A
  * common case is use of a FastRandom instance, initialized from the seed passed
- * to the TestFactory. The following test is prototypical: 
- * 
+ * to the TestFactory. The following test is prototypical:
+ *
  * <code><pre>
  * new TestRunnable() {
  *     final FastRandom _random = new FastRandom( seed );
@@ -22,14 +22,14 @@ package com.gravitext.concurrent;
  *     }
  * }
  * </pre></code>
- * 
+ *
  * @see com.gravitext.util.FastRandom
  * @author david
  */
 public interface TestRunnable
 {
     /**
-     * Run a test iteration. 
+     * Run a test iteration.
      * @param run a sequential run number starting from 1 to the number of runs
      *        tested
      * @return an arbitrary test result count (to be summed as test output)

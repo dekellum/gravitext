@@ -23,7 +23,7 @@ import java.math.BigInteger;
 
 /**
  * Provides accessor methods to Java Beans.
- *  
+ *
  * @author David Kellum
  */
 public class BeanAccessor
@@ -34,7 +34,7 @@ public class BeanAccessor
     public BeanAccessor( Object bean ) {
         _bean = bean;
     }
-    
+
     /**
      * Set the specified property to value on the bean passed on
      * construction.
@@ -49,10 +49,10 @@ public class BeanAccessor
         Class<?> cls = _bean.getClass();
 
         String setterName = propertyToSetterName( property );
-        
+
         Method setter = null;
         for( Method method : cls.getMethods() ) {
-            if( method.getName().equals( setterName ) && 
+            if( method.getName().equals( setterName ) &&
                 ( method.getParameterTypes().length == 1 ) ) {
                 setter = method;
                 break;
@@ -60,23 +60,23 @@ public class BeanAccessor
         }
 
         if( setter == null ) {
-            throw new BeanException( String.format( 
-                "No setter method found on bean class %s " + 
+            throw new BeanException( String.format(
+                "No setter method found on bean class %s " +
                 "for property name [%s].",
                 cls.getName(), property ) );
         }
-    
+
         Class<?> param = setter.getParameterTypes()[0];
 
         if( ( value == null ) && param.isPrimitive() ) {
-            throw new BeanException( String.format( 
+            throw new BeanException( String.format(
                 "Can't set primitive %s type property name [%s] to null.",
                 param.getSimpleName(),
                 property ) );
         }
-        
+
         param = mapPrimitive( param );
-        
+
         value = coerceObject( param, value );
 
         try {
@@ -97,7 +97,7 @@ public class BeanAccessor
      * Attempts to coerce the specified value to the specified
      * type. If the value is a CharSequence it will be coerced via
      * {@link #coerceString coerceString()}. If the value is a
-     * Number the target type is a type of Number, then 
+     * Number the target type is a type of Number, then
      * {@link #coerceNumber coerceNumber()} will be used.
      * @throws BeanException if the specified value could not be
      * coerced to the property type or to wrap a multitude of
@@ -114,18 +114,17 @@ public class BeanAccessor
             }
             else if( ( value instanceof Number ) &&
                      ( Number.class.isAssignableFrom( type ) ) ) {
-                value = coerceNumber( type.asSubclass( Number.class ), 
+                value = coerceNumber( type.asSubclass( Number.class ),
                                       (Number) value );
             }
             else throw new BeanException
-            ( "Unable to coerce value type " + value.getClass() + 
+            ( "Unable to coerce value type " + value.getClass() +
               " to type " + type + '.' );
-        }   
-                
+        }
+
         return type.cast( value );
     }
-    
-    
+
     /**
      * Attempts to coerce the specified string value to the specified
      * type. All of the primitive types, associated primitive wrapper
@@ -140,7 +139,7 @@ public class BeanAccessor
         throws BeanException
     {
         Object res = null;
-        
+
         if( type == String.class ) {
             res = val;
         }
@@ -175,15 +174,14 @@ public class BeanAccessor
         else if( type.isEnum() ) {
             res = coerceEnum( type.asSubclass( Enum.class ), val );
         }
-        
+
         if( ( val != null ) && ( res == null ) ) {
-            throw new BeanException( "Unable to coerce string to type " 
-                                     + type.getName() + '.' );  
+            throw new BeanException( "Unable to coerce string to type "
+                                     + type.getName() + '.' );
         }
 
         return type.cast( res );
     }
-
 
     /**
      * Coerces the specified Number value to an alternative specified
@@ -193,7 +191,7 @@ public class BeanAccessor
      * exceptions which can be thrown on coercion (ex:
      * NumberFormatException).
      */
-    public <T extends Number> T coerceNumber( Class<T> type, Number val ) 
+    public <T extends Number> T coerceNumber( Class<T> type, Number val )
         throws BeanException
     {
         if     ( type == Byte.class )    val = new Byte( val.byteValue() );
@@ -213,7 +211,7 @@ public class BeanAccessor
                 throw new BeanException( x );
             }
         }
-        else throw new BeanException( "Unsupported Number type: " + 
+        else throw new BeanException( "Unsupported Number type: " +
                                       type.getName() );
 
         return type.cast( val );
@@ -221,14 +219,14 @@ public class BeanAccessor
 
     /**
      * Coerces the specified String value to the specified enum type
-     * via the {@link java.lang.Enum#valueOf(java.lang.Class, java.lang.String) Enum.valueOf()} 
+     * via the {@link java.lang.Enum#valueOf(java.lang.Class, java.lang.String) Enum.valueOf()}
      * method.
      * @throws BeanException wrapping an IllegalArgumentException if
      * the string value does not match a Enum constant of the
      * specified type.
      */
     @SuppressWarnings("unchecked")
-    public <T extends Enum> T coerceEnum( Class<T> type, String value ) 
+    public <T extends Enum> T coerceEnum( Class<T> type, String value )
         throws BeanException
     {
         try {
@@ -256,7 +254,7 @@ public class BeanAccessor
             else if( cls == Float.TYPE )     cls = Float.class;
             else if( cls == Double.TYPE )    cls = Double.class;
             else if( cls == Void.TYPE )      cls = Void.class;
-            else throw new IllegalStateException( "Unknown primitive type: " 
+            else throw new IllegalStateException( "Unknown primitive type: "
                                                   + cls.getName() );
         }
 
@@ -264,14 +262,14 @@ public class BeanAccessor
     }
 
     /**
-     * Convert a property name to a setter method name by capitalizing 
+     * Convert a property name to a setter method name by capitalizing
      * the first character and prefixing with "set".
      */
     public static String propertyToSetterName( String propName )
     {
-        return ( "set" + Character.toUpperCase( propName.charAt(0) ) 
+        return ( "set" + Character.toUpperCase( propName.charAt(0) )
                  + propName.substring(1) );
     }
-         
+
     private Object _bean;
-}    
+}

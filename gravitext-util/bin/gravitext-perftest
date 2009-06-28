@@ -51,7 +51,7 @@ module TestCollection
       end
 
       btest = BlockTestFactory.new do |run,fr|
-        10_000.times do 
+        10_000.times do
           rand( 1000 )
         end
         rand( 3 )
@@ -60,7 +60,7 @@ module TestCollection
       tests << btest
 
       btest = BlockTestFactory.new do |run,random|
-        10_000.times do 
+        10_000.times do
           random.next_int( 1000 )
         end
         random.next_int( 3 )
@@ -103,11 +103,11 @@ module TestCollection
     def name
       'RubyEmpty'
     end
-    
+
     def create_test_runnable( seed )
       self.class.new
     end
-    
+
     def run_iteration( run )
       1
     end

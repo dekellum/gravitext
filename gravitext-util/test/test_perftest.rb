@@ -37,4 +37,3 @@ class TestPerfTest < Test::Unit::TestCase
   end
 
 end
-

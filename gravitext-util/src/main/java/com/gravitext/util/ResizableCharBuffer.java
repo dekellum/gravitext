@@ -24,7 +24,7 @@ import java.nio.CharBuffer;
  * A resizable char buffer complementing {@link java.nio.CharBuffer}.
  * @author David Kellum
  */
-public final class ResizableCharBuffer 
+public final class ResizableCharBuffer
     implements Appendable
 {
 
@@ -49,7 +49,7 @@ public final class ResizableCharBuffer
         _b[ _pos++ ] = c;
         return this;
     }
-   
+
     /**
      * Put string at the current position and advance. The
      * underlying buffer will be resized if needed.
@@ -59,14 +59,14 @@ public final class ResizableCharBuffer
     {
         return put( in, 0, in.length() );
     }
-    
+
     /**
      * Put string [start, end) at the current position and
      * advance. The underlying buffer will be resized if needed.
      * @return This buffer.
      */
-    public ResizableCharBuffer put( final String in, 
-                                    final int start, 
+    public ResizableCharBuffer put( final String in,
+                                    final int start,
                                     final int end )
     {
         int length = end - start;
@@ -85,23 +85,23 @@ public final class ResizableCharBuffer
     {
         return put( src, 0, src.length );
     }
-    
+
     /**
      * Put char array range [offset, offset+length) at the current
      * position and advance. The underlying buffer will be resized if
      * needed.
      * @return This buffer.
      */
-    public ResizableCharBuffer put( final char[] src, 
-                                    final int offset, 
-                                    final int length ) 
+    public ResizableCharBuffer put( final char[] src,
+                                    final int offset,
+                                    final int length )
     {
         requestCapacity( length );
         System.arraycopy( src, offset, _b, _pos, length );
         _pos += length;
         return this;
     }
-    
+
     /**
      * Put CharBuffer contents at the current position and
      * advance. The underlying buffer will be resized if needed.
@@ -110,8 +110,8 @@ public final class ResizableCharBuffer
     public ResizableCharBuffer put( final CharBuffer in )
     {
         if( in.hasArray() ) {
-            return put( in.array(), 
-                        in.arrayOffset() + in.position(), 
+            return put( in.array(),
+                        in.arrayOffset() + in.position(),
                         in.remaining() );
         }
         return put( in.toString() );
@@ -129,26 +129,26 @@ public final class ResizableCharBuffer
         }
         return put( in.toString() );
     }
-    
+
     /**
      * Put sequence [start, end) at the current position and
      * advance. The underlying buffer will be resized if needed.
      * @return This buffer.
      */
-    public ResizableCharBuffer put( final CharSequence in, 
-                                    final int start, 
+    public ResizableCharBuffer put( final CharSequence in,
+                                    final int start,
                                     final int end )
     {
         if( in instanceof CharBuffer ) {
             final CharBuffer cb = (CharBuffer) in;
             if( cb.hasArray() ) {
-                
+
                 if( end - start > cb.remaining() ) {
                     throw new IndexOutOfBoundsException( "end - start" );
                 }
-                
-                return put( cb.array(), 
-                            cb.arrayOffset() + cb.position() + start, 
+
+                return put( cb.array(),
+                            cb.arrayOffset() + cb.position() + start,
                             end - start );
             }
         }
@@ -172,7 +172,7 @@ public final class ResizableCharBuffer
         int len = 0;
         int start = _pos;
         int readLen;
-        
+
         while( maxLength > 0 ) {
             requestCapacity( Math.min( chunkSize, maxLength) );
 
@@ -181,15 +181,14 @@ public final class ResizableCharBuffer
 
             len = in.read(_b, _pos, readLen);
             if (len < 0) break;
-            
+
             _pos += len;
             maxLength -= len;
         }
 
         return ( _pos - start );
     }
-   
-    
+
     /**
      * Return the current position offset into the underlying buffer.
      */
@@ -197,7 +196,7 @@ public final class ResizableCharBuffer
     {
         return _pos;
     }
-    
+
     /**
      * Set the position offset into the underlying buffer.
      */
@@ -216,13 +215,13 @@ public final class ResizableCharBuffer
         return put( in );
     }
 
-    public ResizableCharBuffer append( final CharSequence in, 
-                                       final int start, 
+    public ResizableCharBuffer append( final CharSequence in,
+                                       final int start,
                                        final int end )
     {
         return put( in, start, end );
     }
-    
+
     /**
      * Insure that length additional capacity is available.
      */
@@ -230,19 +229,19 @@ public final class ResizableCharBuffer
     {
         if( ( _pos + length ) > _limit ) {
 
-            int size = _limit;                                                  
+            int size = _limit;
             if( size == 0 ) size = 1;
             size *= 2;
             if( size < ( _pos + length ) ) size = _pos + length;
-            
-            char[] b = new char[ size ];                                        
-            System.arraycopy( _b, 0, b, 0, _pos );                              
+
+            char[] b = new char[ size ];
+            System.arraycopy( _b, 0, b, 0, _pos );
             _b = b;
-            
-            _limit = size;                                                      
+
+            _limit = size;
         }
     }
-    
+
     /**
      * Returns a new CharBuffer wraping the underlying array from [0,
      * position). Changes to the returned buffer or its accessible
@@ -254,14 +253,13 @@ public final class ResizableCharBuffer
 
         return CharBuffer.wrap( _b, 0, _pos );
     }
-    
+
     @Override
     public String toString()
     {
         return new String( _b, 0, _pos );
     }
-    
-    
+
     private char[] _b;
     private int _pos = 0;
     private int _limit = 0;

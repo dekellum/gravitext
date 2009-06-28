@@ -24,7 +24,7 @@ import java.nio.CharBuffer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class ResizableCharBufferTest 
+public class ResizableCharBufferTest
 {
     @Test
     public void putString()
@@ -34,7 +34,7 @@ public class ResizableCharBufferTest
         assertEquals( 5, buffer.position() );
         assertBuffer( "moose", buffer );
     }
-    
+
     @Test
     public void putCharBuffer()
     {
@@ -48,7 +48,7 @@ public class ResizableCharBufferTest
         rb.put( text.toCharArray(), 11, 8 );
         assertBuffer( text, rb );
     }
-    
+
     @Test
     public void putCharBufferAsSequence()
     {
@@ -61,7 +61,7 @@ public class ResizableCharBufferTest
         rb.put( "mo" ).put( cs, 2, 3 ).put( "se" );
         assertBuffer( "moose moose moose", rb );
     }
-    
+
     @Test
     public void putSequence()
     {
@@ -74,7 +74,7 @@ public class ResizableCharBufferTest
         rb.put( "mo" ).put( cs, 2, 3 ).put( "se" );
         assertBuffer( "moose moose moose", rb );
     }
-   
+
     @Test
     public void putFromReader() throws IOException
     {
@@ -83,8 +83,7 @@ public class ResizableCharBufferTest
         assertEquals( 4, buffer.position() );
         assertBuffer( "spam", buffer );
     }
-    
-    
+
     @Test
     public void putFromReaderTwice() throws IOException
     {
@@ -94,12 +93,12 @@ public class ResizableCharBufferTest
         assertEquals( 3, buffer.position() );
         assertBuffer( "dog", buffer );
         assertTrue( reader.ready() );
-        
+
         buffer.putFromReader( createReader( " food" ), 5, 12 );
         assertEquals( 8, buffer.position() );
         assertBuffer( "dog food", buffer );
     }
-    
+
     @Test
     public void putZeroLengthReader() throws IOException
     {
@@ -110,18 +109,17 @@ public class ResizableCharBufferTest
         buffer.putFromReader( reader, 3, 0 );
         buffer.putFromReader( reader, 0, 3 );
         buffer.putFromReader( reader, 0, 0 );
-        
+
         assertEquals( 0, buffer.position() );
         assertTrue( reader.ready() );
     }
 
-
-    private void assertBuffer( String expected, ResizableCharBuffer buffer ) 
+    private void assertBuffer( String expected, ResizableCharBuffer buffer )
     {
         CharBuffer out = buffer.flipAsCharBuffer();
         assertEquals( expected, out.toString() );
     }
-    
+
     private StringReader createReader( String text )
     {
         return new StringReader( text );

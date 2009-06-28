@@ -27,13 +27,13 @@ class AdaptiveRunner extends Runner
     {
         super( factory );
     }
-           
+
     @Override
     void run( PerformanceTester altPrior )
     {
         PerformanceTester prior = prior();
         super.run( altPrior );
-        PerformanceTester current = prior(); 
+        PerformanceTester current = prior();
 
         _warmTime += current.duration().seconds();
         _tchange = current.throughputChange( prior );
@@ -41,15 +41,15 @@ class AdaptiveRunner extends Runner
                     * 1.25d
                     / current.duration().seconds() );
     }
-    
+
     @Override
     boolean hasMoreRuns()
     {
-        return ( ( _warmTime < _warmTarget ) || 
-                 ( _tchange < -_warmTolerance ) || 
+        return ( ( _warmTime < _warmTarget ) ||
+                 ( _tchange < -_warmTolerance ) ||
                  ( _tchange > _warmTolerance ) );
     }
-    
+
     private double _warmTime = 0d;
     private double _tchange = Double.NaN;
 

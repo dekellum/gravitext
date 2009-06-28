@@ -71,7 +71,6 @@ public class ResizableByteBuffer
         return put( value, 0, value.length );
     }
 
-
     /**
      * Put the range [offset, offset+length) of the byte array value
      * to current position and advance length bytes. The underlying

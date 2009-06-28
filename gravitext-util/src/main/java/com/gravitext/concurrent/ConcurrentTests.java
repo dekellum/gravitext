@@ -17,7 +17,7 @@
 package com.gravitext.concurrent;
 
 /**
- * Static utility class for ConcurrentTest instances. 
+ * Static utility class for ConcurrentTest instances.
  * @author David Kellum
  * @deprecated Use TestExecutor instead
  */

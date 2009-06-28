@@ -44,7 +44,7 @@ module TestCollection
   def self.lookup_factories( name )
     case name
     when 'producer'
-    
+
       tests = PerfTestFactory::Serializer.values.map do |s|
         PerfTestFactory.new( s )
       end

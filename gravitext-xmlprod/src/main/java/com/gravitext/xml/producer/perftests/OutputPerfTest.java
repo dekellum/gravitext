@@ -14,21 +14,21 @@ public class OutputPerfTest
 {
     protected final class TestOutput
     {
-        public OutputStream getStream() 
+        public OutputStream getStream()
         {
             if( !_doEncode ) throw new IllegalStateException
             ( "If not doEncode, shouldn't use stream." );
-    
+
             if( _stream == null ) {
                 _stream = new ByteArrayOutputStream( 1024 * 24 );
             }
             return _stream;
         }
-    
+
         public void print() throws UnsupportedEncodingException
         {
             if( _doEncode ) {
-                System.out.print( new String( _stream.toByteArray(), 
+                System.out.print( new String( _stream.toByteArray(),
                                               _encoding ) );
             }
             else {
@@ -36,23 +36,23 @@ public class OutputPerfTest
                                   buffer() );
             }
         }
-    
+
         public int size()
         {
-            return ( _doEncode ? _stream.size() : 
+            return ( _doEncode ? _stream.size() :
                                  ( (ResizableCharBufferWriter) _writer).
                                  buffer().position() );
         }
-    
+
         public void flush() throws IOException
         {
             if( _writer != null ) _writer.flush();
         }
-    
+
         public Writer getWriter() throws UnsupportedEncodingException
         {
             if( _writer == null  ) {
-                if( _doEncode ) {   
+                if( _doEncode ) {
                     Writer t = new OutputStreamWriter( getStream(), _encoding );
                     _writer = new BufferedWriter( t, 1024 );
                 }
@@ -62,7 +62,7 @@ public class OutputPerfTest
             }
             return _writer;
         }
-        
+
         private ByteArrayOutputStream _stream = null;
         private Writer _writer                = null;
     }
