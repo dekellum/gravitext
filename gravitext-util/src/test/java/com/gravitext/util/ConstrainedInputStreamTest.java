@@ -1,0 +1,99 @@
+/*
+ * Copyright (C) 2009 David Kellum
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.gravitext.util;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class ConstrainedInputStreamTest
+{
+
+    @Test
+    public void testGoodByte() throws IOException
+    {
+        InputStream in = source();
+        in = new ConstrainedInputStream( in, 11 );
+
+        int c = 0;
+        while( c != -1 ) {
+            c = in.read();
+        }
+        assertEquals( -1, c );
+    }
+
+    @Test
+    public void testBadByte() throws IOException
+    {
+        InputStream in = source();
+        in = new ConstrainedInputStream( in, 9 );
+
+        for( int i = 0; i < 9; ++i ) {
+            assertTrue( -1 != in.read() );
+        }
+
+        try {
+            in.read();
+            fail();
+        }
+        catch( ConstrainedInputStream.MaxLengthException x) {
+            // expected.
+        }
+    }
+
+    @Test
+    public void testGoodBlock() throws IOException
+    {
+        InputStream in = source();
+        in = new ConstrainedInputStream( in, 9 );
+
+        byte buff[] = new byte[9];
+        in.read( buff );
+
+        assertEquals( "123456789", new String( buff, "UTF-8" ) );
+    }
+
+    @Test
+    public void testBadBlock() throws IOException
+    {
+        InputStream in = source();
+        in = new ConstrainedInputStream( in, 9 );
+
+        byte buff[] = new byte[8];
+        assertEquals( 8, in.read( buff ) );
+
+        assertEquals( 1, in.read( buff ) );
+
+        try {
+            in.read( buff );
+            fail();
+        }
+        catch( ConstrainedInputStream.MaxLengthException x) {
+            // expected.
+        }
+    }
+
+    private InputStream source() throws UnsupportedEncodingException
+    {
+        return new ByteArrayInputStream( "1234567890".getBytes( "UTF-8" ) );
+    }
+
+ }
