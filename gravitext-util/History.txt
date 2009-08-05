@@ -5,6 +5,10 @@
 * Added convenience methods KeySpace.createGeneric() and createListKey().
 * Added URL64 encoder/decoder utility.
 * Added explicit dev dependencies for slf4j and logback.
+
+=== 1.3.1 (2009-8-2)
+* ResizableByteBuffer.putFromStream break on zero length read.
+* Add ConstrainedInputStream.
 * Use rdoc 2.4.3 and hoe 1.12.2 for build.
 
 === 1.3 (2009-2-23)
