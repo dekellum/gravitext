@@ -30,21 +30,20 @@ public class ConstrainedInputStreamTest
     @Test
     public void testGoodByte() throws IOException
     {
-        InputStream in = source();
-        in = new ConstrainedInputStream( in, 11 );
+        ConstrainedInputStream in = new ConstrainedInputStream( source(), 11 );
 
         int c = 0;
         while( c != -1 ) {
             c = in.read();
         }
         assertEquals( -1, c );
+        assertEquals( 10, in.readLength() );
     }
 
     @Test
     public void testBadByte() throws IOException
     {
-        InputStream in = source();
-        in = new ConstrainedInputStream( in, 9 );
+        ConstrainedInputStream in = new ConstrainedInputStream( source(), 9 );
 
         for( int i = 0; i < 9; ++i ) {
             assertTrue( -1 != in.read() );
@@ -54,7 +53,7 @@ public class ConstrainedInputStreamTest
             in.read();
             fail();
         }
-        catch( ConstrainedInputStream.MaxLengthException x) {
+        catch( ConstrainedInputStream.MaxLengthException x ) {
             // expected.
         }
     }
@@ -62,8 +61,7 @@ public class ConstrainedInputStreamTest
     @Test
     public void testGoodBlock() throws IOException
     {
-        InputStream in = source();
-        in = new ConstrainedInputStream( in, 9 );
+        ConstrainedInputStream in = new ConstrainedInputStream( source(), 9 );
 
         byte buff[] = new byte[9];
         in.read( buff );
@@ -72,10 +70,27 @@ public class ConstrainedInputStreamTest
     }
 
     @Test
+    public void testMark() throws IOException
+    {
+        ConstrainedInputStream in = new ConstrainedInputStream( source(), 10 );
+        assertEquals( 1, in.read( new byte[1] ) );
+
+        assertTrue(  in.markSupported() );
+
+        in.mark( 9 );
+        assertEquals( 8, in.read( new byte[8] ) );
+        in.reset();
+
+        byte buff[] = new byte[9];
+        in.read( buff );
+        assertEquals( "234567890", new String( buff, "UTF-8" ) );
+        assertEquals( 10, in.readLength() );
+    }
+
+    @Test
     public void testBadBlock() throws IOException
     {
-        InputStream in = source();
-        in = new ConstrainedInputStream( in, 9 );
+        ConstrainedInputStream in = new ConstrainedInputStream( source(), 9 );
 
         byte buff[] = new byte[8];
         assertEquals( 8, in.read( buff ) );
@@ -86,7 +101,7 @@ public class ConstrainedInputStreamTest
             in.read( buff );
             fail();
         }
-        catch( ConstrainedInputStream.MaxLengthException x) {
+        catch( ConstrainedInputStream.MaxLengthException x ) {
             // expected.
         }
     }
