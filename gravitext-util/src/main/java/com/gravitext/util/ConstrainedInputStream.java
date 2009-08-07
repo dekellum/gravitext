@@ -54,6 +54,15 @@ public final class ConstrainedInputStream extends InputStream
     }
 
     /**
+     * Returns the number of bytes actually read or skipped from this
+     * stream.
+     */
+    public int readLength()
+    {
+        return _maxLength - _capacity;
+    }
+
+    /**
      * {@inheritDoc}
      * Constrains available bytes to the least of base.available() and
      * remaining maxLength.
@@ -123,6 +132,7 @@ public final class ConstrainedInputStream extends InputStream
     public void mark( int readlimit )
     {
         _base.mark( readlimit );
+        _markCapacity = _capacity;
     }
 
     @Override
@@ -140,10 +150,12 @@ public final class ConstrainedInputStream extends InputStream
     @Override
     public void reset() throws IOException
     {
-        _base.reset();
+        _base.reset();  //may throw if not reset
+        _capacity = _markCapacity;
     }
 
     private final InputStream _base;
     private int _capacity;
+    private int _markCapacity;
     private final int _maxLength;
 }
