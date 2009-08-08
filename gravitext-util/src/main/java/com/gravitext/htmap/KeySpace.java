@@ -88,7 +88,7 @@ public final class KeySpace
      * construction of keys of complex valueType which will be externally cast.
      * @param name a unique name. By convention, this is the String
      * equivalent of the constant to which the Key will be assigned.
-     * @param valueType the runtime class type of values to be
+     * @param genericType the runtime class type of values to be
      * associated with this key.
      * @throws IllegalArgumentException if a Key by the specified name
      * has already been created.

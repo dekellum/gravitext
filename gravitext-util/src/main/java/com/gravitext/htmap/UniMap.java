@@ -16,7 +16,7 @@
 package com.gravitext.htmap;
 
 /**
- * Common use generic HTAccess container. Extends{@link ArrayHTMap}
+ * Common use generic HTAccess container. Extends {@link ArrayHTMap}
  * with constructors using a single static KEY_SPACE. The set/put methods are
  * overridden to call remove(key) when passed a null value.
  *
@@ -41,8 +41,9 @@ public final class UniMap
     }
 
     /**
-     * {@inheritDoc}  In this implementation, if a null value is given then
-     * the key is removed.
+     * {@inheritDoc}
+     * In this implementation, if a null value is given then the key
+     * is removed.
      */
     @Override
     public <T, V extends T> T set( Key<T> key, V value )
@@ -56,8 +57,9 @@ public final class UniMap
     }
 
     /**
-     * {@inheritDoc}  In this implementation, if a null value is given then
-     * the key is removed.
+     * {@inheritDoc}
+     * In this implementation, if a null value is given then the key
+     * is removed.
      */
     @SuppressWarnings("unchecked")
     @Override

@@ -25,7 +25,7 @@ package com.gravitext.htmap;
  * {@link #set set()} method is introduced which offers a compile-time
  * type-safe alternative to {@code Map.put()}. In this case
  * an overload is not possible because the erased signatures would be
- * the same. The following code sample shows the common usage pattern:
+ * the same.</p>
  *
  * <p>The null key is not supported by this interface.</p>
  *
