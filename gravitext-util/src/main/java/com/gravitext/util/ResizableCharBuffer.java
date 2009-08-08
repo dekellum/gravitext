@@ -24,7 +24,7 @@ import java.nio.CharBuffer;
  * A resizable char buffer complementing {@link java.nio.CharBuffer}.
  * @author David Kellum
  */
-public final class ResizableCharBuffer
+public class ResizableCharBuffer
     implements Appendable
 {
 
@@ -43,7 +43,7 @@ public final class ResizableCharBuffer
      * underlying buffer will be resized if needed.
      * @return This buffer.
      */
-    public ResizableCharBuffer put( final char c )
+    public final ResizableCharBuffer put( final char c )
     {
         requestCapacity( 1 );
         _b[ _pos++ ] = c;
@@ -55,7 +55,7 @@ public final class ResizableCharBuffer
      * underlying buffer will be resized if needed.
      * @return This buffer.
      */
-    public ResizableCharBuffer put( final String in )
+    public final ResizableCharBuffer put( final String in )
     {
         return put( in, 0, in.length() );
     }
@@ -65,9 +65,9 @@ public final class ResizableCharBuffer
      * advance. The underlying buffer will be resized if needed.
      * @return This buffer.
      */
-    public ResizableCharBuffer put( final String in,
-                                    final int start,
-                                    final int end )
+    public final ResizableCharBuffer put( final String in,
+                                          final int start,
+                                          final int end )
     {
         int length = end - start;
         requestCapacity( length );
@@ -81,7 +81,7 @@ public final class ResizableCharBuffer
      * underlying buffer will be resized if needed.
      * @return This buffer.
      */
-    public ResizableCharBuffer put( final char[] src )
+    public final ResizableCharBuffer put( final char[] src )
     {
         return put( src, 0, src.length );
     }
@@ -92,9 +92,9 @@ public final class ResizableCharBuffer
      * needed.
      * @return This buffer.
      */
-    public ResizableCharBuffer put( final char[] src,
-                                    final int offset,
-                                    final int length )
+    public final ResizableCharBuffer put( final char[] src,
+                                          final int offset,
+                                          final int length )
     {
         requestCapacity( length );
         System.arraycopy( src, offset, _b, _pos, length );
@@ -103,18 +103,18 @@ public final class ResizableCharBuffer
     }
 
     /**
-     * Put CharBuffer contents at the current position and
-     * advance. The underlying buffer will be resized if needed.
+     * Put CharBuffer contents at the current position and advance.
+     * The underlying buffer will be resized if needed. The in buffer
+     * will be consumed and positioned at limit.
      * @return This buffer.
      */
-    public ResizableCharBuffer put( final CharBuffer in )
+    public final ResizableCharBuffer put( final CharBuffer in )
     {
-        if( in.hasArray() ) {
-            return put( in.array(),
-                        in.arrayOffset() + in.position(),
-                        in.remaining() );
-        }
-        return put( in.toString() );
+        final int len = in.remaining();
+        requestCapacity( len );
+        in.get( _b, _pos, len );
+        _pos += len;
+        return this;
     }
 
     /**
@@ -122,10 +122,10 @@ public final class ResizableCharBuffer
      * underlying buffer will be resized if needed.
      * @return This buffer.
      */
-    public ResizableCharBuffer put( final CharSequence in )
+    public final ResizableCharBuffer put( final CharSequence in )
     {
         if( in instanceof CharBuffer ) {
-            return put( (CharBuffer) in );
+            return put( ( (CharBuffer) in ).duplicate() );
         }
         return put( in.toString() );
     }
@@ -135,22 +135,22 @@ public final class ResizableCharBuffer
      * advance. The underlying buffer will be resized if needed.
      * @return This buffer.
      */
-    public ResizableCharBuffer put( final CharSequence in,
-                                    final int start,
-                                    final int end )
+    public final ResizableCharBuffer put( final CharSequence in,
+                                          final int start,
+                                          final int end )
     {
         if( in instanceof CharBuffer ) {
-            final CharBuffer cb = (CharBuffer) in;
-            if( cb.hasArray() ) {
+            CharBuffer cb = (CharBuffer) in;
 
-                if( end - start > cb.remaining() ) {
-                    throw new IndexOutOfBoundsException( "end - start" );
-                }
-
-                return put( cb.array(),
-                            cb.arrayOffset() + cb.position() + start,
-                            end - start );
+            if( ( end - start ) > cb.remaining() ) {
+                throw new IndexOutOfBoundsException( "end - start" );
             }
+
+            cb = cb.duplicate();
+            cb.limit( cb.position() + end );
+            cb.position( cb.position() + start );
+
+            return put( cb );
         }
         return put( in.toString(), start, end );
     }
@@ -205,17 +205,17 @@ public final class ResizableCharBuffer
         _pos = position;
     }
 
-    public ResizableCharBuffer append( final char c )
+    public final ResizableCharBuffer append( final char c )
     {
         return put( c );
     }
 
-    public ResizableCharBuffer append( final CharSequence in )
+    public final ResizableCharBuffer append( final CharSequence in )
     {
         return put( in );
     }
 
-    public ResizableCharBuffer append( final CharSequence in,
+    public final ResizableCharBuffer append( final CharSequence in,
                                        final int start,
                                        final int end )
     {
@@ -249,8 +249,6 @@ public final class ResizableCharBuffer
      */
     public final CharBuffer flipAsCharBuffer()
     {
-        //FIXME: Give up our copy for safety?
-
         return CharBuffer.wrap( _b, 0, _pos );
     }
 

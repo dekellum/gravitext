@@ -103,6 +103,21 @@ public class ResizableByteBuffer
     }
 
     /**
+     * Put ByteBuffer contents at the current position and advance.
+     * The underlying buffer will be resized if needed. The in buffer
+     * will be consumed and positioned at limit.
+     * @return This buffer.
+     */
+    public final ResizableByteBuffer put( final ByteBuffer in )
+    {
+        final int len = in.remaining();
+        requestCapacity( len );
+        in.get( _b, _pos, len );
+        _pos += len;
+        return this;
+    }
+
+    /**
      * Read from input stream to end-of-file and put into this buffer,
      * resizing as needed.
      * @param in to be read

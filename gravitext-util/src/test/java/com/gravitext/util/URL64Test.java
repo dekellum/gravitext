@@ -18,11 +18,11 @@ package com.gravitext.util;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.UnsupportedEncodingException;
-
 import org.junit.Test;
 
 import com.gravitext.util.URL64.FormatException;
+
+import static com.gravitext.util.Charsets.UTF_8;
 
 public class URL64Test
 {
@@ -50,22 +50,11 @@ public class URL64Test
 
     public String encode( String in )
     {
-        try {
-            return new String( URL64.encode( in.getBytes( "UTF-8" ) ) );
-        }
-        catch( UnsupportedEncodingException x ) {
-            throw new RuntimeException( x );
-        }
+        return new String( URL64.encode( in.getBytes( UTF_8 ) ) );
     }
 
     public String decode( String in ) throws FormatException
     {
-        try {
-            return new String( URL64.decode( in.toCharArray() ), "UTF-8" );
-        }
-        catch( UnsupportedEncodingException x ) {
-            throw new RuntimeException( x );
-        }
-
+        return new String( URL64.decode( in.toCharArray() ), UTF_8 );
     }
 }

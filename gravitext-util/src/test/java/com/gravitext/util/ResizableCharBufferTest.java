@@ -116,8 +116,7 @@ public class ResizableCharBufferTest
 
     private void assertBuffer( String expected, ResizableCharBuffer buffer )
     {
-        CharBuffer out = buffer.flipAsCharBuffer();
-        assertEquals( expected, out.toString() );
+        assertEquals( expected, buffer.toString() );
     }
 
     private StringReader createReader( String text )

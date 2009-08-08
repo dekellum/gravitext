@@ -16,12 +16,14 @@
 
 package com.gravitext.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import static com.gravitext.util.Charsets.UTF_8;
 
 public class ResizableByteBufferTest
 {
@@ -39,7 +41,7 @@ public class ResizableByteBufferTest
     public void putFromStreamTwice() throws IOException
     {
         ResizableByteBuffer buffer = new ResizableByteBuffer( 0 );
-        ByteArrayInputStream bytes = createStream( "dog " );
+        InputStream bytes = createStream( "dog " );
         buffer.putFromStream( bytes, 3, 1  );
         assertEquals( 3, buffer.position() );
         assertBuffer( "dog", buffer );
@@ -69,16 +71,11 @@ public class ResizableByteBufferTest
     {
         ByteBuffer out = buffer.flipAsByteBuffer();
 
-        assertEquals( expected,
-                      new String( out.array(),
-                                  out.arrayOffset() + out.position(),
-                                  out.remaining() ) );
+        assertEquals( expected, UTF_8.decode( out ).toString() );
     }
 
-    private ByteArrayInputStream createStream( String text )
+    private InputStream createStream( String text )
     {
-        ByteArrayInputStream bytes =
-            new ByteArrayInputStream( text.getBytes() );
-        return bytes;
+        return new ByteBufferInputStream( UTF_8.encode( text ) );
     }
 }

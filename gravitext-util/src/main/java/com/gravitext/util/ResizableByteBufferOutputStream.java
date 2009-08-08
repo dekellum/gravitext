@@ -16,30 +16,29 @@
 
 package com.gravitext.util;
 
-import java.io.Writer;
+import java.io.OutputStream;
 
 /**
- * A writer to a {@link ResizableCharBuffer}. Provides an
- * unsynchronized and fast alternative to both {@link java.io.StringWriter}
- * (based on synchronized StringBuffer) and
- * {@link java.io.CharArrayWriter} (synchronized).
+ * An OutputStream to a {@link ResizableByteBuffer}. Provides an
+ * unsynchronized and fast alternative to a
+ * {@link java.io.ByteArrayOutputStream} (synchronized).
  *
  * @author David Kellum
  */
-public final class ResizableCharBufferWriter extends Writer
+public final class ResizableByteBufferOutputStream extends OutputStream
 {
-    public ResizableCharBufferWriter( ResizableCharBuffer buffer )
+    public ResizableByteBufferOutputStream( ResizableByteBuffer buffer )
     {
         _buff = buffer;
     }
 
-    public ResizableCharBufferWriter( int capacity )
+    public ResizableByteBufferOutputStream( int capacity )
     {
-        _buff = new ResizableCharBuffer( capacity );
+        _buff = new ResizableByteBuffer( capacity );
     }
 
     @Override
-    public void write( char[] src )
+    public void write( byte[] src )
     {
         _buff.put( src );
     }
@@ -47,23 +46,11 @@ public final class ResizableCharBufferWriter extends Writer
     @Override
     public void write( int c )
     {
-        _buff.put( (char) c );
+        _buff.put( (byte) c );
     }
 
     @Override
-    public void write( String str, int offset, int length )
-    {
-        _buff.put( str, offset, offset + length );
-    }
-
-    @Override
-    public void write( String str )
-    {
-        _buff.put( str );
-    }
-
-    @Override
-    public void write( char[] src, int offset, int length )
+    public void write( byte[] src, int offset, int length )
     {
         _buff.put( src, offset, length );
     }
@@ -85,10 +72,10 @@ public final class ResizableCharBufferWriter extends Writer
     /**
      * Return the underlying buffer.
      */
-    public ResizableCharBuffer buffer()
+    public ResizableByteBuffer buffer()
     {
         return _buff;
     }
 
-    private final ResizableCharBuffer _buff;
+    private final ResizableByteBuffer _buff;
 }
