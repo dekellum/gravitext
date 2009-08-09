@@ -76,6 +76,6 @@ public class ResizableByteBufferTest
 
     private InputStream createStream( String text )
     {
-        return new ByteBufferInputStream( UTF_8.encode( text ) );
+        return Streams.inputStream( UTF_8.encode( text ) );
     }
 }

@@ -26,11 +26,12 @@ module TestCollection
   include Gravitext
   include Gravitext::Concurrent
 
-  import 'com.gravitext.util.perftests.FastRandomPerfTest'
   import 'com.gravitext.htmap.perftests.HTMapPerfTest'
-  import 'com.gravitext.util.perftests.ResizableCharBufferWriterPerfTest'
-  import 'com.gravitext.perftest.tests.SortPerfTest'
   import 'com.gravitext.perftest.tests.EmptyPerfTest'
+  import 'com.gravitext.perftest.tests.SortPerfTest'
+  import 'com.gravitext.util.perftests.ByteBufferInputStreamPerfTest'
+  import 'com.gravitext.util.perftests.FastRandomPerfTest'
+  import 'com.gravitext.util.perftests.ResizableCharBufferWriterPerfTest'
 
   def self.run
     tests = TestCollection::lookup_factories( ARGV[0] || 'random' )
@@ -76,6 +77,15 @@ module TestCollection
     when 'buffer-writer'
       ResizableCharBufferWriterPerfTest::TEST_CLASSES.map do |cls|
         ResizableCharBufferWriterPerfTest.new( cls )
+      end
+    when 'buffer-instream'
+      tests = ByteBufferInputStreamPerfTest::TEST_CLASSES.map do |cls|
+        ByteBufferInputStreamPerfTest.new( cls )
+      end
+      tests += ByteBufferInputStreamPerfTest::TEST_CLASSES.map do |cls|
+        t = ByteBufferInputStreamPerfTest.new( cls )
+        t.read_one = true
+        t
       end
     when 'empty'
       btest = BlockTestFactory.new { 1 }

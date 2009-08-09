@@ -6,7 +6,7 @@
 * Added URL64 encoder/decoder utility.
 * Added explicit dev dependencies for slf4j and logback.
 * New Charsets constants.
-* New ByteBufferInputStream.
+* New Streams utilities; ByteBufferInputStream and ByteArrayInputStream.
 * New ResizableByteBufferOutputStream.
 
 === 1.3.2 (2009-8-6)

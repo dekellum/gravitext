@@ -108,6 +108,6 @@ public class ConstrainedInputStreamTest
 
     private InputStream source()
     {
-        return new ByteBufferInputStream( ISO_8859_1.encode( "1234567890" ) );
+        return Streams.inputStream( ISO_8859_1.encode( "1234567890" ) );
     }
  }
