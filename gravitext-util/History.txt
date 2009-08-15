@@ -8,6 +8,7 @@
 * New Charsets constants.
 * New Streams utilities; ByteBufferInputStream and ByteArrayInputStream.
 * New ResizableByteBufferOutputStream.
+* New Closeables utilities.
 
 === 1.3.2 (2009-8-6)
 * Add ConstrainedInputStream.readLength() and mark/reset support.

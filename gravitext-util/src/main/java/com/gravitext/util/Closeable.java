@@ -29,5 +29,5 @@ public interface Closeable
     /**
      * Close resources.
      */
-    public void close();
+    void close();
 }
