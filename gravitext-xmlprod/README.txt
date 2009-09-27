@@ -12,6 +12,7 @@ A fast and simple XML streaming production package in java.
 
 * Java 1.5 or higher
 * gravitext-util gem
+* rjack-jdom for comparative performance test
 
 == License
 

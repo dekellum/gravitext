@@ -19,11 +19,11 @@
 $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
 require 'gravitext-xmlprod'
 
-require 'java'
-require 'gravitext-xmlprod/jdom-1.1.jar' #test only.
-
 require 'rubygems'
 require 'gravitext-util/perftest'
+require 'rjack-jdom'
+
+require 'java'
 
 module TestCollection
   include Gravitext

@@ -1,6 +1,7 @@
 === 1.3.0 (TBD)
 * Upgrade to gravitext-util-1.4.0
-* Use rdoc 2.4.3 and hoe 1.12.2 for build.
+* Use rjack-tarpit for build.
+* Add rjack-jdom as dev dependency (for perf. testing)
 
 === 1.2 (2009-2-23)
 * New gem packaging.
