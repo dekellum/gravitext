@@ -1,6 +1,6 @@
 # -*- ruby -*-
 #--
-# Copyright (C) 2008 David Kellum
+# Copyright (C) 2008-2009 David Kellum
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
 # may not use this file except in compliance with the License.  You
@@ -15,74 +15,26 @@
 # permissions and limitations under the License.
 #++
 
-require 'rubygems'
-require 'hoe'
-
 $LOAD_PATH << './lib'
-
-ENV['NODOT'] = "no thank you"
-
 require 'gravitext-util/version'
 
-jars = [ "gravitext-util-#{Gravitext::Util::VERSION}.jar" ]
+require 'rubygems'
+gem     'rjack-tarpit', '~> 1.0.0'
+require 'rjack-tarpit'
 
-jar_files = jars.map { |jar| "lib/gravitext-util/#{jar}" }
+t = RJack::TarPit.new( 'gravitext-util',
+                       Gravitext::Util::VERSION,
+                       :no_assembly )
 
-desc "Update the Manifest with actual jar"
-task :manifest do
-  out = File.new( 'Manifest.txt', 'w' )
-  begin
-    out.write <<END
-Manifest.txt
-README.txt
-History.txt
-Rakefile
-pom.xml
-bin/gravitext-perftest
-lib/gravitext-util.rb
-lib/gravitext-util/concurrent.rb
-lib/gravitext-util/perftest.rb
-lib/gravitext-util/unimap.rb
-lib/gravitext-util/version.rb
-test/test_concurrent.rb
-END
-    out.puts jar_files
-  ensure
-    out.close
-  end
+t.specify do |h|
+  h.developer( "David Kellum", "dek-oss@gravitext.com" )
+  h.extra_dev_deps += [ [ 'slf4j',   '~> 1.5.8'  ],
+                        [ 'logback', '>= 0.9.16' ] ]
+  h.rubyforge_name = "gravitext"
 end
 
-file :mvn => [ 'pom.xml' ] do
-  sh( 'mvn package' )
-end
+t.jars = [ t.default_jar ]
 
-jars.each do |jar|
-  file "lib/gravitext-util/#{jar}" => [ :mvn ] do
-    cp_r( File.join( "target/", jar ), 'lib/gravitext-util' )
-  end
-end
+file 'Manifest.txt' => [ 'lib/gravitext-util/version.rb' ]
 
-[ :gem, :test ].each { |t| task t => ( jar_files ) }
-
-task :mvn_clean do
-  rm_f( jar_files )
-  sh( 'mvn clean' )
-end
-task :clean => :mvn_clean
-
-task :tag do
-  tag = "gravitext-util-#{Gravitext::Util::VERSION}"
-  dname = File.dirname( __FILE__ )
-  dname = '.' if Dir.getwd == dname
-  sh( "git status --only #{dname}" ) do |ok,res|
-    raise "Commit these changes before tagging." if ok #changes present
-  end
-  sh %{git tag -s -f -m "tag [#{tag}]" "#{tag}"}
-end
-
-hoe = Hoe.new( "gravitext-util", Gravitext::Util::VERSION ) do |p|
-  p.developer( "David Kellum", "dek-oss@gravitext.com" )
-  p.extra_dev_deps << [ 'slf4j',   '~> 1.5.8' ]
-  p.extra_dev_deps << [ 'logback', '>= 0.9.16' ]
-  p.rubyforge_name = "gravitext"
-end
+t.define_tasks
