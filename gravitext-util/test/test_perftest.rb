@@ -10,11 +10,10 @@ require 'java'
 
 require 'rubygems'
 
-require 'slf4j'
-require 'logback' #Or, turn off logging: require 'slf4j/nop'
+require 'rjack-slf4j'
+require 'rjack-logback' #Or, turn off logging: require 'rjack-slf4j/nop'
 
-Logback.config_console
-Logback.root.level = Logback::DEBUG
+RJack::Logback.config_console( :level => Logback::DEBUG )
 
 class TestPerfTest < Test::Unit::TestCase
   include Gravitext::PerfTest
@@ -22,7 +21,7 @@ class TestPerfTest < Test::Unit::TestCase
   def test_listener
     factory = com.gravitext.perftest.tests.EmptyPerfTest.new
     harness = Harness.new( [ factory ] )
-    harness.listener = LogListener.new( SLF4J[ 'TestPerfTest' ] )
+    harness.listener = LogListener.new( RJack::SLF4J[ 'TestPerfTest' ] )
 
     harness.warmup_exec_target = 0.25
     harness.warmup_total_target = 0.5

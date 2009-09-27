@@ -21,8 +21,8 @@ require 'rubygems'
 
 require 'test/unit'
 
-require 'logback'
-Logback.config_console
+require 'rjack-logback'
+RJack::Logback.config_console
 
 $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
 
@@ -47,7 +47,7 @@ class TestUniMap < Test::Unit::TestCase
 
   UniMap.define_accessors
 
-  LOG = SLF4J[ name ]
+  LOG = RJack::SLF4J[ name ]
 
   ## Manual tests
 
