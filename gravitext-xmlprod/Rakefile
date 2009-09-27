@@ -15,72 +15,26 @@
 # permissions and limitations under the License.
 #++
 
-require 'rubygems'
-require 'hoe'
-
 $LOAD_PATH << './lib'
-
-ENV['NODOT'] = "no thank you"
-
 require 'gravitext-xmlprod/version'
 
-jars = [ "gravitext-xmlprod-#{Gravitext::XMLProd::VERSION}.jar",
-         "jdom-1.1.jar" ]
+require 'rubygems'
+gem     'rjack-tarpit', '~> 1.0.0'
+require 'rjack-tarpit'
 
-jar_files = jars.map { |jar| "lib/gravitext-xmlprod/#{jar}" }
+t = RJack::TarPit.new( 'gravitext-xmlprod',
+                       Gravitext::XMLProd::VERSION,
+                       :no_assembly )
 
-desc "Update the Manifest with actual jar"
-task :manifest do
-  out = File.new( 'Manifest.txt', 'w' )
-  begin
-    out.write <<END
-Manifest.txt
-README.txt
-History.txt
-Rakefile
-pom.xml
-bin/gravitext-xmlprod-perftest
-lib/gravitext-xmlprod.rb
-lib/gravitext-xmlprod/version.rb
-END
-    out.puts jar_files
-  ensure
-    out.close
-  end
+t.specify do |h|
+  h.developer( "David Kellum", "dek-oss@gravitext.com" )
+  h.extra_deps     << [ 'gravitext-util', '~> 1.4.0' ]
+  h.extra_dev_deps << [ 'rjack-jdom',     '~> 1.1.1.0' ]
+  h.rubyforge_name = "gravitext"
 end
 
-file :mvn => [ 'pom.xml' ] do
-  sh( 'mvn package ' +
-      'dependency:copy-dependencies -DincludeArtifactIds=jdom ' +
-      '-DoutputDirectory=target' )
-end
+t.jars = [ t.default_jar ]
 
-jars.each do |jar|
-  file "lib/gravitext-xmlprod/#{jar}" => [ :mvn ] do
-    cp_r( File.join( "target/", jar ), 'lib/gravitext-xmlprod' )
-  end
-end
+file 'Manifest.txt' => [ 'lib/gravitext-xmlprod/version.rb' ]
 
-[ :gem, :test ].each { |t| task t => ( jar_files ) }
-
-task :mvn_clean do
-  rm_f( jar_files )
-  sh( 'mvn clean' )
-end
-task :clean => :mvn_clean
-
-task :tag do
-  tag = "gravitext-xmlprod-#{Gravitext::XMLProd::VERSION}"
-  dname = File.dirname( __FILE__ )
-  dname = '.' if Dir.getwd == dname
-  sh( "git status --only #{dname}" ) do |ok,res|
-    raise "Commit these changes before tagging." if ok #changes present
-  end
-  sh %{git tag -s -f -m "tag [#{tag}]" "#{tag}"}
-end
-
-hoe = Hoe.new( "gravitext-xmlprod", Gravitext::XMLProd::VERSION ) do |p|
-  p.developer( "David Kellum", "dek-oss@gravitext.com" )
-  p.rubyforge_name = "gravitext"
-  p.extra_deps << [ 'gravitext-util', '~> 1.4.0' ]
-end
+t.define_tasks
