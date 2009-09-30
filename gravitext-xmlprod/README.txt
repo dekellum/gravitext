@@ -1,8 +1,8 @@
 = gravitext-xmlprod
 
-* http://github.com/dekellum/gravitext
-* http://rubyforge.org/projects/gravitext
+* http://gravitext.rubyforge.org
 * http://gravitext.com/oss/gravitext-xmlprod
+* http://github.com/dekellum/gravitext
 
 == Description
 
@@ -10,13 +10,13 @@ A fast and simple XML streaming production package in java.
 
 == Dependencies
 
-* Java 1.5 or higher
+* Java 1.5+ higher
 * gravitext-util gem
-* rjack-jdom for comparative performance test
+* rjack-jdom for comparative performance testing
 
 == License
 
-Copyright (C) 2007-2009 David Kellum
+Copyright (c) 2007-2009 David Kellum
 
 Licensed under the Apache License, Version 2.0 (the "License"); you
 may not use this file except in compliance with the License.  You

@@ -1,8 +1,8 @@
 = gravitext-util
 
-* http://github.com/dekellum/gravitext
-* http://rubyforge.org/projects/gravitext
+* http://gravitext.rubyforge.org
 * http://gravitext.com/oss/gravitext-util
+* http://github.com/dekellum/gravitext
 
 == Description
 
@@ -14,8 +14,8 @@ A collection of core java utilities with ruby adapters for JRuby.
 * A concurrent performance testing facility for java/JRuby with simple
   test wiring in ruby.
 
-* A Heterogeneous Type-safe Map implementation in java with dynamicly
-  generated ruby accessors.
+* A Heterogeneous Type-safe Map implementation in java with
+  dynamically generated ruby accessors.
 
 * A set of core java utility classes (resizable buffers, a stopwatch,
   SI unit formatting, fast random number generator), in support of the
@@ -30,7 +30,7 @@ A collection of core java utilities with ruby adapters for JRuby.
 
 == License
 
-Copyright (C) 2007-2009 David Kellum
+Copyright (c) 2007-2009 David Kellum
 
 Licensed under the Apache License, Version 2.0 (the "License"); you
 may not use this file except in compliance with the License.  You
