@@ -33,8 +33,6 @@ t.specify do |h|
   h.rubyforge_name = "gravitext"
 end
 
-t.jars = [ t.default_jar ]
-
 file 'Manifest.txt' => [ 'lib/gravitext-xmlprod/version.rb' ]
 
 t.define_tasks
