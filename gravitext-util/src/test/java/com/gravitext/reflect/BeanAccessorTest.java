@@ -122,6 +122,7 @@ public class BeanAccessorTest
     private class Foo {
     }
 
+    @SuppressWarnings("unused")
     private class BeanA
     {
         public SomeEnum getEnum()
@@ -170,6 +171,7 @@ public class BeanAccessorTest
 
     }
 
+    @SuppressWarnings("unused")
     private class BeanB extends BeanA
     {
 
