@@ -24,7 +24,7 @@ require 'rjack-tarpit'
 
 t = RJack::TarPit.new( 'gravitext-util',
                        Gravitext::Util::VERSION,
-                       :no_assembly )
+                       :no_assembly, :java_platform )
 
 t.specify do |h|
   h.developer( "David Kellum", "dek-oss@gravitext.com" )
