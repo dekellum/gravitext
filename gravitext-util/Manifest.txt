@@ -1,7 +1,7 @@
-Manifest.txt
-README.rdoc
 History.rdoc
+Manifest.txt
 NOTICE.txt
+README.rdoc
 Rakefile
 pom.xml
 bin/gravitext-perftest
@@ -11,4 +11,6 @@ lib/gravitext-util/perftest.rb
 lib/gravitext-util/unimap.rb
 lib/gravitext-util/version.rb
 test/test_concurrent.rb
+test/test_perftest.rb
+test/test_unimap.rb
 lib/gravitext-util/gravitext-util-1.4.0.jar

@@ -1,7 +1,7 @@
-Manifest.txt
-README.rdoc
 History.rdoc
+Manifest.txt
 NOTICE.txt
+README.rdoc
 Rakefile
 pom.xml
 bin/gravitext-xmlprod-perftest
