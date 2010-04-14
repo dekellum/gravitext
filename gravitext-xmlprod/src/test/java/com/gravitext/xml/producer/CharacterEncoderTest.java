@@ -56,7 +56,7 @@ public class CharacterEncoderTest extends TestCase
             fail();
         }
         catch( CharacterEncodeException e ) {
-            _log.debug( "Expected:", e );
+            _log.debug( "Expected: " + e );
         }
     }
 
@@ -82,7 +82,7 @@ public class CharacterEncoderTest extends TestCase
             fail();
         }
         catch( CharacterEncodeException e ) {
-            _log.debug( "Expected:", e );
+            _log.debug( "Expected: " + e );
         }
     }
 
@@ -95,7 +95,7 @@ public class CharacterEncoderTest extends TestCase
             fail();
         }
         catch( CharacterEncodeException e ) {
-            _log.debug( "Expected:", e );
+            _log.debug( "Expected: " + e );
         }
     }
 

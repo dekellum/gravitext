@@ -200,7 +200,7 @@ public class XMLProducerTest extends TestCase
             fail();
         }
         catch( IllegalStateException e ) {
-            _log.debug( "Expected:", e );
+            _log.debug( "Expected: " + e );
         }
     }
 
@@ -216,7 +216,7 @@ public class XMLProducerTest extends TestCase
             fail();
         }
         catch( IllegalStateException e ) {
-            _log.debug( "Expected:", e );
+            _log.debug( "Expected: " + e );
         }
     }
 
