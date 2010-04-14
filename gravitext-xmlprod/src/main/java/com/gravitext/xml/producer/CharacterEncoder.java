@@ -81,6 +81,16 @@ public class CharacterEncoder
     }
 
     /**
+     * Set the mode for handling non-characters U+FFFE or
+     * U+FFFF. These are not allowed in XML in any form. The default
+     * is Mode.ERROR.
+     */
+    public final void setModeNAC( Mode mode )
+    {
+        _modeNAC = mode;
+    }
+
+    /**
      * Set the mode for handling the "C0" control characters in the range 0x01
      * to 0x1F excluding TAB, CR, and LF. These characters are disallowed in XML
      * 1.0. In XML 1.1 they are allowed as character references. The default is
@@ -105,6 +115,11 @@ public class CharacterEncoder
     public final Mode modeNUL()
     {
         return _modeNUL;
+    }
+
+    public final Mode modeNAC()
+    {
+        return _modeNAC;
     }
 
     public final Mode modeC0()
@@ -159,6 +174,11 @@ public class CharacterEncoder
             else if ( c >= 0x7F && c <= 0x9F && c != 0x85 ) { // NEL
                 _outA.append( in, last, i );
                 handleSpecialChar( _modeCommentC1, c, i );
+                last = ++i;
+            }
+            else if( c >= 0xFFFE ) {
+                _outA.append( in, last, i );
+                handleSpecialChar( _modeCommentNAC, c, i );
                 last = ++i;
             }
             else ++i; // And ignore everything else.
@@ -260,6 +280,11 @@ public class CharacterEncoder
                 handleSpecialChar( _modeC1, c, i );
                 last = ++i;
             }
+            else if( c >= 0xFFFE ) {
+                _outA.append( in, last, i );
+                handleSpecialChar( _modeNAC, c, i );
+                last = ++i;
+            }
             else ++i; // And ignore everything else.
         } // while
         _outA.append( in, last, i );
@@ -313,6 +338,11 @@ public class CharacterEncoder
             else if( c >= 0x7F && c <= 0x9F && c != 0x85 ) { // NEL
                 _outW.write( in, last, i - last );
                 handleSpecialChar( _modeC1, c, i );
+                last = ++i;
+            }
+            else if( c >= 0xFFFE ) {
+                _outW.write( in, last, i - last );
+                handleSpecialChar( _modeNAC, c, i );
                 last = ++i;
             }
             else ++i; // And ignore everything else.
@@ -372,6 +402,11 @@ public class CharacterEncoder
                 handleSpecialChar( _modeC1, c, i );
                 last = ++i;
             }
+            else if( c >= 0xFFFE ) {
+                _outW.write( in, last, i - last );
+                handleSpecialChar( _modeNAC, c, i );
+                last = ++i;
+            }
             else ++i; // And ignore everything else.
         } // while
         _outW.write( in, last, i - last );
@@ -428,10 +463,12 @@ public class CharacterEncoder
     private final Appendable _outA;
 
     private Mode _modeNUL   = Mode.ERROR;
+    private Mode _modeNAC   = Mode.ERROR;
     private Mode _modeC0    = Mode.ERROR;
     private Mode _modeC1    = Mode.ENCODE;
 
     private static final Mode _modeCommentNUL   = Mode.ERROR;
+    private static final Mode _modeCommentNAC   = Mode.ERROR;
     private static final Mode _modeCommentC0    = Mode.ERROR;
     private static final Mode _modeCommentC1    = Mode.ERROR;
     private static final Mode _modeCommentDash  = Mode.ERROR;

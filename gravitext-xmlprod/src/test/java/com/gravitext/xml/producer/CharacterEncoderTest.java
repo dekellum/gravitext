@@ -16,6 +16,7 @@ public class CharacterEncoderTest extends TestCase
         StringBuilder out = new StringBuilder();
         CharacterEncoder enc = new CharacterEncoder( out );
         assertEquals( CharacterEncoder.Mode.ERROR,  enc.modeNUL() );
+        assertEquals( CharacterEncoder.Mode.ERROR,  enc.modeNAC() );
         assertEquals( CharacterEncoder.Mode.ERROR,  enc.modeC0() );
         assertEquals( CharacterEncoder.Mode.ENCODE, enc.modeC1() );
     }
@@ -56,6 +57,19 @@ public class CharacterEncoderTest extends TestCase
         }
         catch( CharacterEncodeException e ) {
             _log.debug( "Expected:", e );
+        }
+    }
+
+    public void testDefaultErrorNAC() throws IOException
+    {
+        StringBuilder out = new StringBuilder();
+        CharacterEncoder enc = new CharacterEncoder( out );
+        try {
+            enc.encodeCharData( "*\uFFFF*<\"" );
+            fail();
+        }
+        catch( CharacterEncodeException e ) {
+            _log.debug( "Expected: " + e );
         }
     }
 

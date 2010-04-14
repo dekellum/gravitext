@@ -3,6 +3,8 @@
 * Use rjack-tarpit for build
 * Add rjack-jdom as dev dependency (for perf. testing)
 * Set gem platform to java
+* Add CharacterEncoder.modeNAC for handling non-characters U+FFFE and
+  U+FFFF.
 
 === 1.2 (2009-2-23)
 * New gem packaging.
