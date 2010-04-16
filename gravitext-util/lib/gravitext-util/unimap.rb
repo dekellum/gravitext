@@ -57,8 +57,8 @@ module Gravitext
 
           setter = getter + '='
           unless method_defined?( setter )
-            vtype = key.value_type.to_java_object
-            ctype = EXPLICIT_CTOR_TYPES.find { |ct| ct.java_class == vtype }
+            vtype = key.value_type
+            ctype = EXPLICIT_CTOR_TYPES.find { |ct| vtype == ct.java_class }
             if ctype
               define_method( setter ) do |value|
                 set( key, ( ctype.new( value ) if value ) )
