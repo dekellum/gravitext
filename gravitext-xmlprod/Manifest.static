@@ -5,5 +5,5 @@ README.rdoc
 Rakefile
 pom.xml
 bin/gravitext-xmlprod-perftest
-lib/gravitext-xmlprod.rb
 lib/gravitext-xmlprod/version.rb
+lib/gravitext-xmlprod.rb
