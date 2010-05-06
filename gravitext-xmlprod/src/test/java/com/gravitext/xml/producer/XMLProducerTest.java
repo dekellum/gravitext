@@ -235,6 +235,27 @@ public class XMLProducerTest extends TestCase
             _log.debug( "Expected: " + e );
         }
     }
+    static final Namespace NS_I = new Namespace( Namespace.DEFAULT,
+                                                 "urn:foo.ns_i" );
+
+    public void testSubDefaultNS() throws IOException
+    {
+        StringBuilder out = new StringBuilder();
+        XMLProducer p = new XMLProducer( out );
+        p.setIndent( Indentor.PRETTY );
+        p.startTag( "outer" );
+        p.startTag( "inner", NS_I );
+        p.startTag( "more", NS_I ).endTag();
+        p.endTag( "inner", NS_I );
+        p.endTag( "outer" );
+
+        assertEquals( "<outer>\n" +
+                      " <inner xmlns=\"urn:foo.ns_i\">\n" +
+                      "  <more/>\n" +
+                      " </inner>\n" +
+                      "</outer>\n",
+                      out.toString() );
+    }
 
     private Logger _log = LoggerFactory.getLogger( getClass() );
 }

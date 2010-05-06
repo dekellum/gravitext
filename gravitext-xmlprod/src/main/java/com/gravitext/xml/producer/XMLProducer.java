@@ -17,6 +17,7 @@
 package com.gravitext.xml.producer;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Produces well-formed XML documents from a series of event methods.
@@ -108,6 +109,25 @@ public final class XMLProducer
     public XMLProducer startTag( final Tag tag ) throws IOException
     {
         _impl.startTag( tag );
+        return this;
+    }
+
+    /**
+     * Put start tag by name in default Namespace. The various addAttr() methods
+     * can then be called to add attributes to this tag.
+     */
+    public XMLProducer startTag( final String name ) throws IOException
+    {
+        return startTag( name, null );
+    }
+
+    /**
+     * Put start tag by name and Namespace. The various addAttr() methods
+     * can then be called to add attributes to this tag.
+     */
+    public XMLProducer startTag( String name, Namespace ns ) throws IOException
+    {
+        _impl.startTag( cacheTag( name, ns ) );
         return this;
     }
 
@@ -379,6 +399,27 @@ public final class XMLProducer
     }
 
     /**
+     * Close the matching last opened tag by name and default Namespace.
+     * @throws IllegalStateException if there is no matching open tag.
+     * @throws IOException from the underlying Appendable.
+     */
+    public XMLProducer endTag( String name ) throws IOException
+    {
+        return endTag( name, null );
+    }
+
+    /**
+     * Close the matching last opened tag by name and default Namespace.
+     * @throws IllegalStateException if there is no matching open tag.
+     * @throws IOException from the underlying Appendable.
+     */
+    public XMLProducer endTag( String name, Namespace ns ) throws IOException
+    {
+        _impl.endTag( cacheTag( name, ns ) );
+        return this;
+    }
+
+    /**
      * Put comment at the current location.
      * @throws IllegalStateException if a comment can't be written
      *         at this location in the document.
@@ -386,12 +427,34 @@ public final class XMLProducer
      *         underlying CharacterEncoder.
      * @throws IOException from the underlying Appendable.
      */
-     public XMLProducer putComment( final CharSequence comment )
+    public XMLProducer putComment( final CharSequence comment )
         throws IOException
     {
         _impl.putComment( comment );
         return this;
     }
+
+    private Tag cacheTag( String name, Namespace ns )
+    {
+        String iri = ( ns == null ) ? null : ns.nameIRI();
+        HashMap<String,Tag> tags = _tagCache.get( iri );
+
+        if( tags == null ) {
+            tags = new HashMap<String,Tag>(11);
+            _tagCache.put( iri, tags );
+        }
+        Tag t = tags.get( name );
+        if( t == null ) {
+            t = new Tag( name, ns);
+            tags.put( name, t );
+        }
+
+        return t;
+    }
+
+    //Cached tags of: namespace URI -> tag name -> Tag1
+    private HashMap<String,HashMap<String,Tag>> _tagCache =
+        new HashMap<String,HashMap<String,Tag>>(5);
 
     private final XMLProducerImpl _impl;
 }
