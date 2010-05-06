@@ -63,6 +63,21 @@ public final class Namespace
 
     }
 
+    @Override
+    public int hashCode()
+    {
+        return _nameIRI.hashCode();
+    }
+
+    @Override
+    public boolean equals( Object o )
+    {
+        if( ( o != null ) && ( o instanceof Namespace ) ) {
+            return _nameIRI.equals( ((Namespace) o)._nameIRI );
+        }
+        return false;
+    }
+
     /**
      * Return the prefix as constructed or the default (empty) prefix.
      */

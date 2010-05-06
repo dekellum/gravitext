@@ -52,6 +52,30 @@ public final class Tag
         _endTag = "</" + qName + ">";
     }
 
+    @Override
+    public int hashCode()
+    {
+        int h = _name.hashCode();
+        if( _namespace != null ) {
+            h ^= _namespace.hashCode();
+        }
+        return h;
+    }
+
+    @Override
+    public boolean equals( Object o )
+    {
+        if( ( o != null ) && ( o instanceof Tag ) ) {
+            Tag ot = (Tag) o;
+            if( ( namespace() == ot.namespace() ) ||
+                ( ( namespace() != null ) &&
+                    namespace().equals( ot.namespace() ) ) ) {
+                return name().equals( ot.name() );
+            }
+        }
+        return false;
+    }
+
     /**
      * Return the local name of the tag.
      */
