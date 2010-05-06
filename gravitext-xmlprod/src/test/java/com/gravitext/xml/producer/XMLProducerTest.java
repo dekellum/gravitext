@@ -17,10 +17,18 @@
 package com.gravitext.xml.producer;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.CharBuffer;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.gravitext.util.ResizableCharBufferWriter;
 
@@ -255,6 +263,29 @@ public class XMLProducerTest extends TestCase
                       " </inner>\n" +
                       "</outer>\n",
                       out.toString() );
+    }
+
+    public void testDom() throws Exception
+    {
+        assertDomRT( "<p>hello</p>" );
+        assertDomRT( "<p><a href=\"foo\">hello</a><b>world</b></p>" );
+    }
+
+    /**
+     *  Assert that XMLPRoducer.putDom result is identical to input xml parsed
+     *  to DOM.
+     */
+    private void assertDomRT( String xml )
+        throws IOException, ParserConfigurationException, SAXException
+    {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document doc = db.parse( new InputSource( new StringReader( xml ) ) );
+        StringBuilder out = new StringBuilder();
+        XMLProducer p = new XMLProducer( out );
+        p.setIndent( Indentor.COMPRESSED );
+        p.putDom( doc );
+        assertEquals( xml, out.toString() );
     }
 
     private Logger _log = LoggerFactory.getLogger( getClass() );
