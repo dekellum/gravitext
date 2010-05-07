@@ -265,7 +265,7 @@ public class XMLProducerTest extends TestCase
                       out.toString() );
     }
 
-    public void testDom() throws Exception
+    public void testDOM() throws Exception
     {
         assertDomRT( "<p>hello</p>" );
         assertDomRT( "<p><a href=\"foo\">hello</a><b>world</b></p>" );
@@ -284,7 +284,7 @@ public class XMLProducerTest extends TestCase
         StringBuilder out = new StringBuilder();
         XMLProducer p = new XMLProducer( out );
         p.setIndent( Indentor.COMPRESSED );
-        p.putDom( doc );
+        new DOMWalker( p ).putDOM( doc );
         assertEquals( xml, out.toString() );
     }
 

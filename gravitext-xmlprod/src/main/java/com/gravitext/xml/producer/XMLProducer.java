@@ -19,15 +19,6 @@ package com.gravitext.xml.producer;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-
 /**
  * Produces well-formed XML documents from a series of event methods.
  *
@@ -122,8 +113,8 @@ public final class XMLProducer
     }
 
     /**
-     * Put start tag by name in default Namespace. The various addAttr() methods
-     * can then be called to add attributes to this tag.
+     * Put start tag by name in default Namespace. The various addAttr()
+     * methods can then be called to add attributes to this tag.
      */
     public XMLProducer startTag( final String name ) throws IOException
     {
@@ -418,7 +409,7 @@ public final class XMLProducer
     }
 
     /**
-     * Close the matching last opened tag by name and default Namespace.
+     * Close the matching last opened tag by name and Namespace.
      * @throws IllegalStateException if there is no matching open tag.
      * @throws IOException from the underlying Appendable.
      */
@@ -441,44 +432,6 @@ public final class XMLProducer
     {
         _impl.putComment( comment );
         return this;
-    }
-
-    public XMLProducer putDom( final Node node ) throws IOException
-    {
-        if( ( node instanceof Document ) ||
-            ( node instanceof Document ) ) {
-            putNodeList( node.getChildNodes() );
-        }
-        else if( node instanceof Element ) {
-            startTag( node.getNodeName() );
-
-            // Add attributes
-            NamedNodeMap atts = node.getAttributes();
-            final int end = atts.getLength();
-            for( int i = 0; i < end; ++i ) {
-                Attr attr = (Attr) atts.item( i );
-                addAttr( attr.getName(), attr.getValue() );
-            }
-
-            // Add Contents
-            putNodeList( node.getChildNodes() );
-
-            endTag( node.getNodeName() );
-        }
-        else if( ( node instanceof Text ) ||
-                 ( node instanceof CDATASection ) ) {
-            putChars( node.getNodeValue() );
-        }
-
-        return this;
-    }
-
-    private void putNodeList( final NodeList list ) throws IOException
-    {
-        final int end = list.getLength();
-        for( int i = 0; i < end; ++i ) {
-            putDom( list.item( i ) );
-        }
     }
 
     private Tag cacheTag( final String name, final Namespace ns )
