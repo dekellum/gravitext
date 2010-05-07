@@ -1,10 +1,13 @@
 === 1.3.0 (TBD)
-* Upgrade to gravitext-util-1.4.0
-* Use rjack-tarpit for build
-* Add rjack-jdom as dev dependency (for perf. testing)
-* Set gem platform to java
+* New DOMWalker for writing W3C DOM fragments via an XMLProducer.
+* XMLProducer supports start/end tag by String name and optional
+  Namespace.
 * Add CharacterEncoder.modeNAC for handling non-characters U+FFFE and
   U+FFFF.
+* Upgrade to gravitext-util-1.4.0.
+* Use rjack-tarpit for build.
+* Add rjack-jdom as dev dependency (for perf. testing).
+* Set gem platform to java.
 
 === 1.2 (2009-2-23)
 * New gem packaging.
