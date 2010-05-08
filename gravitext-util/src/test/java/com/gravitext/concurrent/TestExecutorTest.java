@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.junit.Test;
 public class TestExecutorTest
 {
     @Test
-    public void testException() 
+    public void testException()
     {
         TestFactory factory = new TestFactoryBase() {
             public TestRunnable createTestRunnable( final int seed )
@@ -44,11 +44,11 @@ public class TestExecutorTest
                 };
             }
         };
-        
+
         try {
             long count = TestExecutor.run( factory, 1000, 5 );
             fail( "Ran " + count + " without error" );
-        } 
+        }
         catch( TestException x ) {
         }
     }
@@ -70,7 +70,7 @@ public class TestExecutorTest
             }
         };
         TestExecutor exec = new TestExecutor( factory, 1000, 7 );
-        
+
         try {
             long count = exec.runTest();
             fail( "Ran " + count + " without error" );
@@ -81,7 +81,7 @@ public class TestExecutorTest
     }
 
     @Test
-    public void testRunCount() 
+    public void testRunCount()
     {
         final int runs = 10000;
         final AtomicIntegerArray slots = new AtomicIntegerArray( runs + 10 );
@@ -100,18 +100,18 @@ public class TestExecutorTest
             }
         };
         TestExecutor exec = new TestExecutor( factory, runs, 3 );
-        
+
         long count = exec.runTest();
         assertEquals( 0, count );
         assertEquals( runs, exec.runsExecuted() );
-        
+
         for( int i = 1; i < slots.length(); ++i ) {
             assertEquals( "Run " + i,
-                          ( i <= exec.runsExecuted() ) ? 1 : 0, 
+                          ( i <= exec.runsExecuted() ) ? 1 : 0,
                           slots.get( i ) );
         }
     }
-    
+
     private static class TestException extends RuntimeException
     {
         public TestException( String message )
@@ -121,5 +121,5 @@ public class TestExecutorTest
 
         private static final long serialVersionUID = 1L;
     }
-    
+
 }

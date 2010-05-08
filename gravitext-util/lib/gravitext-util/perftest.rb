@@ -1,5 +1,5 @@
 #--
-# Copyright (C) 2008 David Kellum
+# Copyright (c) 2007-2010 David Kellum
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
 # may not use this file except in compliance with the License.  You
@@ -66,20 +66,20 @@ module Gravitext
       # Secondary warmup requirement: consectutive iteration
       # throughputs within tollerance (default: 0.05)
       attr_accessor :warmup_tolerance
-      
+
       # Number of final comparison iterations (default: 3)
       attr_accessor :final_iterations
-      
+
       # Number of runs in final comparisons (default: computed from
       # warmup and final_exec_target)
-      attr_accessor :final_runs 
+      attr_accessor :final_runs
 
       # Target duration of final comparison iterations in seconds (default: 10s)
       attr_accessor :final_exec_target
 
       # Test executation progress is sent to listener, see PrintListener.
       attr_accessor :listener
-      
+
       # Do per run timing for mean latency. (default: true)
       attr_accessor :do_per_run_timing
 
@@ -97,7 +97,7 @@ module Gravitext
         @warmup_total_target = 25
         @warmup_tolerance = 0.05
 
-        @final_iterations = 3 
+        @final_iterations = 3
         @final_runs = nil
         @final_exec_target = 10.0
 
@@ -115,20 +115,20 @@ module Gravitext
         run_counts = if @final_runs
                        Array.new( @factories.size, @final_runs )
                      else
-                       counts = @factories.map do |factory| 
+                       counts = @factories.map do |factory|
                          exec = finals.detect { |e| e.factory == factory }
                          ( exec.mean_throughput * @final_exec_target ).to_i
                        end
                        align_counts( counts )
                      end
-        
+
         results = execute_comparisons( run_counts, @final_iterations )
         sums = sum_results( results ) if @final_iterations > 1
 
         @listener.comparisons_end( self, sums )
         sums
       end
-      
+
       def warmup
 
         @listener.warmups_begin( self )
@@ -139,7 +139,7 @@ module Gravitext
           s.prior = nil
           s.warm_time = 0.0
           s
-        end 
+        end
 
         first = true
         finals = []
@@ -148,13 +148,13 @@ module Gravitext
           @listener.warmup_next_series( self ) unless first
 
           states,done = states.partition do |s|
-            
+
             # Cleanup before each run
             Java::java.lang.System::gc
             Java::java.lang.Thread::yield
 
             runs = if s.prior
-                     ( @warmup_exec_target * s.prior.runs_executed ) / 
+                     ( @warmup_exec_target * s.prior.runs_executed ) /
                        s.prior.duration.seconds
                    else
                      1
@@ -169,11 +169,11 @@ module Gravitext
             s.warm_time += executor.duration.seconds
             tchange = throughput_change( executor, s.prior )
             s.prior = executor
-            
+
             ( ( s.warm_time < @warmup_total_target ) ||
               ( tchange.abs > @warmup_tolerance ) )
           end
-          finals += done.map { |s| s.prior }          
+          finals += done.map { |s| s.prior }
           first = false
         end
 
@@ -186,20 +186,20 @@ module Gravitext
 
         # Round to 2-significant digits
         f = 1
-        ( f *= 10 ) while ( mean / f ) > 100 
+        ( f *= 10 ) while ( mean / f ) > 100
         mean = ( mean.to_f / f ).round * f
-        
+
         if ( mean.to_f / counts.min ) > @max_align_ratio
           counts
         else
-          Array.new( counts.size, mean ) 
+          Array.new( counts.size, mean )
         end
       end
 
       def execute_comparisons( run_counts, iterations )
 
         results = Array.new( @factories.size ) { [] }
-        
+
         @listener.comparisons_begin( self, run_counts )
 
         iterations.times do |iteration|
@@ -219,7 +219,7 @@ module Gravitext
 
         results
       end
-      
+
       def sum_results( results )
         sums = []
 
@@ -257,7 +257,7 @@ module Gravitext
         executor.do_per_run_timing = @do_per_run_timing
         executor
       end
-      
+
     end
 
     # Listen for various events from the Harness and print results to console
@@ -269,7 +269,7 @@ module Gravitext
       def initialize( out = $stdout )
         @out = out
       end
-      
+
       def begin( harness, factories )
         @out << "Concurrent testing: #{harness.thread_count} threads."
         new_line
@@ -298,9 +298,9 @@ module Gravitext
       def warmups_end( final_executors )
         new_line
       end
-      
+
       def comparisons_begin( harness, run_counts )
-        @out << ( "Comparison runs (%d iterations):" % 
+        @out << ( "Comparison runs (%d iterations):" %
                   [ harness.final_iterations ] )
         new_line
         print_header
@@ -309,7 +309,7 @@ module Gravitext
       def comparison_next_series( harness )
         print_separator
       end
-      
+
       def comparison_start_run( executor )
         print_result_start( executor )
       end
@@ -350,9 +350,8 @@ module Gravitext
         new_line
       end
 
-
       def print_result_start( exec, out = @out )
-        out << ( "%-#{@nwidth}s %6s " % 
+        out << ( "%-#{@nwidth}s %6s " %
                  [ exec.factory.name,
                    Metric::format( exec.runs_target ) ] )
       end
@@ -361,7 +360,7 @@ module Gravitext
         out << ( "%7s %6s %6s/r %6sr/s (%6s) %7s/r (%6s)" %
                  [ exec.duration,
                    Metric::format( exec.result_sum.to_f ),
-                   Metric::format( exec.result_sum.to_f / 
+                   Metric::format( exec.result_sum.to_f /
                                    exec.runs_executed ),
                    Metric::format( exec.mean_throughput ),
                    Metric::format_difference( throughput_change(exec,prior) ),
@@ -389,7 +388,7 @@ module Gravitext
         super( LogWriter.new( logger ) )
       end
 
-      alias :orig_result_start :print_result_start 
+      alias :orig_result_start :print_result_start
       def print_result_start( exec ); end
 
       # Print run start and result output on single log line
@@ -399,7 +398,7 @@ module Gravitext
         super( exec, prior, line )
         @out << line
       end
-      
+
       def new_line; end
       def print_separator( char = '-' ); end
 

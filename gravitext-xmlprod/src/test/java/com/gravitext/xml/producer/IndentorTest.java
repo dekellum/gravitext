@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2008-2010 David Kellum
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License.  You may
+ * obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied.  See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package com.gravitext.xml.producer;
 
 import java.io.IOException;
@@ -18,7 +34,7 @@ public class IndentorTest extends TestCase
         assertFalse( Indentor.COMPRESSED.isLineBreak() );
         assertFalse(           new Indentor("X").isLineBreak() );
     }
-    
+
     public void testLargeIndent() throws IOException
     {
         Indentor i = new Indentor("12");
@@ -32,7 +48,7 @@ public class IndentorTest extends TestCase
         i.indent( b, 67 );
         assertEquals( 2 * 67 + 1, b.length() );
     }
-    
+
     public void testCompressed() throws IOException
     {
         Indentor i = Indentor.COMPRESSED;
@@ -40,7 +56,7 @@ public class IndentorTest extends TestCase
         i.indent( b, 3 );
         assertEquals( "", b.toString() );
     }
-    
+
     public void testLineBreaks() throws IOException
     {
         Indentor i = Indentor.LINE_BREAK;
@@ -48,5 +64,5 @@ public class IndentorTest extends TestCase
         i.indent( b, 3 );
         assertEquals( "\n", b.toString() );
     }
-     
+
 }

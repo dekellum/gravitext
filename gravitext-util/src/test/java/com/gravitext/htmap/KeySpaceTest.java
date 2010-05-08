@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import com.gravitext.htmap.KeySpace;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-@SuppressWarnings("unchecked")
 public class KeySpaceTest
 {
     @Test
@@ -44,7 +43,7 @@ public class KeySpaceTest
         ks.create( "KEY1", String.class );
         assertEquals( 1, ks.size() );
     }
-    
+
     @Test
     public void testDuplicateName()
     {
@@ -58,20 +57,19 @@ public class KeySpaceTest
             _log.debug( "Expected:", x );
         }
     }
-    
+
     @Test
-    public void testConcurrentCreation() 
+    public void testConcurrentCreation()
     {
         int count = 0;
-        
+
         for( int r = 1; r < 17; ++r ) {
             count += TestExecutor.run( new ConcurrentCreater(), 101, r );
         }
         _log.debug( "Completed threaded run with {} iterations.", count );
     }
 
-    
-    private static class ConcurrentCreater extends TestFactoryBase 
+    private static class ConcurrentCreater extends TestFactoryBase
     {
         public TestRunnable createTestRunnable( final int seed )
         {
@@ -80,13 +78,13 @@ public class KeySpaceTest
                 public int runIteration( int run )
                 {
                     int count = _rand.nextInt( 10 );
-                    
+
                     Key[] lkeys = new Key[ count ];
 
                     ArrayHTMap kmap = new ArrayHTMap( _ks );
-                                
+
                     for( int i = 0; i < count; ++i ) {
-                        lkeys[i] = _ks.create( "k-" + run + '.' + i, 
+                        lkeys[i] = _ks.create( "k-" + run + '.' + i,
                                                String.class );
                         kmap.put( lkeys[i], lkeys[i].toString() );
                         if( _rand.nextInt( 5 ) == 0 ) Thread.yield();
@@ -94,21 +92,21 @@ public class KeySpaceTest
 
                     for( int i = 0; i < count; ++i ) {
                         if( _rand.nextInt( 5 ) == 0 ) Thread.yield();
-                        assertEquals( lkeys[i].name(), 
+                        assertEquals( lkeys[i].name(),
                                       kmap.get( (Object) lkeys[i] ) );
                     }
 
                     Map<Key, Object> copy = new HashMap<Key, Object>( kmap );
                     if( _rand.nextInt( 3 ) == 0 ) Thread.yield();
                     assertEquals( copy, kmap );
-                    
+
                     return count;
-                    
+
                 }
             };
         }
         private final KeySpace _ks = new KeySpace();
     }
-    
+
     private Logger _log = LoggerFactory.getLogger( getClass() );
 }

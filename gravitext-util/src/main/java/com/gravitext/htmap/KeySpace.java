@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ public final class KeySpace
      * construction of keys of complex valueType which will be externally cast.
      * @param name a unique name. By convention, this is the String
      * equivalent of the constant to which the Key will be assigned.
-     * @param valueType the runtime class type of values to be
+     * @param genericType the runtime class type of values to be
      * associated with this key.
      * @throws IllegalArgumentException if a Key by the specified name
      * has already been created.
@@ -111,7 +111,6 @@ public final class KeySpace
     {
         return (Key<List<T>>) createGeneric( name, List.class );
     }
-
 
     /**
      * Get Key by name.

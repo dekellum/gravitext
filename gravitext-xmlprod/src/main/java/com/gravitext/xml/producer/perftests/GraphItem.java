@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2008-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,16 +27,16 @@ public final class GraphItem
     public GraphItem( FastRandom r )
     {
         int s = 0;
-        _content = CHAR_DATA.substring( s = r.nextInt(101), 
+        _content = CHAR_DATA.substring( s = r.nextInt(101),
                                         s + r.nextInt(901));
         _score = r.nextInt();
         _value = r.nextInt();
         _name = CHAR_DATA.substring( s = r.nextInt(201), s + r.nextInt(21) );
-        
+
         int count = r.nextInt(12);
         _list = new ArrayList<String>( count );
         for( int i = 0; i < count; ++i ) {
-            _list.add( CHAR_DATA.substring( s = r.nextInt(201), 
+            _list.add( CHAR_DATA.substring( s = r.nextInt(201),
                                             s + r.nextInt(34) ) );
         }
     }
@@ -65,15 +65,15 @@ public final class GraphItem
     {
         return _value;
     }
-    
+
     private String _content;
     private String _name;
     private int _score;
     private int _value;
-    private List<String> _list; 
+    private List<String> _list;
 
     private static final String CHAR_DATA; // At least 1024 length
-    
+
     static {
         StringBuilder b = new StringBuilder( 1024 + 256 );
         while( b.length() < 1024 ) {

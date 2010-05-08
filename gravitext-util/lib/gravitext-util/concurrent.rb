@@ -1,5 +1,5 @@
 #--
-# Copyright (C) 2008 David Kellum
+# Copyright (c) 2007-2010 David Kellum
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
 # may not use this file except in compliance with the License.  You
@@ -35,7 +35,7 @@ module Gravitext
     # per thread.).  The first of any Exceptions raised in a test
     # thread will be re-raised in the calling thread. Returns sum of
     # runIteration return counts.
-    def self.execute_test_factory( test_factory, runs, 
+    def self.execute_test_factory( test_factory, runs,
                                    threads = available_cores )
       TestExecutor::run( test_factory, runs, threads )
     end
@@ -45,9 +45,9 @@ module Gravitext
     # initialize(). The first of any Exceptions raised in a test
     # thread will be re-raised in the calling thread. Returns sum of
     # runIteration return counts.
-    def self.execute_runnable( test_runnable_class, runs, 
+    def self.execute_runnable( test_runnable_class, runs,
                                threads = available_cores )
-      TestExecutor::run( BasicTestFactory.new( test_runnable_class ), 
+      TestExecutor::run( BasicTestFactory.new( test_runnable_class ),
                          runs, threads )
     end
 
@@ -65,7 +65,7 @@ module Gravitext
       include TestFactory
 
       attr_accessor :name
-      
+
       def initialize( proc = nil, &block )
         @name = 'BlockTestFactory'
         @block = proc || block

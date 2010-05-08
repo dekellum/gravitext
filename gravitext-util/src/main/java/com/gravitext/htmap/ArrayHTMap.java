@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ import java.util.Set;
  * @author David Kellum
  */
 @SuppressWarnings("unchecked")
-public final class ArrayHTMap
+public class ArrayHTMap
     extends AbstractMap<Key, Object>
     implements HTMap
 {
@@ -60,7 +60,7 @@ public final class ArrayHTMap
         _space = space;
         _values = new Object[ space.size() ]; //NPE on null space
     }
-    
+
     /**
      * Construct as copy of other. This ArrayHTMap will have the same
      * KeySpace as other.
@@ -89,16 +89,16 @@ public final class ArrayHTMap
         T prior = cast( key, i );
         _values[i] = value;
         if( prior == null ) ++_size;
-        
+
         return prior;
     }
-    
+
     @Override
     public Object put( Key key, Object value )
     {
         return set( key, value );
     }
-    
+
     /**
      * {@inheritDoc}
      * @throws IllegalArgumentException if key is not from the same
@@ -106,12 +106,12 @@ public final class ArrayHTMap
      * @throws NullPointerException {@inheritDoc}
      */
     public <T> T get( Key<T> key )
-    {        
+    {
         checkKey( key );
-        
+
         int i = key.id();
         if( i >= _values.length ) return null;
-        
+
         return cast( key, i );
     }
 
@@ -120,7 +120,7 @@ public final class ArrayHTMap
     {
         return get( (Key) key );
     }
-    
+
     @Override
     public boolean containsKey( Object key )
     {
@@ -136,7 +136,7 @@ public final class ArrayHTMap
     public <T> T remove( Key<T> key )
     {
         checkKey( key );
-        
+
         int i = key.id();
         if( i >= _values.length ) return null;
 
@@ -160,26 +160,25 @@ public final class ArrayHTMap
         Arrays.fill( _values, null );
         _size = 0;
     }
-    
+
     @Override
     public int size()
     {
         return _size;
     }
-    
+
     @Override
     public Set<Entry<Key, Object>> entrySet()
     {
         return new EntrySet();
     }
-    
+
     @Override
     public ArrayHTMap clone()
     {
         return new ArrayHTMap( this );
     }
 
-   
     private <T> T cast( Key<T> key, int i )
     {
         return (T) _values[i];
@@ -200,17 +199,17 @@ public final class ArrayHTMap
         if( key == null ) throw new NullPointerException( "key" );
         if( key.space() != _space ) {
             throw new IllegalArgumentException(
-                "Key is not from KeySpace of this KeyMap." ); 
+                "Key is not from KeySpace of this KeyMap." );
         }
     }
-    
+
     private void checkValue( Key key, Object value )
     {
         if( value == null ) throw new NullPointerException( "value" );
         if( ! key.valueType().isInstance( value ) ) {
-            throw new ClassCastException( String.format( 
-                "Value type %s not assignable to Key '%s' with value type %s.", 
-                value.getClass().getName(), 
+            throw new ClassCastException( String.format(
+                "Value type %s not assignable to Key '%s' with value type %s.",
+                value.getClass().getName(),
                 key.name(),
                 key.valueType().getName() ) );
         }
@@ -230,17 +229,17 @@ public final class ArrayHTMap
         public boolean contains( Object e )
         {
             Entry<Key, Object> entry = (Entry<Key, Object>) e;
-            
+
             Object value = ArrayHTMap.this.get( entry.getKey() );
-            return ( ( value == null ) ? false : 
-                       value.equals( entry.getValue() ) );    
+            return ( ( value == null ) ? false :
+                       value.equals( entry.getValue() ) );
         }
 
         @Override
         public boolean add( Entry<Key, Object> entry)
         {
             Object prior = set( entry.getKey(), entry.getValue() );
-            return ( ( prior == null ) ? 
+            return ( ( prior == null ) ?
                      true : ( ! prior.equals( entry.getValue() ) ) );
         }
 
@@ -262,9 +261,9 @@ public final class ArrayHTMap
         {
             return _size;
         }
-        
+
     }
-    
+
     private final class EntryIterator
         implements Iterator<Entry<Key, Object>>
     {
@@ -281,7 +280,7 @@ public final class ArrayHTMap
         {
             if( ! hasNext() ) throw new NoSuchElementException();
 
-            KeyMapEntry entry = 
+            KeyMapEntry entry =
                 new KeyMapEntry( _keySequence.get( _current ), _current );
             _last = _current;
             seek();
@@ -290,7 +289,7 @@ public final class ArrayHTMap
 
         public void remove()
         {
-            _values[_last] = null; 
+            _values[_last] = null;
             --_size;
         }
 
@@ -304,7 +303,7 @@ public final class ArrayHTMap
         private int _current = -1;
         private int _last = -1;
     }
-    
+
     private final class KeyMapEntry
         implements Entry<Key, Object>
     {
@@ -322,7 +321,7 @@ public final class ArrayHTMap
         {
             return _values[_index];
         }
-        
+
         public Object setValue( Object value )
         {
             return ArrayHTMap.this.set( _key, value );
@@ -347,7 +346,7 @@ public final class ArrayHTMap
         private Key _key;
         private int _index;
     }
-   
+
     private final KeySpace _space;
     private Object[] _values;
     private int _size = 0;

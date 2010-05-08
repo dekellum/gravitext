@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public final class FastRandom
 {
     /**
      * Construct with FastRandom.generateSeed() as the seed.
-     */    
+     */
     public FastRandom()
     {
         this( generateSeed() );
@@ -46,9 +46,9 @@ public final class FastRandom
     public FastRandom( int seed )
     {
         _r = seed;
-        nextInt(); // Avoid same seed being returned in first call to nextInt(). 
+        nextInt(); // Avoid same seed being returned in first call to nextInt().
     }
-    
+
     /**
      * Returns a psuedorandom value in the range [0,high).
      */
@@ -56,7 +56,7 @@ public final class FastRandom
     {
         return nextInt( 0, high );
     }
-    
+
     /**
      * Returns a psuedorandom value in the range [low,high).
      */
@@ -66,7 +66,7 @@ public final class FastRandom
         if( n < 0 ) n = -n;
         return ( n + low );
     }
-    
+
     /**
      * Returns a psuedorandom integer using all 32-bits.
      */
@@ -76,7 +76,7 @@ public final class FastRandom
         _r = r ^ ( r << 5 ) ^ ( r >>> 9 ) ^ ( r << 7 );
         return r;
     }
-    
+
     /**
      * Generate a new seed derived from System.nanoTime() and a new
      * Object.hashCode().  Note this is a relatively slow operation

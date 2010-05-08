@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import com.gravitext.util.Stopwatch;
 
 /**
  * Runs a concurrent test constructed from a TestFactory.
- * 
+ *
  * @author David Kellum
  */
 public class TestExecutor
@@ -89,7 +89,7 @@ public class TestExecutor
      * thrown in a test thread from {@code TestRunnable.runIteration()} will be
      * re-thrown from this method after wrapping as needed in a
      * RuntimeException.
-     * 
+     *
      * @throws RuntimeException from TestRunnable.runIteration()
      * @throws Error, for example, when jUnit assertions are used in the
      *             TestRunanble

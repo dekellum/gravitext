@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +27,9 @@ import com.gravitext.htmap.ArrayHTMap;
 import com.gravitext.htmap.Key;
 import com.gravitext.htmap.KeySpace;
 
-
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-@SuppressWarnings("unchecked")
 public class ArrayHTMapTest
 {
     @Test
@@ -45,26 +43,26 @@ public class ArrayHTMapTest
 
         assertNull( kmap.get( dkey ) );
         assertNull( kmap.get( skey ) );
-        
+
         assertEquals( 0, kmap.size() );
-        
+
         assertNull( kmap.set( dkey, 3.4 ) );
         assertNull( kmap.set( skey, "string" ) );
         assertEquals( 2, kmap.size() );
-                
+
         assertTrue( kmap.get( dkey ) == 3.4 );
         assertEquals( new String( "string" ), kmap.get( skey ) );
-        
+
         assertTrue( kmap.remove( dkey ) == 3.4 );
         assertEquals( new String( "string" ), kmap.remove( skey ) );
         assertEquals( 0, kmap.size() );
-       
+
         assertNull( kmap.get( dkey ) );
         assertNull( kmap.get( skey ) );
     }
-    
+
     @Test
-    public void testExpansion() 
+    public void testExpansion()
     {
         KeySpace ks = new KeySpace();
         ArrayHTMap kmap = new ArrayHTMap( ks );
@@ -85,12 +83,12 @@ public class ArrayHTMapTest
 
         assertTrue( kmap.get( dkey ) == 3.4 );
         assertEquals( "string", kmap.get( skey ) );
-        
+
         kmap.clear();
         assertEquals( 0, kmap.size() );
         assertNull( kmap.get( skey ) );
     }
-    
+
     @Test
     public void testNulls()
     {
@@ -113,7 +111,7 @@ public class ArrayHTMapTest
             _log.debug( "Expected:", x );
         }
     }
-    
+
     @Test
     public void testWrongValueType()
     {
@@ -121,7 +119,7 @@ public class ArrayHTMapTest
         ArrayHTMap kmap = new ArrayHTMap( ks );
         Key key = ks.create( "DKEY", Double.class );
         Object val = "goo";
-        
+
         try {
             kmap.put( key, val ); //unchecked
             fail( "String inserted for Double value!");
@@ -130,7 +128,7 @@ public class ArrayHTMapTest
             _log.debug( "Expected:", x );
         }
     }
-    
+
     @Test
     public void testWrongSpace()
     {
@@ -138,7 +136,7 @@ public class ArrayHTMapTest
         ArrayHTMap kmap = new ArrayHTMap( ks );
         KeySpace other = new KeySpace();
         Key<Double> key = other.create( "DKEY", Double.class );
-        
+
         try {
             kmap.set( key, 3.4 );
             fail( "put() from wrong KeySpace succeeded!" );
@@ -147,7 +145,7 @@ public class ArrayHTMapTest
             _log.debug( "Expected:", x );
         }
     }
-    
+
     @Test
     public void testMapCompatibility()
     {
@@ -160,29 +158,29 @@ public class ArrayHTMapTest
         assertFalse( kmap.keySet().iterator().hasNext() );
         assertFalse( kmap.values().iterator().hasNext() );
         assertEquals( 0, kmap.entrySet().size() );
-        
+
         kmap.set( dkey, 3.4 );
         assertTrue( kmap.keySet().contains( dkey ) );
         assertTrue( kmap.values().contains( new Double( 3.4 ) ) );
         assertEquals( 1, kmap.entrySet().size() );
         assertFalse( kmap.keySet().contains( skey ) );
         assertFalse( kmap.values().contains( "string" ) );
-        
+
         kmap.entrySet().add( new Map.Entry<Key,Object>() {
             public Key getKey() { return skey; }
             public Object getValue() { return "before"; }
-            public Object setValue( Object value ) { return null; } 
+            public Object setValue( Object value ) { return null; }
         } );
         assertEquals( "before", kmap.get( skey ) );
         for( Map.Entry<Key, Object> e : kmap.entrySet() ) {
             if( e.getKey().equals( skey ) ) e.setValue( "string" );
         }
         assertEquals( "string", kmap.get( skey ) );
-        
+
         assertTrue( kmap.keySet().contains( skey ) );
         assertFalse( kmap.values().contains( "before" ) );
         assertTrue( kmap.values().contains( "string" ) );
-        
+
         ArrayHTMap copy = kmap.clone();
         assertEquals( kmap, copy );
         assertEquals( copy, kmap );
@@ -190,11 +188,11 @@ public class ArrayHTMapTest
         copy = new ArrayHTMap( kmap );
         assertEquals( kmap, copy );
         assertEquals( copy, kmap );
-        
+
         HashMap<Key,Object> hmap = new HashMap<Key,Object>( kmap );
         assertEquals( hmap, kmap );
         assertEquals( kmap, hmap );
-        
+
         ArrayHTMap icopy = new ArrayHTMap( ks );
         for( Map.Entry<Key, Object> e : kmap.entrySet() ) {
             icopy.entrySet().add( e );
@@ -205,7 +203,7 @@ public class ArrayHTMapTest
         assertEquals( 0, kmap.size() );
         assertEquals( icopy, copy );
         assertEquals( copy, icopy );
-        
+
         copy.entrySet().clear();
         Iterator<Map.Entry<Key, Object>> iter = icopy.entrySet().iterator();
         while( iter.hasNext() ) {

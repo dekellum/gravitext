@@ -1,86 +1,37 @@
 # -*- ruby -*-
-#--
-# Copyright (C) 2008 David Kellum
-#
-# Licensed under the Apache License, Version 2.0 (the "License"); you
-# may not use this file except in compliance with the License.  You
-# may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-# implied.  See the License for the specific language governing
-# permissions and limitations under the License.
-#++
-
-require 'rubygems'
-require 'hoe'
 
 $LOAD_PATH << './lib'
-
-ENV['NODOT'] = "no thank you"
-
 require 'gravitext-util/version'
 
-jars = [ "gravitext-util-#{Gravitext::Util::VERSION}.jar" ]
+require 'rubygems'
+gem     'rjack-tarpit', '~> 1.2.0'
+require 'rjack-tarpit'
 
-jar_files = jars.map { |jar| "lib/gravitext-util/#{jar}" }
+t = RJack::TarPit.new( 'gravitext-util',
+                       Gravitext::Util::VERSION,
+                       :no_assembly, :java_platform )
 
-desc "Update the Manifest with actual jar"
-task :manifest do
-  out = File.new( 'Manifest.txt', 'w' )
-  begin
-    out.write <<END
-Manifest.txt
-README.txt
-History.txt
-Rakefile
-pom.xml
-bin/gravitext-perftest
-lib/gravitext-util.rb
-lib/gravitext-util/concurrent.rb
-lib/gravitext-util/perftest.rb
-lib/gravitext-util/version.rb
-test/test_concurrent.rb
-END
-    out.puts jar_files
-  ensure
-    out.close
-  end
+t.specify do |h|
+  h.developer( "David Kellum", "dek-oss@gravitext.com" )
+  h.extra_dev_deps += [ [ 'rjack-slf4j',   '~> 1.5.8'  ],
+                        [ 'rjack-logback', '>= 0.9.17' ] ]
+  h.rubyforge_name = "gravitext"
 end
 
+file 'Manifest.txt' => [ 'lib/gravitext-util/version.rb' ]
 
-file :mvn => [ 'pom.xml' ] do
-  sh( 'mvn package' )
+task :check_pom_version do
+  t.test_line_match( 'pom.xml', /<version>/, /#{t.version}/ )
+end
+task :check_history_version do
+  t.test_line_match( 'History.rdoc', /^==/, / #{t.version} / )
+end
+task :check_history_date do
+  t.test_line_match( 'History.rdoc', /^==/, /\([0-9\-]+\)$/ )
 end
 
-jars.each do |jar|
-  file "lib/gravitext-util/#{jar}" => [ :mvn ] do
-    cp_r( File.join( "target/", jar ), 'lib/gravitext-util' )
-  end
-end
+task :gem  => [ :check_pom_version, :check_history_version                      ]
+task :tag  => [ :check_pom_version, :check_history_version, :check_history_date ]
+task :push => [                                             :check_history_date ]
 
-[ :gem, :test ].each { |t| task t => ( jar_files ) }
-
-task :mvn_clean do
-  rm_f( jar_files )
-  sh( 'mvn clean' )
-end
-task :clean => :mvn_clean
-
-task :tag do
-  tag = "gravitext-util-#{Gravitext::Util::VERSION}"
-  dname = File.dirname( __FILE__ )
-  dname = '.' if Dir.getwd == dname
-  sh( "git status --only #{dname}" ) do |ok,res|
-    raise "Commit these changes before tagging." if ok #changes present
-  end
-  sh %{git tag -s -f -m "tag [#{tag}]" "#{tag}"}
-end
-
-hoe = Hoe.new( "gravitext-util", Gravitext::Util::VERSION ) do |p|
-  p.developer( "David Kellum", "dek-oss@gravitext.com" )
-  p.rubyforge_name = "gravitext"
-end
+t.define_tasks

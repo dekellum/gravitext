@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2008-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,12 +31,12 @@ final class XMLProducerImpl
         _encoder = encoder;
         _out = encoder.output();
     }
-       
+
     public void setIndent( final Indentor indentor )
     {
         _indentor = indentor;
     }
-     
+
     public void putXMLDeclaration( final String encoding )
         throws IOException
     {
@@ -48,57 +48,57 @@ final class XMLProducerImpl
         _out.append( "\"?>" );
         newline(0);
     }
-        
-    public void putSystemDTD( final String name, 
-                              final CharSequence uri ) 
+
+    public void putSystemDTD( final String name,
+                              final CharSequence uri )
         throws IOException
     {
         trans( State.DOCTYPE_DECLARATION );
         _out.append( "<!DOCTYPE " );
         _out.append( name );
         _out.append( " SYSTEM \"" );
-        _out.append( uri ); 
+        _out.append( uri );
         _out.append( "\">" );
         newline(0);
     }
-    
-    public void putDTD( final CharSequence dtd ) 
+
+    public void putDTD( final CharSequence dtd )
         throws IOException
     {
         trans( State.DOCTYPE_DECLARATION );
         _out.append( dtd );
         newline(0);
     }
-        
+
     public void startTag( final Tag tag ) throws IOException
-    {   
+    {
         closeTag();
 
-        if( ( _state == State.ELEMENT ) || 
+        if( ( _state == State.ELEMENT ) ||
             ( _state == State.CHARS ) ||
             ( _state == State.COMMENT_INTERNAL ) ) {
-            newline( _openTags.size() ); 
+            newline( _openTags.size() );
         }
-       
+
         trans( State.START_TAG_OPEN );
         _out.append( tag.beginTag() );
         _openTags.add( tag );
-        
+
         putNamespaceIfNotInScope( tag.namespace() );
     }
 
-    public void addAttr( final Attribute attr, 
-                         final CharSequence value, 
-                         final boolean encode ) 
+    public void addAttr( final Attribute attr,
+                         final CharSequence value,
+                         final boolean encode )
         throws IOException
     {
         if( _state != State.START_TAG_OPEN ) {
-            throw new IllegalStateException( 
+            throw new IllegalStateException(
                 "XMLProducer: Can only addAttr() after startTag()." );
         }
-        
+
         putNamespaceIfNotInScope( attr.namespace() );
-        
+
         _out.append( attr.beginAttribute() );
 
         if( encode ) _encoder.encodeAttrValue( value );
@@ -107,12 +107,12 @@ final class XMLProducerImpl
         _out.append( '"' );
     }
 
-    public void addAttr( final String name, 
-                         final CharSequence value, 
-                         final boolean encode ) 
+    public void addAttr( final String name,
+                         final CharSequence value,
+                         final boolean encode )
         throws IOException
     {
-        if( _state != State.START_TAG_OPEN ) { 
+        if( _state != State.START_TAG_OPEN ) {
             throw new IllegalStateException(
                 "XMLProducer: Can only addAttr() after startTag()." );
         }
@@ -124,22 +124,22 @@ final class XMLProducerImpl
         else _out.append( value );
         _out.append( '"' );
     }
-    
+
     public void addNamespace( final Namespace ns ) throws IOException
     {
         if( _state != State.START_TAG_OPEN ) {
-            throw new IllegalStateException( 
+            throw new IllegalStateException(
                 "XMLProducer: Can only addNamespace() after startTag()." );
         }
         _out.append( ns.beginDecl() );
         _encoder.encodeAttrValue( ns.nameIRI() );
         _out.append( '"' );
-        
+
         _nScopes.add( new NScope( ns, _openTags.size() - 1 ) );
     }
-    
-    public void putChars( final CharSequence data, 
-                          final boolean encode ) 
+
+    public void putChars( final CharSequence data,
+                          final boolean encode )
         throws IOException
     {
         // Test for empty to avoid non-canonical <t></t> instead of <t/>
@@ -150,61 +150,61 @@ final class XMLProducerImpl
             else _out.append( data );
         }
     }
-    
-    public void putComment( final CharSequence comment ) 
+
+    public void putComment( final CharSequence comment )
         throws IOException
     {
-        closeTag(); 
+        closeTag();
 
         if( _state.ordinal() < State.ELEMENT.ordinal() ) {
             trans( State.COMMENT_PROLOG );
         }
         else if( _state.ordinal() < State.END.ordinal() ) {
             trans( State.COMMENT_INTERNAL );
-            newline( _openTags.size() );  
+            newline( _openTags.size() );
         }
         else trans( State.COMMENT_END );
-        
+
         _out.append( "<!--" );
         _encoder.encodeComment( comment );
         _out.append( "-->" );
         if( _openTags.size() == 0 ) newline(0);
     }
-    
+
     /**
      * @param tag matching start tag or null to close last open tag.
      */
     public void endTag( final Tag tag ) throws IOException
     {
         if( _openTags.size() == 0 ) {
-            throw new IllegalStateException( 
+            throw new IllegalStateException(
             "XMLProducer: Attempt to endTag() with no matching startTag()." );
         }
 
-        int depth = _openTags.size() - 1; 
+        int depth = _openTags.size() - 1;
         Tag openTag = _openTags.remove( depth );
         if( ( tag != null ) && ( tag != openTag ) ) {
             throw new IllegalStateException(
-                "XMLProducer: Attempt to end " + tag + " while " 
+                "XMLProducer: Attempt to end " + tag + " while "
                 + openTag + " is open." );
         }
-        
+
         // Remove any namespace scopes closed with this tag.
         int i = _nScopes.size();
         while( i-- > 0 ) {
-            if( _nScopes.get( i ).depth == depth ) _nScopes.remove( i ); 
+            if( _nScopes.get( i ).depth == depth ) _nScopes.remove( i );
             else break;
         }
-        
-        if( ( _state == State.ELEMENT ) || 
-            ( _state == State.COMMENT_INTERNAL ) ) newline( depth );  
-        boolean empty = ( _state == State.START_TAG_OPEN ); 
+
+        if( ( _state == State.ELEMENT ) ||
+            ( _state == State.COMMENT_INTERNAL ) ) newline( depth );
+        boolean empty = ( _state == State.START_TAG_OPEN );
 
         trans( State.ELEMENT );
 
         if( empty ) _out.append( "/>" );
         else _out.append( openTag.endTag() );
-        
+
         if( depth == 0 ) {
             trans( State.END );
             newline( 0 );
@@ -222,9 +222,9 @@ final class XMLProducerImpl
         ELEMENT,
         CHARS,
         END,
-        COMMENT_END       
+        COMMENT_END
     }
-    
+
     /* Allowed state transitions TRANS[current][next] */
     private static final boolean[][] ALLOWED_STATE_TRANSITIONS = {
     /*current | ------------------------------- next ------------------------------- |*/
@@ -253,19 +253,18 @@ final class XMLProducerImpl
         final int depth;
     }
 
-
-    private void putNamespaceIfNotInScope( final Namespace ns ) 
+    private void putNamespaceIfNotInScope( final Namespace ns )
         throws IOException
     {
         if( ns != null ) {
             int i = _nScopes.size();
             while( i-- > 0 ) {
-                if( _nScopes.get( i ).namespace == ns ) return; 
+                if( _nScopes.get( i ).namespace == ns ) return;
             }
             addNamespace( ns );
         }
     }
-    
+
     private void closeTag() throws IOException
     {
         if( _state == State.START_TAG_OPEN ) {
@@ -279,7 +278,7 @@ final class XMLProducerImpl
         _indentor.indent( _out, level );
     }
 
-    private void trans( final State next ) 
+    private void trans( final State next )
     {
         // Test state transition and throw exception if invalid.
 
@@ -288,17 +287,17 @@ final class XMLProducerImpl
         }
         else {
             throw new IllegalStateException
-            ( "XMLProducer: Can't transition from " + _state 
+            ( "XMLProducer: Can't transition from " + _state
                     + " to " + next + '.' );
         }
     }
-            
+
     private State _state = State.BEGIN;
     private final Appendable _out;
     private final CharacterEncoder _encoder;
-    
+
     private Indentor _indentor = Indentor.LINE_BREAK;
-    
+
     private final ArrayList<Tag>    _openTags = new ArrayList<Tag>(16);
     private final ArrayList<NScope> _nScopes  = new ArrayList<NScope>(8);
 }

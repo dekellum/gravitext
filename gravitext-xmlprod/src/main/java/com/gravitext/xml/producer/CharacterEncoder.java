@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2008-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import java.io.Writer;
 import java.nio.CharBuffer;
 
 /**
- * Encodes text as XML character data and attribute values. 
- * 
+ * Encodes text as XML character data and attribute values.
+ *
  * @author David Kellum
  */
 public class CharacterEncoder
@@ -45,7 +45,7 @@ public class CharacterEncoder
         /**
          * Replace the character via the replace() method. The default
          * implementation skips the character.
-         * 
+         *
          * @see CharacterEncoder#replace(char, int, Appendable)
          */
         REPLACE
@@ -58,7 +58,7 @@ public class CharacterEncoder
     {
         this( out, Version.XML_1_0 );
     }
-    
+
     /**
      * Construct with defaults based on the XML version.
      */
@@ -66,7 +66,7 @@ public class CharacterEncoder
     {
         if( version == Version.XML_1_1 ) _modeC0 = Mode.ENCODE;
         _version = version;
-        
+
         _outW = (out instanceof Writer) ? (Writer) out : null;
         _outA = out;
     }
@@ -78,6 +78,16 @@ public class CharacterEncoder
     public final void setModeNUL( Mode mode )
     {
         _modeNUL = mode;
+    }
+
+    /**
+     * Set the mode for handling non-characters U+FFFE or
+     * U+FFFF. These are not allowed in XML in any form. The default
+     * is Mode.ERROR.
+     */
+    public final void setModeNAC( Mode mode )
+    {
+        _modeNAC = mode;
     }
 
     /**
@@ -107,6 +117,11 @@ public class CharacterEncoder
         return _modeNUL;
     }
 
+    public final Mode modeNAC()
+    {
+        return _modeNAC;
+    }
+
     public final Mode modeC0()
     {
         return _modeC0;
@@ -116,29 +131,29 @@ public class CharacterEncoder
     {
         return _modeC1;
     }
-    
+
     public final Appendable output()
     {
         return _outA;
     }
-    
+
     public final Version version()
     {
         return _version;
     }
-    
-    public final void encodeComment( final CharSequence in ) 
+
+    public final void encodeComment( final CharSequence in )
         throws IOException
     {
         int i = 0;
         int last = 0;
         final int end = in.length();
-    
+
         while( i < end ) {
             final char c = in.charAt( i );
-    
+
             if ( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
-                // ignore 
+                // ignore
                 ++i;
             }
             // Dash at very end or "--" anyplace is invalid.
@@ -152,7 +167,7 @@ public class CharacterEncoder
             }
             else if( c <= 0x1F ) { // Other than TAB, CR, LF
                 _outA.append( in, last, i );
-                handleSpecialChar( (c == 0x0) ? _modeCommentNUL : 
+                handleSpecialChar( (c == 0x0) ? _modeCommentNUL :
                                                 _modeCommentC0, c, i );
                 last = ++i;
             }
@@ -161,20 +176,25 @@ public class CharacterEncoder
                 handleSpecialChar( _modeCommentC1, c, i );
                 last = ++i;
             }
+            else if( c >= 0xFFFE ) {
+                _outA.append( in, last, i );
+                handleSpecialChar( _modeCommentNAC, c, i );
+                last = ++i;
+            }
             else ++i; // And ignore everything else.
         } // while
         _outA.append( in, last, i );
     }
-    
+
     /**
      * Encodes the special characters '&amp;' and '&lt;' to "&amp;amp;" and
      * "&amp;lt;" and writes the results to out.
-     * 
+     *
      * @throws IOException from Appendable out.
      */
     public final void encodeCharData( final CharSequence in )
         throws IOException
-    {        
+    {
         if( _outW != null ) {
             if( in instanceof String ) {
                 encodeString( (String) in, false );
@@ -183,8 +203,8 @@ public class CharacterEncoder
             if( in instanceof CharBuffer ) {
                 final CharBuffer cb = (CharBuffer) in;
                 if( cb.hasArray() ) {
-                    encodeArray( cb.array(), 
-                                 cb.arrayOffset() + cb.position(), 
+                    encodeArray( cb.array(),
+                                 cb.arrayOffset() + cb.position(),
                                  cb.remaining(), false );
                     return;
                 }
@@ -198,7 +218,7 @@ public class CharacterEncoder
      * "&amp;amp;", "&amp;lt;", and "&amp;quot;" and writes the
      * results to out. This assumes attribute values are surrounded in
      * double quotes.
-     * 
+     *
      * @throws IOException from append out.
      */
     public final void encodeAttrValue( final CharSequence in )
@@ -209,9 +229,9 @@ public class CharacterEncoder
         }
         else encodeCharSequence( in, true );
     }
-   
-    private final void encodeCharSequence( final CharSequence in, 
-                                           final boolean doEncodeQuote ) 
+
+    private final void encodeCharSequence( final CharSequence in,
+                                           final boolean doEncodeQuote )
         throws IOException
     {
         int i = 0;
@@ -222,7 +242,7 @@ public class CharacterEncoder
             final char c = in.charAt( i );
 
             if( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
-                // ignore 
+                // ignore
                 ++i;
             }
             else if( doEncodeQuote && c == '"' ) {
@@ -238,7 +258,7 @@ public class CharacterEncoder
             // Must encode '>' as "&gt;" when it appears in "]]>"
             // Look back in input to see if required, but if at beginning
             // we must assume a prior putChars() included the ']]'.
-            else if( ( c == '>' ) && 
+            else if( ( c == '>' ) &&
                      ( ( i < 1 ) || ( in.charAt( i - 1 ) == ']' ) ) &&
                      ( ( i < 2 ) || ( in.charAt( i - 2 ) == ']' ) ) ) {
                 _outA.append( in, last, i );
@@ -260,12 +280,17 @@ public class CharacterEncoder
                 handleSpecialChar( _modeC1, c, i );
                 last = ++i;
             }
+            else if( c >= 0xFFFE ) {
+                _outA.append( in, last, i );
+                handleSpecialChar( _modeNAC, c, i );
+                last = ++i;
+            }
             else ++i; // And ignore everything else.
         } // while
         _outA.append( in, last, i );
     }
 
-    private final void encodeString( final String in, 
+    private final void encodeString( final String in,
                                      final boolean doEncodeQuote )
         throws IOException
     {
@@ -277,7 +302,7 @@ public class CharacterEncoder
             final char c = in.charAt( i );
 
             if( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
-                // ignore 
+                // ignore
                 ++i;
             }
             else if( doEncodeQuote && c == '"' ) {
@@ -293,7 +318,7 @@ public class CharacterEncoder
             // Must encode '>' as "&gt;" when it appears in "]]>"
             // Look back in input to see if required, but if at beginning
             // we must assume a prior putChars() included the ']]'.
-            else if( ( c == '>' ) && 
+            else if( ( c == '>' ) &&
                      ( ( i < 1 ) || ( in.charAt( i - 1 ) == ']' ) ) &&
                      ( ( i < 2 ) || ( in.charAt( i - 2 ) == ']' ) ) ) {
                 _outW.write( in, last, i - last );
@@ -315,11 +340,16 @@ public class CharacterEncoder
                 handleSpecialChar( _modeC1, c, i );
                 last = ++i;
             }
+            else if( c >= 0xFFFE ) {
+                _outW.write( in, last, i - last );
+                handleSpecialChar( _modeNAC, c, i );
+                last = ++i;
+            }
             else ++i; // And ignore everything else.
         } // while
         _outW.write( in, last, i - last );
     }
-    
+
     private final void encodeArray( final char[] in,
                                     final int offset,
                                     final int length,
@@ -334,7 +364,7 @@ public class CharacterEncoder
             final char c = in[i];
 
             if( c == 0x09 || c == 0x0A || c == 0x0D ) { // TAB, CR, LF
-                // ignore 
+                // ignore
                 ++i;
             }
             else if( doEncodeQuote && c == '"' ) {
@@ -350,7 +380,7 @@ public class CharacterEncoder
             // Must encode '>' as "&gt;" when it appears in "]]>"
             // Look back in input to see if required, but if at beginning
             // we must assume a prior putChars() included the ']]'.
-            else if( ( c == '>' ) && 
+            else if( ( c == '>' ) &&
                      ( ( ( i - offset ) < 1 ) || ( in[ i - 1 ] == ']' ) ) &&
                      ( ( ( i - offset ) < 2 ) || ( in[ i - 2 ] == ']' ) ) ) {
                 _outW.write( in, last, i - last );
@@ -372,19 +402,23 @@ public class CharacterEncoder
                 handleSpecialChar( _modeC1, c, i );
                 last = ++i;
             }
+            else if( c >= 0xFFFE ) {
+                _outW.write( in, last, i - last );
+                handleSpecialChar( _modeNAC, c, i );
+                last = ++i;
+            }
             else ++i; // And ignore everything else.
         } // while
         _outW.write( in, last, i - last );
     }
 
-
-    private final void handleSpecialChar( final Mode mode, 
-                                          final char c, 
+    private final void handleSpecialChar( final Mode mode,
+                                          final char c,
                                           final int pos )
         throws IOException
     {
         switch( mode ) {
-      
+
         case ENCODE:
             _outA.append( "&#x" );
             if( c > 0xfff ) _outA.append( HEX_DIGITS[( c >>> 12 ) & 0xf] );
@@ -401,7 +435,7 @@ public class CharacterEncoder
         case ERROR:
         default:
             throw new CharacterEncodeException( String.format(
-                "Invalid XML character 0x%04x in input at position %d.", 
+                "Invalid XML character 0x%04x in input at position %d.",
                 (int) c, pos ) );
         }
     }
@@ -416,8 +450,8 @@ public class CharacterEncoder
      * @param pos position index into the original input where c was found
      * @param out output Appendable on which to write replacement
      */
-    protected void replace( final char c, 
-                            final int pos, 
+    protected void replace( final char c,
+                            final int pos,
                             final Appendable out )
         throws IOException
     {
@@ -429,18 +463,20 @@ public class CharacterEncoder
     private final Appendable _outA;
 
     private Mode _modeNUL   = Mode.ERROR;
+    private Mode _modeNAC   = Mode.ERROR;
     private Mode _modeC0    = Mode.ERROR;
     private Mode _modeC1    = Mode.ENCODE;
 
     private static final Mode _modeCommentNUL   = Mode.ERROR;
+    private static final Mode _modeCommentNAC   = Mode.ERROR;
     private static final Mode _modeCommentC0    = Mode.ERROR;
     private static final Mode _modeCommentC1    = Mode.ERROR;
     private static final Mode _modeCommentDash  = Mode.ERROR;
-    
+
     // FIXME: Provide override mechanism for the comment modes if
-    // someone ever asks to override them. Unless comments are somehow 
+    // someone ever asks to override them. Unless comments are somehow
     // generated then such characters can be treated as programmatic errors and
     // thus the ERROR modes are appropriate.
-    
+
     private static final char[] HEX_DIGITS = "0123456789abcdef".toCharArray();
 }

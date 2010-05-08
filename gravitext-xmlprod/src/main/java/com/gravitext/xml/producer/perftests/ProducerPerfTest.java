@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2008-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,13 @@ import com.gravitext.xml.producer.XMLProducer;
 import java.io.IOException;
 import java.util.List;
 
-public final class ProducerPerfTest 
+public final class ProducerPerfTest
     extends SerializePerfTest
 {
-    private static final Namespace itemNS = 
+    private static final Namespace itemNS =
         new Namespace( "graph", "urn:some-unique-id" );
 
-    private static final Tag item     = new Tag( "item", itemNS );    
+    private static final Tag item     = new Tag( "item", itemNS );
     private static final Attribute name  = new Attribute( "name" );
     private static final Attribute value = new Attribute( "value" );
     private static final Attribute score = new Attribute( "score", itemNS );
@@ -40,24 +40,24 @@ public final class ProducerPerfTest
     private static final Tag list     = new Tag( "list" );
     private static final Tag listItem = new Tag( "listItem" );
 
-    protected void serializeGraph( List<GraphItem> graph, TestOutput out ) 
+    protected void serializeGraph( List<GraphItem> graph, TestOutput out )
         throws IOException
     {
         XMLProducer p = new XMLProducer( out.getWriter() );
         p.setIndent( getIndent() );
-                
+
         p.putXMLDeclaration( getEncoding() );
         p.putSystemDTD( "testdoc", "bogus.dtd" );
-        
+
         p.startTag( testdoc );
-        
+
         for( GraphItem g : graph ) {
             p.startTag( item ).addAttr( name, g.getName() )
                               .addAttr( value, g.getValue() )
                               .addAttr( score, g.getScore() );
-            
+
             p.startTag( content ).putChars( g.getContent() ).endTag();
-            
+
             if( g.getList().size() > 0 ) {
                 p.startTag( list );
                 for( String gl : g.getList() ) {
@@ -65,10 +65,10 @@ public final class ProducerPerfTest
                 }
                 p.endTag( list );
             }
-            
+
             p.endTag( item );
         }
-        
+
         p.endTag( testdoc );
     }
 }

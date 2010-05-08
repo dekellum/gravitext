@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.util.Set;
  * Heterogeneous Type-safe {@code HTMap} implementation based on a
  * {@code HashMap}.  A given {@code HashHTMap} instance may contain
  * keys from more than one {@link KeySpace} (since the KeySpace is
- * not used for lookup).  Null keys are not supported as per 
+ * not used for lookup).  Null keys are not supported as per
  * {@code HTMap}. Null values are supported.
  *
  * <p>HashHTMap instances are not internally synchronized, as per the
@@ -36,7 +36,7 @@ import java.util.Set;
  * @author David Kellum
  */
 @SuppressWarnings("unchecked")
-public final class HashHTMap 
+public class HashHTMap
     extends HashMap<Key, Object>
     implements HTMap
 {
@@ -55,13 +55,13 @@ public final class HashHTMap
         super( (1 + (m.size() / 3)) * 4 );
         putAll( m );
     }
-    
+
     @Override
     public Set<Entry<Key, Object>> entrySet()
     {
         return new EntrySet( super.entrySet() );
     }
-    
+
     /**
      * {@inheritDoc}
      * @throws NullPointerException if key is null
@@ -105,7 +105,7 @@ public final class HashHTMap
     {
         return cast( key, super.remove( key ) );
     }
-    
+
     private final class EntrySet
         implements Set<Entry<Key, Object>>
     {
@@ -113,7 +113,7 @@ public final class HashHTMap
         {
             _baseES = base;
         }
-        
+
         public void clear()
         {
             _baseES.clear();
@@ -188,7 +188,7 @@ public final class HashHTMap
             }
             return changed;
         }
-        
+
         public Iterator<Entry<Key, Object>> iterator()
         {
             return new EntryIterator( _baseES.iterator() );
@@ -196,7 +196,7 @@ public final class HashHTMap
 
         private Set<Entry<Key, Object>> _baseES;
     }
-    
+
     private final class EntryIterator
         implements Iterator<Entry<Key, Object>>
     {
@@ -222,7 +222,7 @@ public final class HashHTMap
 
         private Iterator<Entry<Key, Object>> _baseIter;
     }
-    
+
     private final class EntryWrapper
         implements Entry<Key, Object>
     {
@@ -241,7 +241,6 @@ public final class HashHTMap
         {
             return _baseEntry.getKey();
         }
-
 
         public Object getValue()
         {
@@ -262,18 +261,18 @@ public final class HashHTMap
 
         private Entry<Key, Object> _baseEntry;
     }
-    
+
     private void checkValue( Key key, Object value )
     {
         if( ! key.valueType().isInstance( value ) ) {
-            throw new ClassCastException( String.format( 
-            "Value type %s not assignable to Key '%s' with value type %s.", 
-                value.getClass().getName(), 
+            throw new ClassCastException( String.format(
+            "Value type %s not assignable to Key '%s' with value type %s.",
+                value.getClass().getName(),
                 key.name(),
                 key.valueType().getName() ) );
         }
     }
-    
+
     private <T> T cast( Key<T> key, Object value )
     {
         return (T) value;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package com.gravitext.reflect;
 
 /**
- * Checked exception for various BeanAccessor errors. 
+ * Checked exception for various BeanAccessor errors.
  * @author David Kellum
  */
 public class BeanException extends Exception

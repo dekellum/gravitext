@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2008-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public enum Version
      * XML 1.0
      */
     XML_1_0 { public String toString() { return "1.0"; } },
-    
+
     /**
      * XML 1.1
      */

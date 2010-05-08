@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public final class Stopwatch implements Runnable
 
     /**
      * Start by setting the start time to the current time.
-     * @return this Stopwatch 
+     * @return this Stopwatch
      */
     public Stopwatch start()
     {
@@ -49,13 +49,13 @@ public final class Stopwatch implements Runnable
         _start = System.nanoTime();
         return this;
     }
-    
+
     /**
      * Stop by setting the stop time to the current time.
-     * @return this Stopwatch 
+     * @return this Stopwatch
      */
     public Stopwatch stop()
-    {   
+    {
         if( ! _running ) {
             throw new IllegalStateException( "Stopwatch not started." );
         }
@@ -64,7 +64,7 @@ public final class Stopwatch implements Runnable
         return this;
     }
 
-    /** 
+    /**
      * Toggles between start/stop states.  If not started, starts the
      * stopwatch.  If already started, stops the stopwatch.
      */
@@ -98,9 +98,9 @@ public final class Stopwatch implements Runnable
         if( _running ) {
             throw new IllegalStateException( "Stopwatch not stopped" );
         }
-        return ( _end - _start ); 
+        return ( _end - _start );
     }
-    
+
     private boolean _running = false;
     private long _start = 0;
     private long _end = 0;

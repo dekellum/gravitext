@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2008-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package com.gravitext.xml.producer;
 import java.io.IOException;
 
 /**
- * Immutable XML indentor for human readability.  
+ * Immutable XML indentor for human readability.
  * @author David Kellum
  */
 public final class Indentor
@@ -30,7 +30,7 @@ public final class Indentor
     public static final Indentor COMPRESSED = new Indentor();
 
     /**
-     * Constant Indentor for UNIX line breaks and no indentation.  
+     * Constant Indentor for UNIX line breaks and no indentation.
      */
     public static final Indentor LINE_BREAK = new Indentor( "" );
 
@@ -39,13 +39,12 @@ public final class Indentor
      * indentation.
      */
     public static final Indentor PRETTY = new Indentor( " " );
-    
 
     public Indentor()
     {
         this( null );
     }
-    
+
     /**
      * Construct Indentor using indent string for each indentation
      * level and the lineSeperator to use. The indent is typically
@@ -56,7 +55,7 @@ public final class Indentor
     {
         this( indent, "\n" );
     }
-    
+
     /**
      * Construct Indentor using indent string for each indentation
      * level and the lineSeperator to use. The indent is typically
@@ -67,15 +66,15 @@ public final class Indentor
     {
         _indent = indent;
         _lineSeparator = lineSeparator;
-        
+
         if( _indent == null ) {
             _indentSize = -1;
             _indents = null;
         }
         else {
             _indentSize = _indent.length();
-            StringBuilder b = 
-                new StringBuilder( _lineSeparator.length() + 
+            StringBuilder b =
+                new StringBuilder( _lineSeparator.length() +
                                    _indentSize * CACHE_INDENTS );
             b.append( _lineSeparator );
             if( _indentSize > 0 ) {
@@ -84,7 +83,7 @@ public final class Indentor
             _indents = b.toString();
         }
     }
-    
+
     /**
      * Return true if this Indentor is equivalent to COMPRESSED
      * constant.
@@ -93,7 +92,7 @@ public final class Indentor
     {
         return ( _indentSize == -1 );
     }
-    
+
     /**
      * Return true if this Indentor is equivalent to LINE_BREAKS
      * constant.
@@ -102,14 +101,14 @@ public final class Indentor
     {
         return ( _indentSize == 0 );
     }
-    
-    public void indent( final Appendable out, final int level ) 
-        throws IOException 
+
+    public void indent( final Appendable out, final int level )
+        throws IOException
     {
         if( _indentSize == 0 ) { out.append( _lineSeparator ); }
         else if( _indentSize > 0 ) {
             int olev = Math.min( level, CACHE_INDENTS );
-            out.append( _indents, 0, 
+            out.append( _indents, 0,
                         _lineSeparator.length() + ( olev * _indentSize ) );
             while( olev < level ) { //Remainder
                 out.append( _indent );
@@ -117,7 +116,7 @@ public final class Indentor
             }
         }
     }
-    
+
     private final int _indentSize;
     private final String _indent;
     private final String _lineSeparator;

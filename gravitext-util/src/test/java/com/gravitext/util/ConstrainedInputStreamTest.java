@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package com.gravitext.util;
 
-import java.io.ByteArrayInputStream;
+import static org.junit.Assert.*;
+import static com.gravitext.util.Charsets.ISO_8859_1;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class ConstrainedInputStreamTest
 {
@@ -66,7 +66,7 @@ public class ConstrainedInputStreamTest
         byte buff[] = new byte[9];
         in.read( buff );
 
-        assertEquals( "123456789", new String( buff, "UTF-8" ) );
+        assertEquals( "123456789", new String( buff, ISO_8859_1 ) );
     }
 
     @Test
@@ -83,7 +83,7 @@ public class ConstrainedInputStreamTest
 
         byte buff[] = new byte[9];
         in.read( buff );
-        assertEquals( "234567890", new String( buff, "UTF-8" ) );
+        assertEquals( "234567890", new String( buff, ISO_8859_1 ) );
         assertEquals( 10, in.readLength() );
     }
 
@@ -106,9 +106,8 @@ public class ConstrainedInputStreamTest
         }
     }
 
-    private InputStream source() throws UnsupportedEncodingException
+    private InputStream source()
     {
-        return new ByteArrayInputStream( "1234567890".getBytes( "UTF-8" ) );
+        return Streams.inputStream( ISO_8859_1.encode( "1234567890" ) );
     }
-
  }

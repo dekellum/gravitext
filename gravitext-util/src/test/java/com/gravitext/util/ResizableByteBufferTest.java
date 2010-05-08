@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,16 @@
 
 package com.gravitext.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class ResizableByteBufferTest 
+import static com.gravitext.util.Charsets.UTF_8;
+
+public class ResizableByteBufferTest
 {
 
     @Test
@@ -34,23 +36,22 @@ public class ResizableByteBufferTest
         assertEquals( 4, buffer.position() );
         assertBuffer( "spam", buffer );
     }
-    
-    
+
     @Test
     public void putFromStreamTwice() throws IOException
     {
         ResizableByteBuffer buffer = new ResizableByteBuffer( 0 );
-        ByteArrayInputStream bytes = createStream( "dog " );
+        InputStream bytes = createStream( "dog " );
         buffer.putFromStream( bytes, 3, 1  );
         assertEquals( 3, buffer.position() );
         assertBuffer( "dog", buffer );
         assertEquals( 1, bytes.available() );
-        
+
         buffer.putFromStream( createStream( " food" ), 5, 12 );
         assertEquals( 8, buffer.position() );
         assertBuffer( "dog food", buffer );
     }
-    
+
     @Test
     public void putZeroLengthStream() throws IOException
     {
@@ -61,25 +62,20 @@ public class ResizableByteBufferTest
         buffer.putFromStream( bytes, 3, 0 );
         buffer.putFromStream( bytes, 0, 3 );
         buffer.putFromStream( bytes, 0, 0 );
-        
+
         assertEquals( 0, buffer.position() );
         assertEquals( "never used".length(), bytes.available() );
     }
 
-    private void assertBuffer( String expected, ResizableByteBuffer buffer ) 
+    private void assertBuffer( String expected, ResizableByteBuffer buffer )
     {
         ByteBuffer out = buffer.flipAsByteBuffer();
-        
-        assertEquals( expected,
-                      new String( out.array(),
-                                  out.arrayOffset() + out.position(),
-                                  out.remaining() ) );
+
+        assertEquals( expected, UTF_8.decode( out ).toString() );
     }
 
-    private ByteArrayInputStream createStream( String text )
+    private InputStream createStream( String text )
     {
-        ByteArrayInputStream bytes = 
-            new ByteArrayInputStream( text.getBytes() );
-        return bytes;
+        return Streams.inputStream( UTF_8.encode( text ) );
     }
 }

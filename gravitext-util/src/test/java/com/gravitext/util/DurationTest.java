@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public class DurationTest
     @Test
     public void test()
     {
-        assertEquals( "1.235ms", 
+        assertEquals( "1.235ms",
                       new Duration( 1234567, TimeUnit.NANOSECONDS )
                           .toString() );
         assertEquals( " 1,235s",
@@ -37,8 +37,8 @@ public class DurationTest
         assertEquals( "12.345s",
                 new Duration( 12345, TimeUnit.MILLISECONDS )
                     .toString() );
-        
-        assertEquals( "7.000ns", 
+
+        assertEquals( "7.000ns",
                       new Duration( 7, TimeUnit.NANOSECONDS ).toString() );
         assertEquals( "5.000ms",
                       new Duration( 5000000000000000000L,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,6 +99,21 @@ public class ResizableByteBuffer
                                           int length )
     {
         System.arraycopy( value, offset, _b, index, length );
+        return this;
+    }
+
+    /**
+     * Put ByteBuffer contents at the current position and advance.
+     * The underlying buffer will be resized if needed. The in buffer
+     * will be consumed and positioned at limit.
+     * @return This buffer.
+     */
+    public final ResizableByteBuffer put( final ByteBuffer in )
+    {
+        final int len = in.remaining();
+        requestCapacity( len );
+        in.get( _b, _pos, len );
+        _pos += len;
         return this;
     }
 

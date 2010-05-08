@@ -1,5 +1,5 @@
 #--
-# Copyright (C) 2008 David Kellum
+# Copyright (c) 2008-2010 David Kellum
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
 # may not use this file except in compliance with the License.  You
@@ -16,7 +16,7 @@
 
 module Gravitext
   module XMLProd
-    VERSION = '1.2'
+    VERSION = '1.3.0'
 
     LIB_DIR = File.dirname(__FILE__) # :nodoc:
   end

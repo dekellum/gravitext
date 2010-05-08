@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2009 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package com.gravitext.util;
 /**
  * Interface for resources which must be closed once they are done being used.
  * Unlike {@link java.io.Closeable}, close does not throw a checked exception,
- * as failing to close one resource should not prevent attempting to 
+ * as failing to close one resource should not prevent attempting to
  * close the next. Implementers should instead log errors during close.
- * 
+ *
  * @author David Kellum
  */
 public interface Closeable
@@ -29,5 +29,5 @@ public interface Closeable
     /**
      * Close resources.
      */
-    public void close();
+    void close();
 }

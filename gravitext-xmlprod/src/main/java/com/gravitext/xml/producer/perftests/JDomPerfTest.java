@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2008-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,34 +26,34 @@ import org.jdom.Namespace;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-public final class JDomPerfTest 
+public final class JDomPerfTest
     extends SerializePerfTest
 {
-    protected void serializeGraph( List<GraphItem> graph, TestOutput out ) 
+    protected void serializeGraph( List<GraphItem> graph, TestOutput out )
         throws IOException
     {
         Document doc = new Document();
-        
+
         doc.setDocType( new DocType( "testdoc", "bogus.dtd" ) );
-        
+
         Element root = new Element( "testdoc" );
         doc.setRootElement( root );
-        
-        Namespace itemNS = 
+
+        Namespace itemNS =
             Namespace.getNamespace( "graph", "urn:some-unique-id" );
-        
+
         for( GraphItem g : graph ) {
             Element item = new Element( "item", itemNS );
-            
+
             item.setAttribute( "name", g.getName() );
             item.setAttribute( "value", String.valueOf( g.getValue() ) );
-            item.setAttribute( "score", 
-                               String.valueOf( g.getScore() ), 
+            item.setAttribute( "score",
+                               String.valueOf( g.getScore() ),
                                itemNS );
-            
+
             item.addContent( new Element( "content").
                                  setText( g.getContent() ) );
-            
+
             if( g.getList().size() > 0 ) {
                 Element list = new Element( "list" );
                 for( String gl : g.getList() ) {

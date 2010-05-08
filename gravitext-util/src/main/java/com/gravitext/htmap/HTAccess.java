@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2009 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ package com.gravitext.htmap;
  * {@link #set set()} method is introduced which offers a compile-time
  * type-safe alternative to {@code Map.put()}. In this case
  * an overload is not possible because the erased signatures would be
- * the same. The following code sample shows the common usage pattern:
- * 
+ * the same.</p>
+ *
  * <p>The null key is not supported by this interface.</p>
  *
  * @see Key
@@ -47,10 +47,10 @@ public interface HTAccess
      * are not supported and value is null.
      */
     <T, V extends T> T set( Key<T> key, V value );
-    
+
     /**
      * Returns the value previously set with the specified key.
-     * 
+     *
      * @see java.util.Map#get(Object)
      * @param <T> the value type provided by the key
      * @return the value associated with key, or null if no such value
@@ -58,7 +58,7 @@ public interface HTAccess
      * @throws NullPointerException if key is null.
      */
     <T> T get( Key<T> key );
-    
+
     /**
      * Removes any value previously set with for the specified key.
      * @see java.util.Map#remove(Object)

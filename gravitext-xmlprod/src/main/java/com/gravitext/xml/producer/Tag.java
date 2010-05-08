@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2008-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package com.gravitext.xml.producer;
 
 /**
- * Immutable XML tag identifier. 
+ * Immutable XML tag identifier.
  * @author David Kellum
  */
 public final class Tag
@@ -29,7 +29,7 @@ public final class Tag
     {
         this( name, null );
     }
-    
+
     /**
      * Construct given (local) name and the specified namespace.
      */
@@ -41,15 +41,39 @@ public final class Tag
         //FIXME: Test other name validations here?
         _name = name;
         _namespace = ns;
-        
+
         StringBuilder qName = new StringBuilder(64);
         if( ( _namespace != null ) && (! _namespace.isDefault() ) ) {
             qName.append( _namespace.prefix() ).append( ':' );
         }
         qName.append( _name );
-        
+
         _beginTag = "<" + qName;
         _endTag = "</" + qName + ">";
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int h = _name.hashCode();
+        if( _namespace != null ) {
+            h ^= _namespace.hashCode();
+        }
+        return h;
+    }
+
+    @Override
+    public boolean equals( Object o )
+    {
+        if( ( o != null ) && ( o instanceof Tag ) ) {
+            Tag ot = (Tag) o;
+            if( ( namespace() == ot.namespace() ) ||
+                ( ( namespace() != null ) &&
+                    namespace().equals( ot.namespace() ) ) ) {
+                return name().equals( ot.name() );
+            }
+        }
+        return false;
     }
 
     /**
@@ -75,9 +99,9 @@ public final class Tag
     @Override
     public String toString()
     {
-        return ( beginTag() + '>' ); 
+        return ( beginTag() + '>' );
     }
-    
+
     String beginTag()
     {
         return _beginTag;
@@ -87,11 +111,11 @@ public final class Tag
     {
         return _endTag;
     }
-    
+
     private final String _name;
     private final Namespace _namespace;
 
     private final String _beginTag;
     private final String _endTag;
-    
+
 }

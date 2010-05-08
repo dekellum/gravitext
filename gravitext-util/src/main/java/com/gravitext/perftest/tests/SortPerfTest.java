@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,10 +48,10 @@ public class SortPerfTest implements TestFactory
                     numbers.add( _random.nextInt( 10000 ) );
                 }
                 Collections.sort( numbers );
-                
+
                 return numbers.get( 0 ); // return lowest
             }
-            
+
         };
     }
 }

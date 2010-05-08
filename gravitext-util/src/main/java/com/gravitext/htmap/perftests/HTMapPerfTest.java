@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,24 +31,23 @@ import com.gravitext.htmap.KeySpace;
  * ArrayHTMap performance test.
  * @author David Kellum
  */
-@SuppressWarnings("unchecked")
 public class HTMapPerfTest implements TestFactory
 {
     public static final Class<?>[] TEST_CLASSES = new Class<?>[] {
         ArrayHTMap.class,
         HashHTMap.class
     };
-    
+
     public String name()
     {
         return _testClass.getSimpleName();
     }
-    
+
     public HTMapPerfTest( Class<?> testClass )
     {
         _testClass = testClass;
     }
-    
+
     public TestRunnable createTestRunnable( int seed )
     {
         if( _testClass == ArrayHTMap.class ) {
@@ -59,7 +58,7 @@ public class HTMapPerfTest implements TestFactory
                 }
             };
         }
-            
+
         if( _testClass == HashHTMap.class ) {
             return new TestRunnableBase( seed ) {
                 public int runIteration( int run )
@@ -78,7 +77,7 @@ public class HTMapPerfTest implements TestFactory
         {
             _random = new FastRandom( seed );
         }
-        
+
         public final int readWrite( Map<Key,Object> map )
         {
             int found = 0;
@@ -109,24 +108,24 @@ public class HTMapPerfTest implements TestFactory
         return new ArrayHTMap( KEY_SPACE );
     }
 
-    protected static final int TOTAL_KEYS = 40; 
+    protected static final int TOTAL_KEYS = 40;
     protected static final int PASSES = 120;
-    
+
     protected static final KeySpace KEY_SPACE = new KeySpace();
-    
-    protected static final Key[] KEYS; 
+
+    protected static final Key[] KEYS;
     protected static final String[] VALUES;
 
     static
     {
         KEYS = new Key[TOTAL_KEYS];
         VALUES = new String[TOTAL_KEYS];
-        
+
         for( int i = 0; i < TOTAL_KEYS; ++i ) {
             KEYS[i] = KEY_SPACE.create( "key-" + i, String.class );
             VALUES[i] = ( "value-" + i );
         }
     }
     private final Class<?> _testClass;
-    
+
 }

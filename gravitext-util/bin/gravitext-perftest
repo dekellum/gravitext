@@ -1,7 +1,7 @@
 #!/usr/bin/env jruby
 # -*- ruby -*-
 #--
-# Copyright (C) 2008 David Kellum
+# Copyright (c) 2007-2010 David Kellum
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
 # may not use this file except in compliance with the License.  You
@@ -26,11 +26,12 @@ module TestCollection
   include Gravitext
   include Gravitext::Concurrent
 
-  import 'com.gravitext.util.perftests.FastRandomPerfTest'
   import 'com.gravitext.htmap.perftests.HTMapPerfTest'
-  import 'com.gravitext.util.perftests.ResizableCharBufferWriterPerfTest'
-  import 'com.gravitext.perftest.tests.SortPerfTest'
   import 'com.gravitext.perftest.tests.EmptyPerfTest'
+  import 'com.gravitext.perftest.tests.SortPerfTest'
+  import 'com.gravitext.util.perftests.ByteBufferInputStreamPerfTest'
+  import 'com.gravitext.util.perftests.FastRandomPerfTest'
+  import 'com.gravitext.util.perftests.ResizableCharBufferWriterPerfTest'
 
   def self.run
     tests = TestCollection::lookup_factories( ARGV[0] || 'random' )
@@ -51,7 +52,7 @@ module TestCollection
       end
 
       btest = BlockTestFactory.new do |run,fr|
-        10_000.times do 
+        10_000.times do
           rand( 1000 )
         end
         rand( 3 )
@@ -60,7 +61,7 @@ module TestCollection
       tests << btest
 
       btest = BlockTestFactory.new do |run,random|
-        10_000.times do 
+        10_000.times do
           random.next_int( 1000 )
         end
         random.next_int( 3 )
@@ -76,6 +77,15 @@ module TestCollection
     when 'buffer-writer'
       ResizableCharBufferWriterPerfTest::TEST_CLASSES.map do |cls|
         ResizableCharBufferWriterPerfTest.new( cls )
+      end
+    when 'buffer-instream'
+      tests = ByteBufferInputStreamPerfTest::TEST_CLASSES.map do |cls|
+        ByteBufferInputStreamPerfTest.new( cls )
+      end
+      tests += ByteBufferInputStreamPerfTest::TEST_CLASSES.map do |cls|
+        t = ByteBufferInputStreamPerfTest.new( cls )
+        t.read_one = true
+        t
       end
     when 'empty'
       btest = BlockTestFactory.new { 1 }
@@ -103,11 +113,11 @@ module TestCollection
     def name
       'RubyEmpty'
     end
-    
+
     def create_test_runnable( seed )
       self.class.new
     end
-    
+
     def run_iteration( run )
       1
     end

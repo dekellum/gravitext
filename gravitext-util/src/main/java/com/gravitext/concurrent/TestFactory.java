@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ public interface TestFactory
      * Return name of this factory, suitable for reporting the test variation.
      */
     String name();
-    
+
     /**
-     * Create a TestRunnable instance to be used by a single test thread. 
+     * Create a TestRunnable instance to be used by a single test thread.
      */
     TestRunnable createTestRunnable( int seed );
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package com.gravitext.htmap;
 /**
  * An immutable associative array key that carries an associated value
  * class type.
- * @param <T> the associated value type. 
+ * @param <T> the associated value type.
  * @see KeySpace
  * @author David Kellum
  */
@@ -33,16 +33,16 @@ public final class Key<T>
      * @param id {@code KeySpace} assigned unique id
      */
     Key( final String name,
-         final Class<T> valueType, 
+         final Class<T> valueType,
          final KeySpace space,
          final int id )
     {
         _name = name;
-        _valueType = valueType; 
+        _valueType = valueType;
         _space = space;
         _id = id;
     }
-    
+
     /**
      * Return the class type defined for values associated with this
      * Key.
@@ -51,7 +51,7 @@ public final class Key<T>
     {
         return _valueType;
     }
-    
+
     /**
      * Return the name of this key.  Names are unique across all Keys
      * created from a single KeySpace.
@@ -60,7 +60,7 @@ public final class Key<T>
     {
         return _name;
     }
-    
+
     /**
      * Return the name of this Key, as per {@link #name}.
      */
@@ -87,7 +87,7 @@ public final class Key<T>
     {
         return _space;
     }
-    
+
     private final String _name;
     private final Class<T> _valueType;
     private final KeySpace _space;

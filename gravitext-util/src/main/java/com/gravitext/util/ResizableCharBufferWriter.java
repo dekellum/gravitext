@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 David Kellum
+ * Copyright (c) 2007-2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ import java.io.Writer;
 
 /**
  * A writer to a {@link ResizableCharBuffer}. Provides an
- * unsynchronized and fast alternative to both {@link java.io.StringWriter} 
+ * unsynchronized and fast alternative to both {@link java.io.StringWriter}
  * (based on synchronized StringBuffer) and
  * {@link java.io.CharArrayWriter} (synchronized).
- * 
+ *
  * @author David Kellum
  */
 public final class ResizableCharBufferWriter extends Writer
@@ -32,12 +32,12 @@ public final class ResizableCharBufferWriter extends Writer
     {
         _buff = buffer;
     }
-    
+
     public ResizableCharBufferWriter( int capacity )
     {
         _buff = new ResizableCharBuffer( capacity );
     }
-    
+
     @Override
     public void write( char[] src )
     {
@@ -67,19 +67,21 @@ public final class ResizableCharBufferWriter extends Writer
     {
         _buff.put( src, offset, length );
     }
-    
+
+    /**
+     * {@inheritDoc}
+     * This implementation does nothing, and retains reference to buffer.
+     */
     @Override
-    public void close() 
+    public void close()
     {
-        // do nothing
     }
 
     @Override
     public void flush()
     {
-        // do nothing
     }
-    
+
     /**
      * Return the underlying buffer.
      */
@@ -87,6 +89,6 @@ public final class ResizableCharBufferWriter extends Writer
     {
         return _buff;
     }
-    
+
     private final ResizableCharBuffer _buff;
 }
