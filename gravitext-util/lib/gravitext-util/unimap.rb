@@ -64,8 +64,18 @@ module Gravitext
                 set( key, ( ctype.new( value ) if value ) )
               end
             else
-              define_method( setter ) do |value|
-                set( key, value )
+              if vtype == Java::java.util.Date.java_class
+                define_method( setter ) do |v|
+                  unless v.nil? || v.is_a?( Java::java.util.Date )
+                    v = Java::java.util.Date.new( ( v.to_i * 1000 ) +
+                                                  ( v.usec / 1000 ) )
+                  end
+                  set( key, v )
+                end
+              else
+                define_method( setter ) do |value|
+                  set( key, value )
+                end
               end
             end
           end

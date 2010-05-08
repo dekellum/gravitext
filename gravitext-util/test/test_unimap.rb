@@ -68,7 +68,8 @@ class TestUniMap < Test::Unit::TestCase
   def test_date_key
     c = UniMap.new
     c.date_key = now = Time.now
-    assert( c.date_key.equals( now ) )
+    assert_equal( ( now.to_i * 1000 ) + ( now.usec / 1000 ),
+                  c.date_key.time )
   end
 
   # Define test_<type_key> for all not manually defined above
