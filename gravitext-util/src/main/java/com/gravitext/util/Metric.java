@@ -26,7 +26,6 @@ import java.text.NumberFormat;
  */
 public final class Metric
 {
-
     /**
      * Write formatted value to out, using six total characters and
      * the most appropriate metric unit suffix.  Metric suffixes in
@@ -36,6 +35,21 @@ public final class Metric
      * value may be left padded with a space: (ex: " 1.000").
      */
     public static void format( double value, StringBuilder out )
+    {
+        format( value, out, 3 );
+    }
+
+    /**
+     * Write formatted value to out, using six total characters and
+     * the most appropriate metric unit suffix.  Metric suffixes in
+     * the range peta (P, 1e15) to femto (f, 1e-15) are supported.
+     * Values outside of the supported metric range may force
+     * formatting of more than six characters.  In some cases the
+     * value may be left padded with a space: (ex: " 1.000").
+     * @param maxFDigits maximum fractional digits
+     *        (i.e. zero for original integers, 3 for input fractional values)
+     */
+    public static void format( double value, StringBuilder out, int maxFDigits )
     {
         char p = 0;
         double v = value;
@@ -72,6 +86,7 @@ public final class Metric
                 else fdigits = 2;
             }
         }
+        if( p == 0 ) fdigits = Math.min( fdigits, maxFDigits );
 
         NumberFormat f = NumberFormat.getNumberInstance();
         f.setMinimumFractionDigits( fdigits );
@@ -80,7 +95,8 @@ public final class Metric
 
         String vf = f.format( v );
 
-        if( vf.length() == ( (p == 0) ? 5 : 4 ) ) out.append( ' ' );
+        int plen = ( (p == 0) ? 6 : 5 ) - vf.length();
+        while( plen-- > 0 ) out.append( ' ' );
         out.append( vf );
         if( p != 0 ) out.append( p );
     }
@@ -147,6 +163,26 @@ public final class Metric
     {
         StringBuilder b = new StringBuilder( 16 );
         format( value, b );
+        return b.toString();
+    }
+
+    /**
+     * Return formatted value as String using six characters, the
+     * most appropriate metric suffix, and no fractional digits.
+     */
+    public static String format( long value )
+    {
+        return formatInteger( (double) value );
+    }
+
+    /**
+     * Return formatted value as String using six characters, the
+     * most appropriate metric suffix, and no fractional digits.
+     */
+    public static String formatInteger( double value )
+    {
+        StringBuilder b = new StringBuilder( 16 );
+        format( value, b, 0 );
         return b.toString();
     }
 
