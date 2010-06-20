@@ -1,3 +1,5 @@
+=== 1.4.1 (TBD)
+
 === 1.4.0 (2010-5-8)
 * New generic UniMap (Java) with ruby dynamic accessor extension.
 * New Charsets constants.
