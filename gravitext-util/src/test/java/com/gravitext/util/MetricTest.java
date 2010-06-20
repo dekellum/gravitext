@@ -86,6 +86,28 @@ public class MetricTest
     }
 
     @Test
+    public void testInteger()
+    {
+        assertEquals( "     1",  Metric.format( 1 ) );
+        assertEquals( "    10",  Metric.format( 10 ) );
+        assertEquals( "   999",  Metric.format( 999 ) );
+        assertEquals( " 1,000",  Metric.format( 1000 ) );
+        assertEquals( "10,000",  Metric.format( 10000 ) );
+        assertEquals( "99,999",  Metric.format( 99999 ) );
+        assertEquals( "100.0k",  Metric.format( 100000 ) );
+        assertEquals( "1.000M",  Metric.format( 1000000 ) );
+        assertEquals( "    -1",  Metric.format( -1 ) );
+        assertEquals( "   -10",  Metric.format( -10 ) );
+        assertEquals( "  -100",  Metric.format( -100 ) );
+        assertEquals( "-1,000",  Metric.format( -1000 ) );
+        assertEquals( "-9,999",  Metric.format( -9999 ) );
+        assertEquals( "-10.0k",  Metric.format( -10000 ) );
+        assertEquals( " -100k",  Metric.format( -99999 ) );
+        assertEquals( " -100k",  Metric.format( -100000 ) );
+        assertEquals( "-1.00M",  Metric.format( -1000000 ) );
+    }
+
+    @Test
     public void test0()
     {
         assertEquals( " 0.000", Metric.format( 0.0d ) );
