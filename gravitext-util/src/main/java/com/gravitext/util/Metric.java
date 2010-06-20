@@ -167,13 +167,22 @@ public final class Metric
     }
 
     /**
-     * Return formatted value as String using six characters and the
-     * most appropriate metric suffix.
+     * Return formatted value as String using six characters, the
+     * most appropriate metric suffix, and no fractional digits.
      */
     public static String format( long value )
     {
+        return formatInteger( (double) value );
+    }
+
+    /**
+     * Return formatted value as String using six characters, the
+     * most appropriate metric suffix, and no fractional digits.
+     */
+    public static String formatInteger( double value )
+    {
         StringBuilder b = new StringBuilder( 16 );
-        format( (double) value, b, 0 );
+        format( value, b, 0 );
         return b.toString();
     }
 
