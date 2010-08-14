@@ -49,7 +49,7 @@
     <dependency>
       <groupId>com.gravitext</groupId>
       <artifactId>gravitext-util</artifactId>
-      <version>1.4.0</version>
+      <version>[1.3.2,1.5.0)</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
