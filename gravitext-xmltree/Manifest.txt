@@ -1,0 +1,8 @@
+History.rdoc
+NOTICE.txt
+README.rdoc
+Rakefile
+pom.xml
+lib/gravitext-xmltree/version.rb
+lib/gravitext-xmltree.rb
+lib/gravitext-xmltree/gravitext-xmltree-1.0.0.jar
