@@ -9,13 +9,16 @@ import org.xml.sax.helpers.DefaultHandler;
 import com.gravitext.xml.producer.Attribute;
 import com.gravitext.xml.producer.Namespace;
 
-public class SAXHandler
+public final class SAXHandler
     extends DefaultHandler
 {
-    public SAXHandler( Node root )
+    public SAXHandler()
     {
-        _root = root;
-        _current = root;
+    }
+
+    public Node root()
+    {
+        return _root;
     }
 
     @Override
@@ -27,7 +30,8 @@ public class SAXHandler
 
         Namespace ns = new Namespace( prefix, iri );
         _current.addNamespace( ns );
-        _spaces.add( ns ); //FIXME: Replace by ascending anscestry?
+        _activeNS.add( ns );
+        _nextNS.add( ns );
     }
 
     @Override
@@ -39,10 +43,20 @@ public class SAXHandler
 
         Node node = Node.newElement( localName, ns );
 
-        _current.addChild( node );
-        _current = node;
+        for( Namespace decl: _nextNS ) {
+            node.addNamespace( decl );
+        }
+        _nextNS.clear();
 
         node.setAttributes( copyAttributes( attributes ) );
+
+        if( _root == null ) {
+            _root = _current = node;
+        }
+        else {
+            _current.addChild( node );
+            _current = node;
+        }
     }
 
     @Override
@@ -60,7 +74,7 @@ public class SAXHandler
 
     private Namespace findNamespace( String iri )
     {
-        for( Namespace ns : _spaces ) {
+        for( Namespace ns : _activeNS ) {
             if( ns.nameIRI() == iri ) return ns;
         }
         return null;
@@ -69,7 +83,8 @@ public class SAXHandler
     private ArrayList<AttributeValue> copyAttributes( Attributes attributes )
     {
         final int end = attributes.getLength();
-        //FIXME: Handle zero case here?
+        //FIXME: Handle zero case for perf here?
+
         final ArrayList<AttributeValue> atts
             = new ArrayList<AttributeValue>( end );
 
@@ -84,8 +99,9 @@ public class SAXHandler
         return atts;
     }
 
-    private Node _root; //FIXME: Needed?
-    private Node _current;
+    private Node _root = null;
+    private Node _current = null;
 
-    private ArrayList<Namespace> _spaces = new ArrayList<Namespace>();
+    private ArrayList<Namespace> _activeNS = new ArrayList<Namespace>( 8 );
+    private ArrayList<Namespace> _nextNS = new ArrayList<Namespace>( 8 );
 }
