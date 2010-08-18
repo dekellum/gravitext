@@ -1,5 +1,7 @@
 package com.gravitext.xml.tree;
 
+import com.gravitext.xml.producer.Attribute;
+
 
 /**
  * Immutable XML attribute/value pair.

@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.gravitext.xml.producer.Attribute;
+import com.gravitext.xml.producer.Namespace;
+
 public class SAXHandler
     extends DefaultHandler
 {

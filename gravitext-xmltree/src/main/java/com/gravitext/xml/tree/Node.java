@@ -8,6 +8,7 @@ import com.gravitext.htmap.ArrayHTMap;
 import com.gravitext.htmap.HTAccess;
 import com.gravitext.htmap.Key;
 import com.gravitext.htmap.KeySpace;
+import com.gravitext.xml.producer.Namespace;
 
 /**
  *
@@ -132,6 +133,11 @@ public final class Node
         }
 
         _spaces.add( ns );
+    }
+
+    public List<Namespace> namespaceDeclarations()
+    {
+        return _spaces;
     }
 
     public Node parent()
