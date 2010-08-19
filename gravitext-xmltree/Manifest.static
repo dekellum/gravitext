@@ -4,6 +4,8 @@ NOTICE.txt
 README.rdoc
 Rakefile
 pom.xml
+bin/gravitext-xmltree-perftest
 lib/gravitext-xmltree/version.rb
 lib/gravitext-xmltree.rb
 test/test_sax.rb
+test/xml/wp_rss.xml

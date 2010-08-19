@@ -19,17 +19,23 @@ package com.gravitext.xml.tree;
 import java.io.IOException;
 import java.io.StringReader;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import com.gravitext.util.ByteArrayInputStream;
 import com.gravitext.xml.producer.Indentor;
 import com.gravitext.xml.producer.XMLProducer;
 
 public class TreeUtils
 {
-    private static String produceString( Node root, Indentor indent )
+    public static String produceString( Node root, Indentor indent )
         throws IOException
     {
         StringBuilder out = new StringBuilder( 128 );
@@ -37,7 +43,7 @@ public class TreeUtils
         return out.toString();
     }
 
-    private static void produce( Node root, Indentor indent, Appendable out )
+    public static void produce( Node root, Indentor indent, Appendable out )
         throws IOException
     {
         XMLProducer pd = new XMLProducer( out );
@@ -53,6 +59,21 @@ public class TreeUtils
         reader.setContentHandler( handler );
         reader.parse( input );
         return handler.root();
+    }
+
+    public static Document domParse( byte[] input )
+        throws ParserConfigurationException, SAXException, IOException
+    {
+        DocumentBuilder builder =
+            DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        return builder.parse( new ByteArrayInputStream( input,
+                                                        0, input.length ) );
+    }
+
+    public static InputSource saxInputSource( byte[] input )
+    {
+        return new InputSource(
+            new ByteArrayInputStream( input, 0, input.length ) );
     }
 
     public static InputSource saxInputSource( String input )

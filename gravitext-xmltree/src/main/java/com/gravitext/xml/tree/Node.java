@@ -27,7 +27,6 @@ import com.gravitext.htmap.KeySpace;
 import com.gravitext.xml.producer.Namespace;
 
 /**
- *
  * FIXME: Start with just a single non-polymorphic representation of
  * Document/Element, content, etc. May choose to divide this into parent and
  * child classes if it gets unwieldy.
@@ -240,5 +239,4 @@ public final class Node
 
     private ArrayHTMap _props = EMPTY_PROPS;
     private Node _parent = null;
-
 }

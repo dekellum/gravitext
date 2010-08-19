@@ -1,0 +1,57 @@
+#!/usr/bin/env jruby
+##.hashdot.vm.options += -agentlib:hprof=cpu=samples
+# -*- ruby -*-
+#--
+# Copyright (c) 2008-2010 David Kellum
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you
+# may not use this file except in compliance with the License.  You
+# may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.  See the License for the specific language governing
+# permissions and limitations under the License.
+#++
+
+$LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
+
+require 'rubygems'
+
+require 'gravitext-xmltree'
+require 'gravitext-util'
+require 'gravitext-util/perftest'
+require 'rjack-jdom'
+
+require 'java'
+
+module TestCollection
+  include Gravitext
+  include Gravitext::Concurrent
+
+  import 'com.gravitext.xml.tree.TreePerfTest'
+  import 'com.gravitext.xml.producer.perftests.PerfTestFactory'
+
+  def self.run
+    xfile = ( ARGV[0] ||
+              File.join( File.dirname(__FILE__), '..', 'test', 'xml', 'wp_rss.xml' ) )
+    xml = IO.read( xfile ).to_java_bytes
+
+    tests = [ true ].map do |do_write|
+      TreePerfTest::Impl.values.to_a.reverse.map do |s|
+        TreePerfTest.new( xml, s, do_write )
+      end
+    end.flatten
+
+    harness = PerfTest::Harness.new( tests )
+    # harness.thread_count = 2
+
+    harness.execute
+  end
+
+end
+
+TestCollection.run
