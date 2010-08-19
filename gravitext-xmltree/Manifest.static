@@ -1,7 +1,9 @@
 History.rdoc
+Manifest.txt
 NOTICE.txt
 README.rdoc
 Rakefile
 pom.xml
 lib/gravitext-xmltree/version.rb
 lib/gravitext-xmltree.rb
+test/test_sax.rb

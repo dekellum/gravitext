@@ -1,6 +1,21 @@
+/*
+ * Copyright (c) 2010 David Kellum
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License.  You may
+ * obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied.  See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package com.gravitext.xml.tree;
 
-import java.nio.CharBuffer;
 import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
@@ -28,23 +43,22 @@ public final class SAXHandler
             prefix = Namespace.DEFAULT;
         }
 
-        Namespace ns = new Namespace( prefix, iri );
-        _current.addNamespace( ns );
-        _activeNS.add( ns );
-        _nextNS.add( ns );
+        _nextNS.add( findNamespace( iri, prefix ) );
     }
 
     @Override
     public void startElement( String iri, String localName, String qName,
                               Attributes attributes )
     {
+        bufferToChars();
+
         Namespace ns = null;
         if( ! iri.isEmpty() ) ns = findNamespace( iri );
-
         Node node = Node.newElement( localName, ns );
 
+        // Add namespaces declared and not already used by this element.
         for( Namespace decl: _nextNS ) {
-            node.addNamespace( decl );
+            if( decl != ns ) node.addNamespace( decl );
         }
         _nextNS.clear();
 
@@ -62,14 +76,25 @@ public final class SAXHandler
     @Override
     public void endElement( String iri, String localName, String qName )
     {
+        bufferToChars();
         _current = _current.parent();
     }
 
     @Override
     public void characters( char[] ch, int start, int length )
     {
-        _current.addChild(
-            Node.newContent( CharBuffer.wrap( ch, start, length ) ) );
+        if( _buffer == null ) {
+            _buffer = new StringBuilder( length + 16 );
+        }
+        _buffer.append( ch, start, length );
+    }
+
+    private void bufferToChars()
+    {
+        if( _buffer != null ) {
+            _current.addChild( Node.newCharacters( _buffer ) );
+            _buffer = null;
+        }
     }
 
     private Namespace findNamespace( String iri )
@@ -78,6 +103,15 @@ public final class SAXHandler
             if( ns.nameIRI() == iri ) return ns;
         }
         return null;
+    }
+    private Namespace findNamespace( String iri, String prefix )
+    {
+        Namespace ns = findNamespace( iri );
+        if( ns == null ) {
+            ns = new Namespace( prefix, iri );
+            _activeNS.add( ns );
+        }
+        return ns;
     }
 
     private ArrayList<AttributeValue> copyAttributes( Attributes attributes )
@@ -89,12 +123,13 @@ public final class SAXHandler
             = new ArrayList<AttributeValue>( end );
 
         for( int i = 0; i < end; ++i ) {
+            final String ln = attributes.getLocalName( i );
             Namespace ns = null;
             String iri = attributes.getURI( i );
             if( ! iri.isEmpty() ) ns = findNamespace( iri );
-
-            Attribute attr = new Attribute( attributes.getLocalName( i ), ns );
-            atts.add( new AttributeValue( attr, attributes.getValue( i ) ) );
+            //  FIXME: Cache attribute defs?
+            atts.add( new AttributeValue( new Attribute( ln, ns ),
+                                          attributes.getValue( i ) ) );
         }
         return atts;
     }
@@ -102,6 +137,8 @@ public final class SAXHandler
     private Node _root = null;
     private Node _current = null;
 
-    private ArrayList<Namespace> _activeNS = new ArrayList<Namespace>( 8 );
-    private ArrayList<Namespace> _nextNS = new ArrayList<Namespace>( 8 );
+    private final ArrayList<Namespace> _activeNS = new ArrayList<Namespace>( 8 );
+    private final ArrayList<Namespace> _nextNS = new ArrayList<Namespace>( 8 );
+    private StringBuilder _buffer = null;
+
 }

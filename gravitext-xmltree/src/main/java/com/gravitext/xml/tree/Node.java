@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2010 David Kellum
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License.  You may
+ * obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied.  See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package com.gravitext.xml.tree;
 
 import java.util.ArrayList;
@@ -35,7 +51,7 @@ public final class Node
         return new Node( null, name, ns );
     }
 
-    public static Node newContent( CharSequence chars )
+    public static Node newCharacters( CharSequence chars )
     {
         return new Node( chars, null, null );
     }
@@ -126,6 +142,10 @@ public final class Node
         _attributes = attributes;
     }
 
+    /**
+     * Additional namespace declarations rooted at this element. Should not
+     * include the elements namespace.
+     */
     public void addNamespace( Namespace ns )
     {
         if( _spaces == EMPTY_NAMESPACES ) {

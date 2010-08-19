@@ -15,6 +15,8 @@
 #++
 
 require 'gravitext-xmltree/version'
+require 'gravitext-util'
+require 'gravitext-xmlprod'
 require 'java'
 
 module Gravitext
