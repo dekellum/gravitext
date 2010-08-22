@@ -35,7 +35,7 @@ public final class Streams
     public static InputStream inputStream( final ByteBuffer b )
     {
         return ( ( b.hasArray() && ! b.isReadOnly() ) ?
-                    new com.gravitext.util.ByteArrayInputStream( b ) :
+                    new ByteArrayInputStream( b ) :
                     new ByteBufferInputStream( b.duplicate() ) );
     }
 
