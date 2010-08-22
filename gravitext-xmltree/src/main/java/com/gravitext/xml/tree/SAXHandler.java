@@ -104,6 +104,7 @@ public final class SAXHandler
         }
         return null;
     }
+
     private Namespace findNamespace( String iri, String prefix )
     {
         Namespace ns = findNamespace( iri );
