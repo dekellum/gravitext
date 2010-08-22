@@ -27,7 +27,6 @@
     <module>gravitext-parent</module>
     <module>gravitext-util</module>
     <module>gravitext-xmlprod</module>
-    <module>gravitext-xmltree</module>
   </modules>
 
 </project>
