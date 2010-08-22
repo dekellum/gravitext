@@ -1,5 +1,6 @@
 #!/usr/bin/env jruby
 # -*- ruby -*-
+
 #--
 # Copyright (c) 2008-2010 David Kellum
 #
@@ -17,11 +18,11 @@
 #++
 
 $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
-require 'gravitext-xmlprod'
 
 require 'rubygems'
+
+require 'gravitext-xmlprod'
 require 'gravitext-util/perftest'
-require 'rjack-jdom'
 
 require 'java'
 
@@ -31,11 +32,13 @@ module TestCollection
 
   import 'com.gravitext.xml.producer.perftests.PerfTestFactory'
   import 'com.gravitext.xml.producer.perftests.StringBufferEncodePerfTest'
+  import 'com.gravitext.xml.tree.TreePerfTest'
 
   def self.run
     tests = TestCollection::lookup_factories( ARGV[0] || 'producer' )
 
     harness = PerfTest::Harness.new( tests )
+    #FIXME: -c
     # harness.thread_count = 2
 
     harness.execute
@@ -44,6 +47,7 @@ module TestCollection
   def self.lookup_factories( name )
     case name
     when 'producer'
+      require 'rjack-jdom'
 
       tests = PerfTestFactory::Serializer.values.map do |s|
         PerfTestFactory.new( s )
@@ -61,10 +65,21 @@ module TestCollection
       tests = Array.new(2) { StringBufferEncodePerfTest.new }
       tests.zip( [ false, true ] ) { |test,b| test.use_char_buffer = b }
       tests
+
+    when 'tree'
+      xfile = ( ARGV[1] ||
+                File.join( File.dirname(__FILE__),
+                           '..', 'test', 'xml', 'huffingtonpost.full.atom.xml' ) )
+      xml = IO.read( xfile ).to_java_bytes
+
+      [ false, true ].map do |do_write|
+        TreePerfTest::Impl.values.map do |s|
+          TreePerfTest.new( xml, s, do_write )
+        end
+      end.flatten
+
     end
-
   end
-
 end
 
 TestCollection.run
