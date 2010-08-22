@@ -38,11 +38,12 @@ module TestCollection
 
   def self.run
     xfile = ( ARGV[0] ||
-              File.join( File.dirname(__FILE__), '..', 'test', 'xml', 'wp_rss.xml' ) )
+              File.join( File.dirname(__FILE__),
+                         '..', 'test', 'xml', 'wp_rss.xml' ) )
     xml = IO.read( xfile ).to_java_bytes
 
-    tests = [ true ].map do |do_write|
-      TreePerfTest::Impl.values.to_a.reverse.map do |s|
+    tests = [ false ].map do |do_write|
+      TreePerfTest::Impl.values.map do |s|
         TreePerfTest.new( xml, s, do_write )
       end
     end.flatten

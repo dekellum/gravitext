@@ -19,6 +19,7 @@ package com.gravitext.xml.tree;
 import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -35,8 +36,9 @@ public class TreePerfTest implements TestFactory
 {
     public enum Impl
     {
-        TREE_NODE,
-        DOM
+        DOM,
+        TREE_NODE_SAX,
+        TREE_NODE_STAX
     };
 
     public TreePerfTest( byte[] xml, Impl impl, boolean doWrite )
@@ -54,7 +56,7 @@ public class TreePerfTest implements TestFactory
     public TestRunnable createTestRunnable( int seed )
     {
         switch( _impl ) {
-        case TREE_NODE :
+        case TREE_NODE_SAX :
             return new TestRunnable() {
                 public int runIteration( int run )
                     throws SAXException, IOException
@@ -71,6 +73,24 @@ public class TreePerfTest implements TestFactory
                     }
                 }
             };
+        case TREE_NODE_STAX :
+            return new TestRunnable() {
+                public int runIteration( int run )
+                    throws XMLStreamException, IOException
+                {
+                    Node node = staxParse( staxSource( _xml ) );
+                    if( _doWrite ) {
+                        StringBuilder buffer =
+                            new StringBuilder( _xml.length * 4/3 );
+                        produce( node, Indentor.PRETTY, buffer );
+                        return buffer.length();
+                    }
+                    else {
+                        return node.children().size();
+                    }
+                }
+            };
+
         case DOM :
             return new TestRunnable() {
                 public int runIteration( int run )

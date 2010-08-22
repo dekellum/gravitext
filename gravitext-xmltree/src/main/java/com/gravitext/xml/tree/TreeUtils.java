@@ -22,6 +22,12 @@ import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+
 import org.w3c.dom.Document;
 
 import org.xml.sax.InputSource;
@@ -61,24 +67,42 @@ public class TreeUtils
         return handler.root();
     }
 
-    public static Document domParse( byte[] input )
-        throws ParserConfigurationException, SAXException, IOException
-    {
-        DocumentBuilder builder =
-            DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        return builder.parse( new ByteArrayInputStream( input,
-                                                        0, input.length ) );
-    }
-
     public static InputSource saxInputSource( byte[] input )
     {
-        return new InputSource(
-            new ByteArrayInputStream( input, 0, input.length ) );
+        return new InputSource( byteStream( input ) );
     }
 
     public static InputSource saxInputSource( String input )
     {
         return new InputSource( new StringReader( input ) );
+    }
+
+    public static Node staxParse( Source source ) throws XMLStreamException
+    {
+        XMLInputFactory inf = XMLInputFactory.newFactory();
+        inf.setProperty( "javax.xml.stream.isCoalescing", true );
+        inf.setProperty( "javax.xml.stream.supportDTD", false );
+        StaxConsumer sc = new StaxConsumer();
+        XMLStreamReader sr = inf.createXMLStreamReader( source );
+        return sc.read( sr );
+    }
+
+    public static Source staxSource( byte[] input )
+    {
+        return new StreamSource( byteStream( input ) );
+    }
+
+    public static Source staxSource( String input )
+    {
+        return new StreamSource( new StringReader( input ) );
+    }
+
+    public static Document domParse( byte[] input )
+        throws ParserConfigurationException, SAXException, IOException
+    {
+        DocumentBuilder builder =
+            DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        return builder.parse( byteStream( input ) );
     }
 
     public static String roundTripSAX( String input )
@@ -94,4 +118,23 @@ public class TreeUtils
 
         return produceString( root, indent );
     }
+    public static String roundTripSTAX( String input )
+        throws IOException, XMLStreamException
+    {
+        return roundTripSTAX( input, Indentor.COMPRESSED );
+    }
+
+    public static String roundTripSTAX( String input, Indentor indent )
+        throws IOException, XMLStreamException
+    {
+        Node root = staxParse( staxSource( input ) );
+
+        return produceString( root, indent );
+    }
+
+    public static ByteArrayInputStream byteStream( byte[] input )
+    {
+        return new ByteArrayInputStream( input, 0, input.length );
+    }
+
 }

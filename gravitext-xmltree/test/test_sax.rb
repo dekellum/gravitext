@@ -69,23 +69,24 @@ XML
  <s:e xmlns:s="bar" s:att2="a2value"/>
 </doc>
 XML
+    show_tree xml
     assert_rt xml
   end
 
   def assert_rt( input )
-    rt = TreeUtils::roundTripSAX( input )
+    rt = TreeUtils::roundTripSTAX( input )
     assert_equal( input.rstrip, rt )
   end
 
   def show_tree( input )
-    node = TreeUtils::saxParse( TreeUtils::saxInputSource( input ) )
+    node = TreeUtils::staxParse( TreeUtils::staxSource( input ) )
     show_node( node )
   end
 
   def show_node( n, d = 0 )
     if n.name
       puts( ' ' * d + '<' + n.name + ' ' +
-            n.namespace_declarations.map { |ns| 'ns:' + ns.nameIRI }.join( ' ' ) +
+            n.namespace_declarations.to_a.map { |ns| 'ns:' + ns.nameIRI }.join( ' ' ) +
             ' ' + n.attributes.map { |av| av.attribute.name }.join( ' ' ) )
       n.children.each { |c| show_node( c, d+1 ) }
       puts( ' ' * d + '</' + n.name )
