@@ -51,7 +51,8 @@ public final class Namespace
         //FIXME: exclude prefix: "xml" and "xmlns"
 
         _nameIRI = nameIRI;
-        _prefix = prefix;
+        _prefix  = prefix;
+        _isXML   = prefix.equals( "xml" );
 
         StringBuilder qName = new StringBuilder(64);
         qName.append( " xmlns" ); //Note leading space.
@@ -103,6 +104,11 @@ public final class Namespace
         return ( _prefix == DEFAULT );
     }
 
+    public boolean isXML()
+    {
+        return _isXML;
+    }
+
     String beginDecl()
     {
         return _beginDecl;
@@ -111,4 +117,5 @@ public final class Namespace
     private final String _prefix;
     private final String _nameIRI;
     private final String _beginDecl;
+    private final boolean _isXML;
 }
