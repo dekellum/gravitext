@@ -22,9 +22,9 @@ require 'test/unit'
 
 $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
 
-require 'gravitext-xmltree'
+require 'gravitext-xmlprod'
 
-class TestSax < Test::Unit::TestCase
+class TestTree < Test::Unit::TestCase
   import 'com.gravitext.xml.tree.TreeUtils'
   import 'com.gravitext.xml.producer.Indentor'
 
