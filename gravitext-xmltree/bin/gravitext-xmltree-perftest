@@ -42,7 +42,7 @@ module TestCollection
                          '..', 'test', 'xml', 'wp_rss.xml' ) )
     xml = IO.read( xfile ).to_java_bytes
 
-    tests = [ false ].map do |do_write|
+    tests = [ false, true ].map do |do_write|
       TreePerfTest::Impl.values.map do |s|
         TreePerfTest.new( xml, s, do_write )
       end
