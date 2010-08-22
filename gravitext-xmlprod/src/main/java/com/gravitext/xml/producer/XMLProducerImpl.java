@@ -131,11 +131,13 @@ final class XMLProducerImpl
             throw new IllegalStateException(
                 "XMLProducer: Can only addNamespace() after startTag()." );
         }
-        _out.append( ns.beginDecl() );
-        _encoder.encodeAttrValue( ns.nameIRI() );
-        _out.append( '"' );
+        if( !ns.isXML() ) {
+            _out.append( ns.beginDecl() );
+            _encoder.encodeAttrValue( ns.nameIRI() );
+            _out.append( '"' );
 
-        _nScopes.add( new NScope( ns, _openTags.size() - 1 ) );
+            _nScopes.add( new NScope( ns, _openTags.size() - 1 ) );
+        }
     }
 
     public void putChars( final CharSequence data,
@@ -256,7 +258,7 @@ final class XMLProducerImpl
     private void putNamespaceIfNotInScope( final Namespace ns )
         throws IOException
     {
-        if( ns != null ) {
+        if( ns != null && !ns.isXML() ) {
             int i = _nScopes.size();
             while( i-- > 0 ) {
                 if( _nScopes.get( i ).namespace == ns ) return;
