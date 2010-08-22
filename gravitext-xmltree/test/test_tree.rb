@@ -74,28 +74,36 @@ XML
 </doc>
 XML
 
-  def test_sax
-    TEST_XML.each do | name, xml |
-      root = TreeUtils::saxParse( TreeUtils::saxInputSource( xml ) )
-      assert_equal( xml.rstrip,
-                    TreeUtils::produceString( root, Indentor::COMPRESSED ),
-                    name.to_s + ":\n" + show_node( root )  )
+  TEST_XML[ :namespace_5 ] = <<XML
+<doc xmlns:s="ns" a1="v1" s:a2="v2"/>
+XML
+
+  TEST_XML[ :namespace_xml ] = <<XML
+<doc>
+ <content type="html" xml:lang="en" xml:base="http://www.huffingtonpost.com/thenewswire"/>
+</doc>
+XML
+
+  TEST_XML.each do | name, xml |
+    define_method( "test_sax_#{name}" ) do
+      assert_xml( xml, TreeUtils::saxParse( TreeUtils::saxInputSource( xml ) ) )
+    end
+    define_method( "test_stax_#{name}" ) do
+      assert_xml( xml, TreeUtils::staxParse( TreeUtils::staxSource( xml ) ) )
     end
   end
 
-  def test_stax
-    TEST_XML.each do | name, xml |
-      root = TreeUtils::staxParse( TreeUtils::staxSource( xml ) )
-      assert_equal( xml.rstrip,
-                    TreeUtils::produceString( root, Indentor::COMPRESSED ),
-                    name.to_s + ":\n " + show_node( root )  )
-    end
+  def assert_xml( xml, root )
+    assert_equal( xml.rstrip,
+                  TreeUtils::produceString( root, Indentor::COMPRESSED ),
+                  show_node( root ) )
   end
 
   def show_node( n, d = 0, out = "" )
-    if n.name
+    if n.isElement
       out << ( ' ' * d + '<' + n.name + ' ' +
-               n.namespace_declarations.to_a.map { |ns| 'ns:' + ns.nameIRI }.join( ' ' ) +
+               n.namespace_declarations.to_a.map { |ns|
+                 'ns:%s=%s' % [ ns.prefix.to_s, ns.nameIRI ] }.join( ' ' ) +
                ' ' + n.attributes.map { |av| av.attribute.name }.join( ' ' ) )
       n.children.each { |c| show_node( c, d+1, out ) }
       out << ( ' ' * d + '</' + n.name )

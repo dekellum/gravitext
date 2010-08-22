@@ -36,7 +36,7 @@ public final class NodeWriter
     {
         if( node.isElement() ) {
 
-            _pd.startTag( node.name(), node.namespace() );
+            _pd.startTag( node.tag() );
 
             for( Namespace ns : node.namespaceDeclarations() ) {
                 _pd.addNamespace( ns );

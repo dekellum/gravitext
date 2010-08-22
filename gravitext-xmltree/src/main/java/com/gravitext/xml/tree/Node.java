@@ -25,6 +25,7 @@ import com.gravitext.htmap.HTAccess;
 import com.gravitext.htmap.Key;
 import com.gravitext.htmap.KeySpace;
 import com.gravitext.xml.producer.Namespace;
+import com.gravitext.xml.producer.Tag;
 
 /**
  * FIXME: Start with just a single non-polymorphic representation of
@@ -40,6 +41,11 @@ public final class Node
     public  static final Key<CharSequence> CONTENT =
         COMPAT_KEY_SPACE.create( "content", CharSequence.class );
 
+    public static Node newElement( Tag tag )
+    {
+        return new Node( null, tag );
+    }
+
     public static Node newElement( String name )
     {
         return newElement( name, null );
@@ -47,12 +53,12 @@ public final class Node
 
     public static Node newElement( String name, Namespace ns )
     {
-        return new Node( null, name, ns );
+        return new Node( null, new Tag( name, ns ) );
     }
 
     public static Node newCharacters( CharSequence chars )
     {
-        return new Node( chars, null, null );
+        return new Node( chars, null );
     }
 
     public List<Node> children()
@@ -102,24 +108,17 @@ public final class Node
 
     public String name()
     {
-        return _elementName;
+        return _tag.name();
     }
 
     public Namespace namespace()
     {
-        return _namespace;
+        return _tag.namespace();
     }
 
-    public void setElement( String name )
+    public Tag tag()
     {
-        //FIXME: Asymmetric with above name().
-        setElement( name, null );
-    }
-
-    public void setElement( String name, Namespace ns )
-    {
-        _elementName = name;
-        _namespace = ns;
+        return _tag;
     }
 
     public List<AttributeValue> attributes()
@@ -166,7 +165,7 @@ public final class Node
 
     public boolean isElement()
     {
-        return ( _elementName != null );
+        return ( _tag != null );
     }
 
     public <T, V extends T> T set( Key<T> key, V value )
@@ -205,11 +204,10 @@ public final class Node
         return _props.remove( key );
     }
 
-    private Node( CharSequence chars, String elementName, Namespace ns )
+    private Node( CharSequence chars, Tag tag )
     {
         _chars = chars;
-        _elementName = elementName;
-        _namespace = ns;
+        _tag = tag;
     }
 
     private void setParent( Node node )
@@ -229,8 +227,8 @@ public final class Node
     private static final List<Node> EMPTY_CHILDREN = Collections.emptyList();
     private static final ArrayHTMap EMPTY_PROPS = new ArrayHTMap( KEY_SPACE );
 
-    private String _elementName = null;
-    private Namespace _namespace = null;
+    private Tag _tag;
+
     private List<AttributeValue> _attributes = EMPTY_ATTS;
     private List<Namespace> _spaces = EMPTY_NAMESPACES;
     private List<Node> _children = EMPTY_CHILDREN;

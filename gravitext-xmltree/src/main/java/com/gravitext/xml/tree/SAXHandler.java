@@ -39,11 +39,7 @@ public final class SAXHandler
     @Override
     public void startPrefixMapping( String prefix, String iri )
     {
-        if( prefix.isEmpty() ) {
-            prefix = Namespace.DEFAULT;
-        }
-
-        _nextNS.add( findNamespace( iri, prefix ) );
+        _nextNS.add( _cache.namespace( prefix, iri ) );
     }
 
     @Override
@@ -52,17 +48,18 @@ public final class SAXHandler
     {
         bufferToChars();
 
-        Namespace ns = null;
-        if( ! iri.isEmpty() ) ns = findNamespace( iri );
-        Node node = Node.newElement( localName, ns );
+        Namespace ns = findNamespace( iri );
+        Node node = Node.newElement( _cache.tag( localName, ns ) );
 
-        // Add namespaces declared and not already used by this element.
+        // Add any namespaces declared and not
+        // already used by this element.
         for( Namespace decl: _nextNS ) {
             if( decl != ns ) node.addNamespace( decl );
         }
-        _nextNS.clear();
 
-        node.setAttributes( copyAttributes( attributes ) );
+        copyAttributes( attributes, node );
+
+        _nextNS.clear();
 
         if( _root == null ) {
             _root = _current = node;
@@ -97,48 +94,57 @@ public final class SAXHandler
         }
     }
 
-    private Namespace findNamespace( String iri )
-    {
-        for( Namespace ns : _activeNS ) {
-            if( ns.nameIRI() == iri ) return ns;
-        }
-        return null;
-    }
-
-    private Namespace findNamespace( String iri, String prefix )
-    {
-        Namespace ns = findNamespace( iri );
-        if( ns == null ) {
-            ns = new Namespace( prefix, iri );
-            _activeNS.add( ns );
-        }
-        return ns;
-    }
-
-    private ArrayList<AttributeValue> copyAttributes( Attributes attributes )
+    private void copyAttributes( Attributes attributes, Node node )
     {
         final int end = attributes.getLength();
-        //FIXME: Handle zero case for perf here?
+        if( end == 0 ) return;
 
         final ArrayList<AttributeValue> atts
             = new ArrayList<AttributeValue>( end );
 
         for( int i = 0; i < end; ++i ) {
-            final String ln = attributes.getLocalName( i );
-            Namespace ns = null;
-            String iri = attributes.getURI( i );
-            if( ! iri.isEmpty() ) ns = findNamespace( iri );
-            //  FIXME: Cache attribute defs?
-            atts.add( new AttributeValue( new Attribute( ln, ns ),
+            final Attribute attr =
+                _cache.attribute( attributes.getLocalName( i ),
+                                  findNamespace( attributes.getURI( i ) ) );
+            atts.add( new AttributeValue( attr,
                                           attributes.getValue( i ) ) );
         }
-        return atts;
+
+        node.setAttributes( atts );
+    }
+
+    private Namespace findNamespace( String iri )
+    {
+        if( ( iri != null ) && ! iri.isEmpty() ) {
+            for( Namespace ns : _nextNS ) {
+                if( ns.nameIRI().equals( iri ) ) return ns;
+            }
+
+            Node n = _current; //Effective parent of new tag being handled.
+            while( n != null ) {
+
+                Namespace nns = n.namespace();
+                if( ( nns != null ) && nns.nameIRI().equals( iri ) ) {
+                    return nns;
+                }
+
+                for( Namespace ns : n.namespaceDeclarations() ) {
+                   if( ns.nameIRI().equals( iri ) ) return ns;
+                }
+                n = n.parent();
+
+            }
+            if( iri.equals( "http://www.w3.org/XML/1998/namespace" ) ) {
+                return _cache.namespace( "xml", iri );
+            }
+            throw new IllegalStateException( "ns: " + iri + " not found!" );
+        }
+        return null;
     }
 
     private Node _root = null;
     private Node _current = null;
-
-    private final ArrayList<Namespace> _activeNS = new ArrayList<Namespace>( 8 );
+    private final NamespaceCache _cache = new NamespaceCache();
     private final ArrayList<Namespace> _nextNS = new ArrayList<Namespace>( 8 );
     private StringBuilder _buffer = null;
 

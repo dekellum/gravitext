@@ -52,17 +52,17 @@ public class StaxConsumer
 
     private void startElement( XMLStreamReader sr )
     {
-        Namespace ns = null;
-        String iri = sr.getNamespaceURI();
-        if( iri != null ) {
-            ns = findNamespace( iri, sr.getPrefix() );
-        }
-        Node node = Node.newElement( sr.getLocalName(), ns );
+        Namespace ns = _cache.namespace( sr.getPrefix(),
+                                         sr.getNamespaceURI() );
+
+        Node node = Node.newElement( _cache.tag( sr.getLocalName(), ns ) );
 
         final int nsds = sr.getNamespaceCount();
         for( int i = 0; i < nsds; ++i ) {
-            Namespace decl = findNamespace( sr.getNamespaceURI( i ),
-                                            sr.getNamespacePrefix( i ) );
+
+            Namespace decl = _cache.namespace( sr.getNamespacePrefix( i ),
+                                               sr.getNamespaceURI( i ) );
+
             if( decl != ns ) node.addNamespace( decl );
         }
 
@@ -88,27 +88,6 @@ public class StaxConsumer
         _current = _current.parent();
     }
 
-    private Namespace findNamespace( String iri )
-    {
-        for( Namespace ns : _activeNS ) {
-            if( ns.nameIRI() == iri ) return ns;
-        }
-        return null;
-    }
-
-    private Namespace findNamespace( String iri, String prefix )
-    {
-        Namespace ns = findNamespace( iri );
-        if( ns == null ) {
-            if( prefix == null || prefix.isEmpty()) {
-                prefix = Namespace.DEFAULT;
-            }
-            ns = new Namespace( prefix, iri );
-            _activeNS.add( ns );
-        }
-        return ns;
-    }
-
     private void copyAttributes( XMLStreamReader sr, Node node )
     {
         final int end = sr.getAttributeCount();
@@ -118,12 +97,12 @@ public class StaxConsumer
                 = new ArrayList<AttributeValue>( end );
 
             for( int i = 0; i < end; ++i ) {
-                final String ln = sr.getAttributeLocalName( i );
-                Namespace ns = null;
-                String iri = sr.getAttributeNamespace( i );
-                if( iri != null ) ns = findNamespace( iri );
-                //  FIXME: Cache attribute defs?
-                atts.add( new AttributeValue( new Attribute( ln, ns ),
+                final Attribute attr =
+                    _cache.attribute( sr.getAttributeLocalName( i ),
+                                      _cache.namespace(
+                                          sr.getAttributePrefix( i ),
+                                          sr.getAttributeNamespace( i ) ) );
+                atts.add( new AttributeValue( attr,
                                               sr.getAttributeValue( i ) ) );
             }
 
@@ -134,6 +113,5 @@ public class StaxConsumer
     private Node _root = null;
     private Node _current = null;
 
-    private final ArrayList<Namespace> _activeNS =
-        new ArrayList<Namespace>( 8 );
+    private final NamespaceCache _cache = new NamespaceCache();
 }
