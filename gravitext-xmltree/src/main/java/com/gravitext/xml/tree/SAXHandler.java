@@ -113,6 +113,8 @@ public final class SAXHandler
         node.setAttributes( atts );
     }
 
+    //FIXME: Test perf of alternative: processing qName for prefix
+
     private Namespace findNamespace( String iri )
     {
         if( ( iri != null ) && ! iri.isEmpty() ) {

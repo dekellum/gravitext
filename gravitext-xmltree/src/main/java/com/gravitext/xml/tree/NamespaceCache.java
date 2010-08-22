@@ -28,16 +28,6 @@ import com.gravitext.xml.producer.Tag;
  */
 public final class NamespaceCache
 {
-    public NamespaceCache()
-    {
-        String xiri = "http://www.w3.org/XML/1998/namespace";
-        Namespace nxml = new Namespace( "xml", xiri );
-
-        NameSet nset = new NameSet();
-        nset.spaces.add( nxml );
-        _cache.put( xiri, nset );
-    }
-
     /**
      * Find or create Namespace for the specified prefix and iri.
      * Returns null for a null or empty iri.
