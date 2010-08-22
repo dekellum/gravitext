@@ -5,5 +5,8 @@ README.rdoc
 Rakefile
 pom.xml
 bin/gravitext-xmlprod-perftest
+bin/gravitext-xmltree-perftest
 lib/gravitext-xmlprod/version.rb
 lib/gravitext-xmlprod.rb
+test/test_tree.rb
+test/xml/huffingtonpost.full.atom.xml

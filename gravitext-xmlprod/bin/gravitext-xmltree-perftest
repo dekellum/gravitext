@@ -1,5 +1,4 @@
 #!/usr/bin/env jruby
-##.hashdot.vm.options += -agentlib:hprof=cpu=samples
 # -*- ruby -*-
 
 #--
@@ -22,10 +21,9 @@ $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
 
 require 'rubygems'
 
-require 'gravitext-xmltree'
+require 'gravitext-xmlprod'
 require 'gravitext-util'
 require 'gravitext-util/perftest'
-require 'rjack-jdom'
 
 require 'java'
 
@@ -34,12 +32,11 @@ module TestCollection
   include Gravitext::Concurrent
 
   import 'com.gravitext.xml.tree.TreePerfTest'
-  import 'com.gravitext.xml.producer.perftests.PerfTestFactory'
 
   def self.run
     xfile = ( ARGV[0] ||
               File.join( File.dirname(__FILE__),
-                         '..', 'test', 'xml', 'wp_rss.xml' ) )
+                         '..', 'test', 'xml', 'huffingtonpost.full.atom.xml' ) )
     xml = IO.read( xfile ).to_java_bytes
 
     tests = [ false, true ].map do |do_write|
