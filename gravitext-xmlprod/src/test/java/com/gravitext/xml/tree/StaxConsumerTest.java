@@ -23,7 +23,7 @@ import javax.xml.stream.XMLStreamException;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static com.gravitext.xml.tree.TreeUtils.*;
+import static com.gravitext.xml.tree.StAXUtils.*;
 
 public class StaxConsumerTest
 {
@@ -33,6 +33,6 @@ public class StaxConsumerTest
         String input = "<doc>\n" +
                        " <a>b</a>\n" +
                        "</doc>";
-        assertEquals( input, roundTripSTAX( input ) );
+        assertEquals( input, roundTripStAX( input ) );
     }
 }

@@ -26,6 +26,8 @@ require 'gravitext-xmlprod'
 
 class TestTree < Test::Unit::TestCase
   import 'com.gravitext.xml.tree.TreeUtils'
+  import 'com.gravitext.xml.tree.SAXUtils'
+  import 'com.gravitext.xml.tree.StAXUtils'
   import 'com.gravitext.xml.producer.Indentor'
 
   TEST_XML = {}
@@ -86,10 +88,10 @@ XML
 
   TEST_XML.each do | name, xml |
     define_method( "test_sax_#{name}" ) do
-      assert_xml( xml, TreeUtils::saxParse( TreeUtils::saxInputSource( xml ) ) )
+      assert_xml( xml, SAXUtils::saxParse( SAXUtils::saxInput( xml ) ) )
     end
     define_method( "test_stax_#{name}" ) do
-      assert_xml( xml, TreeUtils::staxParse( TreeUtils::staxSource( xml ) ) )
+      assert_xml( xml, StAXUtils::staxParse( StAXUtils::staxInput( xml ) ) )
     end
   end
 

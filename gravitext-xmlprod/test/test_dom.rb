@@ -26,6 +26,7 @@ require 'gravitext-xmlprod'
 
 class TestDOM < Test::Unit::TestCase
   import 'com.gravitext.xml.tree.TreeUtils'
+  import 'com.gravitext.xml.tree.DOMUtils'
   import 'com.gravitext.xml.tree.Node'
   import 'com.gravitext.xml.producer.Indentor'
 
@@ -85,13 +86,13 @@ XML
 
   TEST_XML.each do | name, xml |
     define_method( "test_dom_#{name}" ) do
-      assert_xml( xml, TreeUtils::domParse( xml.to_java_bytes ) )
+      assert_xml( xml, DOMUtils::domParse( xml.to_java_bytes ) )
     end
   end
 
   def assert_xml( xml, root )
     assert_equal( xml.rstrip,
-                  TreeUtils::produceString( root, Indentor::COMPRESSED ) )
+                  DOMUtils::produceString( root, Indentor::COMPRESSED ) )
   end
 
 end

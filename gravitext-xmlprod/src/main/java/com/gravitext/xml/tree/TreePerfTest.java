@@ -28,8 +28,6 @@ import com.gravitext.concurrent.TestFactory;
 import com.gravitext.concurrent.TestRunnable;
 import com.gravitext.xml.producer.Indentor;
 
-import static com.gravitext.xml.tree.TreeUtils.*;
-
 public class TreePerfTest implements TestFactory
 {
     public enum Impl
@@ -59,11 +57,11 @@ public class TreePerfTest implements TestFactory
                 public int runIteration( int run )
                     throws SAXException, IOException
                 {
-                    Node node = saxParse( saxInputSource( _xml ) );
+                    Node node = SAXUtils.saxParse( SAXUtils.saxInput( _xml ) );
                     if( _doWrite ) {
                         StringBuilder buffer =
                             new StringBuilder( _xml.length * 4/3 );
-                        produce( node, Indentor.PRETTY, buffer );
+                        TreeUtils.produce( node, Indentor.PRETTY, buffer );
                         return buffer.length();
                     }
                     else {
@@ -76,11 +74,12 @@ public class TreePerfTest implements TestFactory
                 public int runIteration( int run )
                     throws XMLStreamException, IOException
                 {
-                    Node node = staxParse( staxSource( _xml ) );
+                    Node node =
+                        StAXUtils.staxParse( StAXUtils.staxInput( _xml ) );
                     if( _doWrite ) {
                         StringBuilder buffer =
                             new StringBuilder( _xml.length * 4/3 );
-                        produce( node, Indentor.PRETTY, buffer );
+                        TreeUtils.produce( node, Indentor.PRETTY, buffer );
                         return buffer.length();
                     }
                     else {
@@ -95,11 +94,11 @@ public class TreePerfTest implements TestFactory
                     throws SAXException, IOException,
                         ParserConfigurationException
                 {
-                    Document doc = domParse( _xml );
+                    Document doc = DOMUtils.domParse( _xml );
                     if( _doWrite ) {
                         StringBuilder buffer =
                             new StringBuilder( _xml.length * 4/3 );
-                        produce( doc,Indentor.PRETTY, buffer );
+                        DOMUtils.produce( doc,Indentor.PRETTY, buffer );
                         return buffer.length();
                     }
                     else {

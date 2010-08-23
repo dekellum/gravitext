@@ -27,7 +27,7 @@ import com.gravitext.xml.producer.Namespace;
 
 import static javax.xml.stream.XMLStreamConstants.*;
 
-public class StaxConsumer
+public class StAXConsumer
 {
     public Node read( XMLStreamReader sr ) throws XMLStreamException
     {
@@ -44,7 +44,7 @@ public class StaxConsumer
                 break;
             case END_ELEMENT:
                 endElement();
-                if( --depth == 0 ) break loop;
+                if( --depth <= 0 ) break loop;
             }
         }
 
@@ -79,7 +79,6 @@ public class StaxConsumer
     }
 
     public void characters( XMLStreamReader sr )
-        throws XMLStreamException
     {
         _current.addChild( Node.newCharacters( sr.getText() ) );
     }

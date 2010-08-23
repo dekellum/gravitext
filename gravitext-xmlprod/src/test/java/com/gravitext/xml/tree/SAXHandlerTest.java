@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import static org.junit.Assert.*;
-import static com.gravitext.xml.tree.TreeUtils.*;
+import static com.gravitext.xml.tree.SAXUtils.*;
 
 public class SAXHandlerTest
 {
