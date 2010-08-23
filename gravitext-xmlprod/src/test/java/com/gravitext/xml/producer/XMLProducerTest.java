@@ -279,6 +279,7 @@ public class XMLProducerTest extends TestCase
         throws IOException, ParserConfigurationException, SAXException
     {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware( true );
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse( new InputSource( new StringReader( xml ) ) );
         StringBuilder out = new StringBuilder();

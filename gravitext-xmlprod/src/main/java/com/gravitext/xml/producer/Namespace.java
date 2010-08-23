@@ -48,11 +48,13 @@ public final class Namespace
             ( "Illegal attempt to construct Namespace with empty nameIRI." );
         }
         //FIXME: Other nameIRI and prefix validity tests
-        //FIXME: exclude prefix: "xml" and "xmlns"
 
         _nameIRI = nameIRI;
         _prefix  = prefix;
-        _isXML   = prefix.equals( "xml" );
+
+        // Flag all prefixes starting with xml, i.e xml:lang, xml:base, "xmlns"
+        // Should not declare these.
+        _isXML   = prefix.startsWith( "xml" );
 
         StringBuilder qName = new StringBuilder(64);
         qName.append( " xmlns" ); //Note leading space.

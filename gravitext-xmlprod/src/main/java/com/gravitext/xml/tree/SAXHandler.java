@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.gravitext.xml.NamespaceCache;
 import com.gravitext.xml.producer.Attribute;
 import com.gravitext.xml.producer.Namespace;
 

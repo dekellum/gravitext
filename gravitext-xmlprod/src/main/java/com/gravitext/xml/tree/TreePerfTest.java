@@ -26,9 +26,7 @@ import org.xml.sax.SAXException;
 
 import com.gravitext.concurrent.TestFactory;
 import com.gravitext.concurrent.TestRunnable;
-import com.gravitext.xml.producer.DOMWalker;
 import com.gravitext.xml.producer.Indentor;
-import com.gravitext.xml.producer.XMLProducer;
 
 import static com.gravitext.xml.tree.TreeUtils.*;
 
@@ -101,9 +99,7 @@ public class TreePerfTest implements TestFactory
                     if( _doWrite ) {
                         StringBuilder buffer =
                             new StringBuilder( _xml.length * 4/3 );
-                        XMLProducer pd = new XMLProducer( buffer );
-                        pd.setIndent( Indentor.PRETTY );
-                        new DOMWalker( pd ).putDOM( doc );
+                        produce( doc,Indentor.PRETTY, buffer );
                         return buffer.length();
                     }
                     else {

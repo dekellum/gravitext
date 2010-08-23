@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 
-package com.gravitext.xml.tree;
+package com.gravitext.xml;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +47,6 @@ public final class NamespaceCache
         NameSet nset = nset( iri );
 
         Namespace ns = null;
-
         for( Namespace nc : nset.spaces ) {
             if( nc.prefix().equals( prefix ) ) {
                 ns = nc;
@@ -108,13 +107,12 @@ public final class NamespaceCache
 
     private final static class NameSet
     {
-        final ArrayList<Namespace>    spaces = new ArrayList<Namespace>(2);
-        final HashMap<String,Tag>       tags = new HashMap<String,Tag>(16);
+        final ArrayList<Namespace>    spaces = new ArrayList<Namespace>( 2 );
+        final HashMap<String,Tag>       tags = new HashMap<String,Tag>( 16 );
         final HashMap<String,Attribute> attributes =
-            new HashMap<String,Attribute>(16);
+            new HashMap<String,Attribute>( 16 );
     }
 
     private final HashMap<String,NameSet> _cache =
         new HashMap<String,NameSet>( 8 );
-
 }

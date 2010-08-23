@@ -36,6 +36,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.gravitext.util.ByteArrayInputStream;
+import com.gravitext.xml.producer.DOMWalker;
 import com.gravitext.xml.producer.Indentor;
 import com.gravitext.xml.producer.XMLProducer;
 
@@ -55,6 +56,22 @@ public class TreeUtils
         XMLProducer pd = new XMLProducer( out );
         pd.setIndent( indent );
         new NodeWriter( pd ).putTree( root );
+    }
+
+    public static String produceString( Document doc, Indentor indent )
+        throws IOException
+    {
+        StringBuilder out = new StringBuilder( 128 );
+        produce( doc, indent, out );
+        return out.toString();
+    }
+
+    public static void produce( Document doc, Indentor indent, Appendable out )
+        throws IOException
+    {
+        XMLProducer pd = new XMLProducer( out );
+        pd.setIndent( indent );
+        new DOMWalker( pd ).putDOM( doc );
     }
 
     public static Node saxParse( InputSource input )
@@ -100,8 +117,10 @@ public class TreeUtils
     public static Document domParse( byte[] input )
         throws ParserConfigurationException, SAXException, IOException
     {
-        DocumentBuilder builder =
-            DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware( true );
+        dbf.setCoalescing( true );
+        DocumentBuilder builder = dbf.newDocumentBuilder();
         return builder.parse( byteStream( input ) );
     }
 

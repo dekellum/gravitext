@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import com.gravitext.xml.NamespaceCache;
 import com.gravitext.xml.producer.Attribute;
 import com.gravitext.xml.producer.Namespace;
 

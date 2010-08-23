@@ -28,6 +28,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import com.gravitext.xml.NamespaceCache;
+
 /**
  * XMLProducer helper for writing from W3C DOM trees.
  * @author David Kellum
@@ -48,31 +50,17 @@ public final class DOMWalker
      * <li>CDATASection and Text nodes are written identically via
      *     putChars.</li>
      * <li>Element attributes are written in the order found, which is
-     *     typically undefined/random.</li>
+     *     typically undefined/</li>
      * <li>All other node types are ignored.</li>
      * </ul>
      *
-     * <p>Any namespace information in the DOM is currently ignored.</p>
+     * <p>Namespace information in the DOM is observed. For best results, enable
+     * Namespace processing when constructing the DOM.</p>
      */
     public void putDOM( final Node node ) throws IOException
     {
         if( node instanceof Element ) {
-
-            _pd.startTag( node.getNodeName() );
-
-            // Add attributes
-            NamedNodeMap atts = node.getAttributes();
-            final int end = atts.getLength();
-            for( int i = 0; i < end; ++i ) {
-                Attr attr = (Attr) atts.item( i );
-                _pd.addAttr( attr.getName(), attr.getValue() );
-            }
-
-            // Add Contents
-            putNodeList( node.getChildNodes() );
-
-            _pd.endTag( node.getNodeName() );
-
+            putElement( node );
         }
         else if( ( node instanceof Text ) ||
                  ( node instanceof CDATASection ) ) {
@@ -86,6 +74,53 @@ public final class DOMWalker
         }
     }
 
+    private void putElement( final Node node ) throws IOException
+    {
+        final Namespace ns =
+            _cache.namespace( node.getPrefix(), node.getNamespaceURI() );
+        final Tag tag = _cache.tag( lname( node ), ns );
+
+        _pd.startTag( tag );
+
+        // Add Namespace declarations
+        NamedNodeMap atts = node.getAttributes();
+        final int end = atts.getLength();
+        for( int i = 0; i < end; ++i ) {
+            final Attr dattr = (Attr) atts.item( i );
+            final String iri = dattr.getNamespaceURI();
+            if( XMLNS_200_URI.equals( iri ) ) {
+                final Namespace na =
+                    _cache.namespace( dattr.getLocalName(), dattr.getValue() );
+                if( na != ns ) _pd.addNamespace( na );
+            }
+        }
+
+        // Add attributes (after all namespaces)
+        for( int i = 0; i < end; ++i ) {
+            final Attr dattr = (Attr) atts.item( i );
+            final String iri = dattr.getNamespaceURI();
+            if( ! XMLNS_200_URI.equals( iri ) ) {
+                final Attribute attr =
+                    _cache.attribute( lname( dattr ),
+                                      _cache.namespace( dattr.getPrefix(),
+                                                        iri ) );
+                _pd.addAttr( attr, dattr.getValue() );
+            }
+        }
+
+        // Add Contents
+        putNodeList( node.getChildNodes() );
+
+        _pd.endTag( tag );
+    }
+
+    private String lname( Node node )
+    {
+        String name = node.getLocalName();
+        if( name == null ) name = node.getNodeName();
+        return name;
+    }
+
     private void putNodeList( final NodeList list ) throws IOException
     {
         final int end = list.getLength();
@@ -95,5 +130,8 @@ public final class DOMWalker
         }
     }
 
+    private static final String XMLNS_200_URI = "http://www.w3.org/2000/xmlns/";
+
+    private final NamespaceCache _cache = new NamespaceCache();
     private final XMLProducer _pd;
 }
