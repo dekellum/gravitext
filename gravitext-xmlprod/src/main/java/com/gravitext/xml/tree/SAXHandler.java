@@ -25,6 +25,10 @@ import com.gravitext.xml.NamespaceCache;
 import com.gravitext.xml.producer.Attribute;
 import com.gravitext.xml.producer.Namespace;
 
+/**
+ * A SAX2 event handler which builds a Node tree.
+ * @see SAXUtils
+ */
 public final class SAXHandler
     extends DefaultHandler
 {
@@ -32,6 +36,9 @@ public final class SAXHandler
     {
     }
 
+    /**
+     * The root Node available after SAX parsing events have been received.
+     */
     public Node root()
     {
         return _root;

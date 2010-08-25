@@ -27,13 +27,45 @@ import com.gravitext.xml.producer.Namespace;
 
 import static javax.xml.stream.XMLStreamConstants.*;
 
-public class StAXConsumer
+/**
+ * Consumes events from a StAX XMLStreamReader, for a single Element or
+ * entire document, and producing a Node tree.
+ *
+ * @see StAXUtils
+ */
+public final class StAXConsumer
 {
-    public Node read( XMLStreamReader sr ) throws XMLStreamException
+    public Node readCurrentElement( XMLStreamReader sr )
+        throws XMLStreamException
     {
-        int depth = 0;
+        if( sr.getEventType() != START_ELEMENT ) {
+            throw new XMLStreamException(
+                "Reader not on START_ELEMENT (" + sr.getEventType() + ")." );
+        }
+        startElement( sr );
+        consume( sr );
+        Node root = _root;
+        _root = _current = null;
+        return root;
+    }
+
+    public Node readDocument( XMLStreamReader sr )
+        throws XMLStreamException
+    {
+        consume( sr );
+        Node root = _root;
+        _root = _current = null;
+        return root;
+    }
+
+    private Node consume( XMLStreamReader sr ) throws XMLStreamException
+    {
+        int depth = ( sr.getEventType() == START_ELEMENT ) ? 1 : 0;
         loop: while( true ) {
             switch( sr.next() ) {
+            case START_DOCUMENT:
+                ++depth;
+                break;
             case START_ELEMENT:
                 startElement( sr );
                 ++depth;
@@ -45,6 +77,9 @@ public class StAXConsumer
             case END_ELEMENT:
                 endElement();
                 if( --depth <= 0 ) break loop;
+                break;
+            case END_DOCUMENT:
+                break loop;
             }
         }
 
@@ -78,13 +113,15 @@ public class StAXConsumer
         }
     }
 
-    public void characters( XMLStreamReader sr )
+    private void characters( XMLStreamReader sr )
     {
+        //FIXME: Check _current set?
         _current.addChild( Node.newCharacters( sr.getText() ) );
     }
 
-    public void endElement()
+    private void endElement()
     {
+        //FIXME: Check _current set?
         _current = _current.parent();
     }
 

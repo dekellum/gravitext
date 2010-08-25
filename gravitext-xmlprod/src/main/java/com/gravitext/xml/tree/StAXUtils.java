@@ -19,6 +19,7 @@ package com.gravitext.xml.tree;
 import java.io.IOException;
 import java.io.StringReader;
 
+import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -29,6 +30,44 @@ import com.gravitext.xml.producer.Indentor;
 
 public class StAXUtils extends TreeUtils
 {
+    public static Source staxInput( byte[] input )
+    {
+        return new StreamSource( byteStream( input ) );
+    }
+
+    public static Source staxInput( String input )
+    {
+        return new StreamSource( new StringReader( input ) );
+    }
+
+    public static XMLStreamReader staxReader( Source source )
+        throws FactoryConfigurationError, XMLStreamException
+    {
+        XMLInputFactory inf = XMLInputFactory.newFactory();
+        inf.setProperty( "javax.xml.stream.isCoalescing", true );
+        inf.setProperty( "javax.xml.stream.supportDTD", false );
+        XMLStreamReader sr = inf.createXMLStreamReader( source );
+        return sr;
+    }
+
+    public static Node readCurrentElement( XMLStreamReader sr )
+        throws XMLStreamException
+    {
+        return new StAXConsumer().readCurrentElement( sr );
+    }
+
+    public static Node readDocument( XMLStreamReader sr )
+        throws XMLStreamException
+    {
+        return new StAXConsumer().readDocument( sr );
+    }
+
+    public static Node staxParse( Source source )
+        throws XMLStreamException
+    {
+        return readDocument( staxReader( source ) );
+    }
+
     public static String roundTripStAX( String input )
         throws IOException, XMLStreamException
     {
@@ -41,25 +80,5 @@ public class StAXUtils extends TreeUtils
         Node root = staxParse( staxInput( input ) );
 
         return produceString( root, indent );
-    }
-
-    public static Source staxInput( byte[] input )
-    {
-        return new StreamSource( byteStream( input ) );
-    }
-
-    public static Source staxInput( String input )
-    {
-        return new StreamSource( new StringReader( input ) );
-    }
-
-    public static Node staxParse( Source source ) throws XMLStreamException
-    {
-        XMLInputFactory inf = XMLInputFactory.newFactory();
-        inf.setProperty( "javax.xml.stream.isCoalescing", true );
-        inf.setProperty( "javax.xml.stream.supportDTD", false );
-        StAXConsumer sc = new StAXConsumer();
-        XMLStreamReader sr = inf.createXMLStreamReader( source );
-        return sc.read( sr );
     }
 }
