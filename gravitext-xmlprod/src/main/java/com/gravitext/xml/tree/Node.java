@@ -32,18 +32,14 @@ import com.gravitext.xml.producer.Tag;
  * Document/Element, content, etc. May choose to divide this into parent and
  * child classes if it gets unwieldy.
  */
-public final class Node
+public class Node
     implements HTAccess
 {
     public static final KeySpace KEY_SPACE = new KeySpace();
 
-    private static final KeySpace COMPAT_KEY_SPACE = new KeySpace();
-    public  static final Key<CharSequence> CONTENT =
-        COMPAT_KEY_SPACE.create( "content", CharSequence.class );
-
     public static Node newElement( Tag tag )
     {
-        return new Node( null, tag );
+        return new Node( tag );
     }
 
     public static Node newElement( String name )
@@ -53,12 +49,12 @@ public final class Node
 
     public static Node newElement( String name, Namespace ns )
     {
-        return new Node( null, new Tag( name, ns ) );
+        return new Node( new Tag( name, ns ) );
     }
 
     public static Node newCharacters( CharSequence chars )
     {
-        return new Node( chars, null );
+        return new Characters( chars );
     }
 
     public List<Node> children()
@@ -94,16 +90,6 @@ public final class Node
             _parent.removeChild( this );
             _parent = null;
         }
-    }
-
-    public CharSequence characters()
-    {
-        return _chars;
-    }
-
-    public void setCharacters( CharSequence chars )
-    {
-        _chars = chars;
     }
 
     public String name()
@@ -170,12 +156,6 @@ public final class Node
 
     public <T, V extends T> T set( Key<T> key, V value )
     {
-        if( key == CONTENT ) {
-            CharSequence old = characters();
-            setCharacters( CONTENT.valueType().cast( value ) );
-            return key.valueType().cast( old );
-        }
-
         if( _props == EMPTY_PROPS ) {
             _props = new ArrayHTMap( KEY_SPACE );
         }
@@ -188,25 +168,26 @@ public final class Node
 
     public <T> T get( Key<T> key )
     {
-        if( key == CONTENT ) {
-            return key.valueType().cast( characters() );
-        }
         return _props.get( key );
     }
 
     public <T> T remove( Key<T> key )
     {
-        if( key == CONTENT ) {
-            CharSequence old = characters();
-            setCharacters("");
-            return key.valueType().cast( old );
-        }
         return _props.remove( key );
     }
 
-    private Node( CharSequence chars, Tag tag )
+    public CharSequence characters()
     {
-        _chars = chars;
+        throw new RuntimeException( "Not characters" );
+
+    }
+
+    protected Node()
+    {
+    }
+
+    private Node( Tag tag )
+    {
         _tag = tag;
     }
 
@@ -220,12 +201,16 @@ public final class Node
         _children.remove( node );
     }
 
-    private static final List<AttributeValue> EMPTY_ATTS =
+    protected static final List<AttributeValue> EMPTY_ATTS =
         Collections.emptyList();
-    private static final List<Namespace> EMPTY_NAMESPACES =
+    protected static final List<Namespace> EMPTY_NAMESPACES =
         Collections.emptyList();
-    private static final List<Node> EMPTY_CHILDREN = Collections.emptyList();
-    private static final ArrayHTMap EMPTY_PROPS = new ArrayHTMap( KEY_SPACE );
+    protected static final List<Node> EMPTY_CHILDREN = Collections.emptyList();
+    protected static final ArrayHTMap EMPTY_PROPS = new ArrayHTMap( KEY_SPACE );
+
+    protected static final KeySpace COMPAT_KEY_SPACE = new KeySpace();
+
+    private ArrayHTMap _props = EMPTY_PROPS;
 
     private Tag _tag;
 
@@ -233,8 +218,6 @@ public final class Node
     private List<Namespace> _spaces = EMPTY_NAMESPACES;
     private List<Node> _children = EMPTY_CHILDREN;
 
-    private CharSequence _chars = null;
-
-    private ArrayHTMap _props = EMPTY_PROPS;
     private Node _parent = null;
+
 }
