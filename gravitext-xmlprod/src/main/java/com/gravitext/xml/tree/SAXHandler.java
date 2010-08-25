@@ -37,9 +37,9 @@ public final class SAXHandler
     }
 
     /**
-     * The root Node available after SAX parsing events have been received.
+     * The root Element available after SAX parsing events have been received.
      */
-    public Node root()
+    public Element root()
     {
         return _root;
     }
@@ -57,24 +57,24 @@ public final class SAXHandler
         bufferToChars();
 
         Namespace ns = findNamespace( iri );
-        Node node = Node.newElement( _cache.tag( localName, ns ) );
+        Element element = new Element( _cache.tag( localName, ns ) );
 
         // Add any namespaces declared and not
         // already used by this element.
         for( Namespace decl: _nextNS ) {
-            if( decl != ns ) node.addNamespace( decl );
+            if( decl != ns ) element.addNamespace( decl );
         }
 
-        copyAttributes( attributes, node );
+        copyAttributes( attributes, element );
 
         _nextNS.clear();
 
         if( _root == null ) {
-            _root = _current = node;
+            _root = _current = element;
         }
         else {
-            _current.addChild( node );
-            _current = node;
+            _current.addChild( element );
+            _current = element;
         }
     }
 
@@ -97,12 +97,12 @@ public final class SAXHandler
     private void bufferToChars()
     {
         if( _buffer != null ) {
-            _current.addChild( Node.newCharacters( _buffer ) );
+            _current.addChild( new Characters( _buffer ) );
             _buffer = null;
         }
     }
 
-    private void copyAttributes( Attributes attributes, Node node )
+    private void copyAttributes( Attributes attributes, Element element )
     {
         final int end = attributes.getLength();
         if( end == 0 ) return;
@@ -118,7 +118,7 @@ public final class SAXHandler
                                           attributes.getValue( i ) ) );
         }
 
-        node.setAttributes( atts );
+        element.setAttributes( atts );
     }
 
     //FIXME: Test perf of alternative: processing qName for prefix
@@ -130,7 +130,7 @@ public final class SAXHandler
                 if( ns.nameIRI().equals( iri ) ) return ns;
             }
 
-            Node n = _current; //Effective parent of new tag being handled.
+            Element n = _current; //Effective parent of new tag being handled.
             while( n != null ) {
 
                 Namespace nns = n.namespace();
@@ -152,10 +152,9 @@ public final class SAXHandler
         return null;
     }
 
-    private Node _root = null;
-    private Node _current = null;
+    private Element _root = null;
+    private Element _current = null;
     private final NamespaceCache _cache = new NamespaceCache();
     private final ArrayList<Namespace> _nextNS = new ArrayList<Namespace>( 8 );
     private StringBuilder _buffer = null;
-
 }

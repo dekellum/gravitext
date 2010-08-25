@@ -38,7 +38,7 @@ public class SAXUtils extends TreeUtils
         return new InputSource( new StringReader( input ) );
     }
 
-    public static Node saxParse( InputSource input )
+    public static Element saxParse( InputSource input )
         throws SAXException, IOException
     {
         XMLReader reader = XMLReaderFactory.createXMLReader();
@@ -57,7 +57,7 @@ public class SAXUtils extends TreeUtils
     public static String roundTripSAX( String input, Indentor indent )
         throws SAXException, IOException
     {
-        Node root = saxParse( saxInput( input ) );
+        Element root = saxParse( saxInput( input ) );
 
         return produceString( root, indent );
     }

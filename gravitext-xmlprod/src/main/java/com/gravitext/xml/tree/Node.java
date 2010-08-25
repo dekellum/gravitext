@@ -16,142 +16,27 @@
 
 package com.gravitext.xml.tree;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.gravitext.htmap.ArrayHTMap;
 import com.gravitext.htmap.HTAccess;
 import com.gravitext.htmap.Key;
 import com.gravitext.htmap.KeySpace;
-import com.gravitext.xml.producer.Namespace;
-import com.gravitext.xml.producer.Tag;
 
 /**
- * FIXME: Start with just a single non-polymorphic representation of
- * Document/Element, content, etc. May choose to divide this into parent and
- * child classes if it gets unwieldy.
+ * Generic XML Tree Node.
  */
 public class Node
     implements HTAccess
 {
     public static final KeySpace KEY_SPACE = new KeySpace();
 
-    public static Node newElement( Tag tag )
-    {
-        return new Node( tag );
-    }
-
-    public static Node newElement( String name )
-    {
-        return newElement( name, null );
-    }
-
-    public static Node newElement( String name, Namespace ns )
-    {
-        return new Node( new Tag( name, ns ) );
-    }
-
-    public static Node newCharacters( CharSequence chars )
-    {
-        return new Characters( chars );
-    }
-
-    public List<Node> children()
-    {
-        return _children;
-    }
-
-    public void addChild( Node node )
-    {
-        if( _children == EMPTY_CHILDREN ) {
-            _children = new ArrayList<Node>(3);
-        }
-
-        node.detach();
-        _children.add( node );
-        node.setParent( this );
-    }
-
-    public void insertChild( int index, Node node )
-    {
-        if( _children == EMPTY_CHILDREN ) {
-            _children = new ArrayList<Node>(3);
-        }
-
-        node.detach();
-        _children.add( index, node );
-        node.setParent( this );
-    }
-
-    public void detach()
-    {
-        if( _parent != null ) {
-            _parent.removeChild( this );
-            _parent = null;
-        }
-    }
-
-    public String name()
-    {
-        return _tag.name();
-    }
-
-    public Namespace namespace()
-    {
-        return _tag.namespace();
-    }
-
-    public Tag tag()
-    {
-        return _tag;
-    }
-
-    public List<AttributeValue> attributes()
-    {
-        return _attributes;
-    }
-
-    public void addAttribute( AttributeValue avalue )
-    {
-        if( _attributes == EMPTY_ATTS ) {
-            _attributes = new ArrayList<AttributeValue>(3);
-        }
-
-        _attributes.add( avalue );
-    }
-
-    public void setAttributes( List<AttributeValue> attributes )
-    {
-        _attributes = attributes;
-    }
-
-    /**
-     * Additional namespace declarations rooted at this element. Should not
-     * include the elements namespace.
-     */
-    public void addNamespace( Namespace ns )
-    {
-        if( _spaces == EMPTY_NAMESPACES ) {
-            _spaces = new ArrayList<Namespace>(3);
-        }
-
-        _spaces.add( ns );
-    }
-
-    public List<Namespace> namespaceDeclarations()
-    {
-        return _spaces;
-    }
-
-    public Node parent()
+    public final Element parent()
     {
         return _parent;
     }
 
-    public boolean isElement()
+    public Element asElement()
     {
-        return ( _tag != null );
+        return null;
     }
 
     public <T, V extends T> T set( Key<T> key, V value )
@@ -178,46 +63,28 @@ public class Node
 
     public CharSequence characters()
     {
-        throw new RuntimeException( "Not characters" );
-
+        throw new RuntimeException( "Not a Characters node" );
     }
 
-    protected Node()
+    /**
+     * Detach this node from its parent, if attached.
+     */
+    public final void detach()
     {
+        if( _parent != null ) {
+            _parent.removeChild( this );
+            _parent = null;
+        }
     }
 
-    private Node( Tag tag )
+    protected void setParent( Element parent )
     {
-        _tag = tag;
+        _parent = parent;
     }
 
-    private void setParent( Node node )
-    {
-        _parent = node;
-    }
-
-    private void removeChild( Node node )
-    {
-        _children.remove( node );
-    }
-
-    protected static final List<AttributeValue> EMPTY_ATTS =
-        Collections.emptyList();
-    protected static final List<Namespace> EMPTY_NAMESPACES =
-        Collections.emptyList();
-    protected static final List<Node> EMPTY_CHILDREN = Collections.emptyList();
     protected static final ArrayHTMap EMPTY_PROPS = new ArrayHTMap( KEY_SPACE );
-
     protected static final KeySpace COMPAT_KEY_SPACE = new KeySpace();
 
     private ArrayHTMap _props = EMPTY_PROPS;
-
-    private Tag _tag;
-
-    private List<AttributeValue> _attributes = EMPTY_ATTS;
-    private List<Namespace> _spaces = EMPTY_NAMESPACES;
-    private List<Node> _children = EMPTY_CHILDREN;
-
-    private Node _parent = null;
-
+    private Element _parent = null;
 }

@@ -57,15 +57,16 @@ public class TreePerfTest implements TestFactory
                 public int runIteration( int run )
                     throws SAXException, IOException
                 {
-                    Node node = SAXUtils.saxParse( SAXUtils.saxInput( _xml ) );
+                    Element element =
+                        SAXUtils.saxParse( SAXUtils.saxInput( _xml ) );
                     if( _doWrite ) {
                         StringBuilder buffer =
                             new StringBuilder( _xml.length * 4/3 );
-                        TreeUtils.produce( node, Indentor.PRETTY, buffer );
+                        TreeUtils.produce( element, Indentor.PRETTY, buffer );
                         return buffer.length();
                     }
                     else {
-                        return node.children().size();
+                        return element.children().size();
                     }
                 }
             };
@@ -74,16 +75,16 @@ public class TreePerfTest implements TestFactory
                 public int runIteration( int run )
                     throws XMLStreamException, IOException
                 {
-                    Node node =
+                    Element element =
                         StAXUtils.staxParse( StAXUtils.staxInput( _xml ) );
                     if( _doWrite ) {
                         StringBuilder buffer =
                             new StringBuilder( _xml.length * 4/3 );
-                        TreeUtils.produce( node, Indentor.PRETTY, buffer );
+                        TreeUtils.produce( element, Indentor.PRETTY, buffer );
                         return buffer.length();
                     }
                     else {
-                        return node.children().size();
+                        return element.children().size();
                     }
                 }
             };

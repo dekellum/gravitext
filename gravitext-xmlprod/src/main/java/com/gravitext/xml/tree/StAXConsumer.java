@@ -35,7 +35,7 @@ import static javax.xml.stream.XMLStreamConstants.*;
  */
 public final class StAXConsumer
 {
-    public Node readCurrentElement( XMLStreamReader sr )
+    public Element readCurrentElement( XMLStreamReader sr )
         throws XMLStreamException
     {
         if( sr.getEventType() != START_ELEMENT ) {
@@ -44,21 +44,21 @@ public final class StAXConsumer
         }
         startElement( sr );
         consume( sr );
-        Node root = _root;
+        Element root = _root;
         _root = _current = null;
         return root;
     }
 
-    public Node readDocument( XMLStreamReader sr )
+    public Element readDocument( XMLStreamReader sr )
         throws XMLStreamException
     {
         consume( sr );
-        Node root = _root;
+        Element root = _root;
         _root = _current = null;
         return root;
     }
 
-    private Node consume( XMLStreamReader sr ) throws XMLStreamException
+    private Element consume( XMLStreamReader sr ) throws XMLStreamException
     {
         int depth = ( sr.getEventType() == START_ELEMENT ) ? 1 : 0;
         loop: while( true ) {
@@ -91,7 +91,7 @@ public final class StAXConsumer
         Namespace ns = _cache.namespace( sr.getPrefix(),
                                          sr.getNamespaceURI() );
 
-        Node node = Node.newElement( _cache.tag( sr.getLocalName(), ns ) );
+        Element element = new Element( _cache.tag( sr.getLocalName(), ns ) );
 
         final int nsds = sr.getNamespaceCount();
         for( int i = 0; i < nsds; ++i ) {
@@ -99,24 +99,24 @@ public final class StAXConsumer
             Namespace decl = _cache.namespace( sr.getNamespacePrefix( i ),
                                                sr.getNamespaceURI( i ) );
 
-            if( decl != ns ) node.addNamespace( decl );
+            if( decl != ns ) element.addNamespace( decl );
         }
 
-        copyAttributes( sr, node );
+        copyAttributes( sr, element );
 
         if( _root == null ) {
-            _root = _current = node;
+            _root = _current = element;
         }
         else {
-            _current.addChild( node );
-            _current = node;
+            _current.addChild( element );
+            _current = element;
         }
     }
 
     private void characters( XMLStreamReader sr )
     {
         //FIXME: Check _current set?
-        _current.addChild( Node.newCharacters( sr.getText() ) );
+        _current.addChild( new Characters( sr.getText() ) );
     }
 
     private void endElement()
@@ -125,7 +125,7 @@ public final class StAXConsumer
         _current = _current.parent();
     }
 
-    private void copyAttributes( XMLStreamReader sr, Node node )
+    private void copyAttributes( XMLStreamReader sr, Element element )
     {
         final int end = sr.getAttributeCount();
         if( end > 0 ) {
@@ -143,12 +143,12 @@ public final class StAXConsumer
                                               sr.getAttributeValue( i ) ) );
             }
 
-            node.setAttributes( atts );
+            element.setAttributes( atts );
         }
     }
 
-    private Node _root = null;
-    private Node _current = null;
+    private Element _root = null;
+    private Element _current = null;
 
     private final NamespaceCache _cache = new NamespaceCache();
 }
