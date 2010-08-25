@@ -1,17 +1,18 @@
 = gravitext-util
 
 * http://gravitext.rubyforge.org
-* http://gravitext.com/oss/gravitext-util
 * http://github.com/dekellum/gravitext
+* http://gravitext.com/oss/gravitext-util
+* http://rubygems.org/gems/gravitext-util
 
 == Description
 
-A collection of core java utilities with ruby adapters for JRuby.
+A collection of core java utilities, many with jruby adaptions:
 
 * A concurrent (thread safety) testing facility for java JUnit,
   ruby Test::Unit, or other test harnesses.
 
-* A concurrent performance testing facility for java/JRuby with simple
+* A concurrent performance testing facility for java/ruby with simple
   test wiring in ruby.
 
 * A Heterogeneous Type-safe Map implementation in java with
@@ -24,9 +25,6 @@ A collection of core java utilities with ruby adapters for JRuby.
 == Dependencies
 
 * Java 1.5+
-* JRuby 1.1.6+
-* rjack-slf4j[http://rjack.rubyforge.org/slf4j] and
-  rjack-logback[http://rjack.rubyforge.org/logback] gems for testing.
 
 == License
 
