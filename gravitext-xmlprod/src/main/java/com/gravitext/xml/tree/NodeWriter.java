@@ -34,21 +34,23 @@ public final class NodeWriter
      */
     public void putTree( final Node node ) throws IOException
     {
-        if( node.isElement() ) {
+        Element element = node.asElement();
 
-            _pd.startTag( node.tag() );
+        if( element != null ) {
 
-            for( Namespace ns : node.namespaceDeclarations() ) {
+            _pd.startTag( element.tag() );
+
+            for( Namespace ns : element.namespaceDeclarations() ) {
                 _pd.addNamespace( ns );
             }
 
             // Add attributes
-            for( AttributeValue av : node.attributes() ) {
+            for( AttributeValue av : element.attributes() ) {
                 _pd.addAttr( av.attribute(), av.value() );
             }
 
             // Add Contents
-            for( Node child : node.children() ) {
+            for( Node child : element.children() ) {
                 putTree( child );
             }
 

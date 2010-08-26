@@ -74,10 +74,17 @@ class TestCollection
       tests
 
     when 'tree', 'tree_write'
-      xfile = ( ARGV.shift ||
-                File.join( File.dirname(__FILE__),
-                           '..', 'test', 'xml', 'huffingtonpost.full.atom.xml' ) )
-      xml = IO.read( xfile ).to_java_bytes
+
+      if ARGV.empty?
+        ddir = File.join( File.dirname(__FILE__), '..', 'test', 'xml' )
+        files = Dir.glob( File.join( ddir, "*.xml" ) )
+      else
+        files = ARGV
+      end
+
+      xml = files.map do |xfile|
+        IO.read( xfile ).to_java_bytes
+      end
 
       TreePerfTest::Impl.values.map do |s|
         TreePerfTest.new( xml, s, ( name == 'tree_write' ) )

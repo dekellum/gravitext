@@ -102,7 +102,7 @@ XML
   end
 
   def show_node( n, d = 0, out = "" )
-    if n.isElement
+    if n.asElement
       out << ( ' ' * d + '<' + n.name + ' ' +
                n.namespace_declarations.to_a.map { |ns|
                  'ns:%s=%s' % [ ns.prefix.to_s, ns.nameIRI ] }.join( ' ' ) +

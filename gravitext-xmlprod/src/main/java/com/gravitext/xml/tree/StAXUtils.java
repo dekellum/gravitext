@@ -50,19 +50,19 @@ public class StAXUtils extends TreeUtils
         return sr;
     }
 
-    public static Node readCurrentElement( XMLStreamReader sr )
+    public static Element readCurrentElement( XMLStreamReader sr )
         throws XMLStreamException
     {
         return new StAXConsumer().readCurrentElement( sr );
     }
 
-    public static Node readDocument( XMLStreamReader sr )
+    public static Element readDocument( XMLStreamReader sr )
         throws XMLStreamException
     {
         return new StAXConsumer().readDocument( sr );
     }
 
-    public static Node staxParse( Source source )
+    public static Element staxParse( Source source )
         throws XMLStreamException
     {
         return readDocument( staxReader( source ) );
