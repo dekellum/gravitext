@@ -17,7 +17,8 @@
 package com.gravitext.xml.producer;
 
 import java.io.IOException;
-import java.util.HashMap;
+
+import com.gravitext.xml.NamespaceCache;
 
 /**
  * Produces well-formed XML documents from a series of event methods.
@@ -127,7 +128,7 @@ public final class XMLProducer
      */
     public XMLProducer startTag( String name, Namespace ns ) throws IOException
     {
-        _impl.startTag( cacheTag( name, ns ) );
+        _impl.startTag( _cache.tag( name, ns ) );
         return this;
     }
 
@@ -415,7 +416,7 @@ public final class XMLProducer
      */
     public XMLProducer endTag( String name, Namespace ns ) throws IOException
     {
-        _impl.endTag( cacheTag( name, ns ) );
+        _impl.endTag( _cache.tag( name, ns ) );
         return this;
     }
 
@@ -434,27 +435,6 @@ public final class XMLProducer
         return this;
     }
 
-    private Tag cacheTag( final String name, final Namespace ns )
-    {
-        String iri = ( ns == null ) ? null : ns.nameIRI();
-        HashMap<String,Tag> tags = _tagCache.get( iri );
-
-        if( tags == null ) {
-            tags = new HashMap<String,Tag>( 17 );
-            _tagCache.put( iri, tags );
-        }
-        Tag t = tags.get( name );
-        if( t == null ) {
-            t = new Tag( name, ns );
-            tags.put( name, t );
-        }
-
-        return t;
-    }
-
-    //Cached tags of: namespace URI -> tag name -> Tag1
-    private final HashMap< String, HashMap<String,Tag> > _tagCache =
-        new HashMap< String, HashMap<String,Tag> >( 5 );
-
+    private final NamespaceCache _cache = new NamespaceCache();
     private final XMLProducerImpl _impl;
 }

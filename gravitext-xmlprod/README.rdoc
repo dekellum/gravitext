@@ -1,18 +1,18 @@
 = gravitext-xmlprod
 
 * http://gravitext.rubyforge.org
-* http://gravitext.com/oss/gravitext-xmlprod
 * http://github.com/dekellum/gravitext
+* http://gravitext.com/oss/gravitext-xmlprod
+* http://rubygems.org/gems/gravitext-xmlprod
 
 == Description
 
-A fast and simple XML streaming production package in java.
+XML utilities, includes a fast XML streaming producer and an
+extensible XML tree representation in Java.
 
 == Dependencies
 
 * Java 1.5+
-* gravitext-util 1.3+ (perf testing)
-* rjack-jdom (perf testing)
 
 == License
 

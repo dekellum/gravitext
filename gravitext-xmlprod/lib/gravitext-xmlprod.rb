@@ -17,6 +17,8 @@
 require 'gravitext-xmlprod/version'
 require 'java'
 
+require 'gravitext-util'
+
 module Gravitext
 
   module XMLProd

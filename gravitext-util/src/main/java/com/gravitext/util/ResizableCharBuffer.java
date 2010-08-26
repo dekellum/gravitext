@@ -216,8 +216,8 @@ public class ResizableCharBuffer
     }
 
     public final ResizableCharBuffer append( final CharSequence in,
-                                       final int start,
-                                       final int end )
+                                             final int start,
+                                             final int end )
     {
         return put( in, start, end );
     }

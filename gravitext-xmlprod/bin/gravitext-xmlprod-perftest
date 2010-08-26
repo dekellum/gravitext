@@ -1,5 +1,6 @@
 #!/usr/bin/env jruby
 # -*- ruby -*-
+
 #--
 # Copyright (c) 2008-2010 David Kellum
 #
@@ -17,33 +18,43 @@
 #++
 
 $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
-require 'gravitext-xmlprod'
 
 require 'rubygems'
+
+require 'gravitext-xmlprod'
 require 'gravitext-util/perftest'
-require 'rjack-jdom'
+require 'optparse'
 
 require 'java'
 
-module TestCollection
+class TestCollection
   include Gravitext
   include Gravitext::Concurrent
 
   import 'com.gravitext.xml.producer.perftests.PerfTestFactory'
   import 'com.gravitext.xml.producer.perftests.StringBufferEncodePerfTest'
+  import 'com.gravitext.xml.tree.TreePerfTest'
 
-  def self.run
-    tests = TestCollection::lookup_factories( ARGV[0] || 'producer' )
+  def run
+    options = {}
+    OptionParser.new do |opts|
+      opts.banner = "Usage: gravitext-xmlprod-perftest [options] <test>"
+      opts.on("-t", "--threads N", Integer, "Test with thread count" ) do |n|
+        options[ :threads ] = n
+      end
+    end.parse!
+
+    tests = lookup_factories( ARGV.shift || 'producer' )
 
     harness = PerfTest::Harness.new( tests )
-    # harness.thread_count = 2
-
+    harness.thread_count = options[ :threads ] if options[ :threads ]
     harness.execute
   end
 
-  def self.lookup_factories( name )
+  def lookup_factories( name )
     case name
     when 'producer'
+      require 'rjack-jdom'
 
       tests = PerfTestFactory::Serializer.values.map do |s|
         PerfTestFactory.new( s )
@@ -61,10 +72,21 @@ module TestCollection
       tests = Array.new(2) { StringBufferEncodePerfTest.new }
       tests.zip( [ false, true ] ) { |test,b| test.use_char_buffer = b }
       tests
+
+    when 'tree', 'tree_write'
+      xfile = ( ARGV.shift ||
+                File.join( File.dirname(__FILE__),
+                           '..', 'test', 'xml', 'huffingtonpost.full.atom.xml' ) )
+      xml = IO.read( xfile ).to_java_bytes
+
+      TreePerfTest::Impl.values.map do |s|
+        TreePerfTest.new( xml, s, ( name == 'tree_write' ) )
+      end
+    else
+      raise "No test named #{name}."
     end
 
   end
-
 end
 
-TestCollection.run
+TestCollection.new.run

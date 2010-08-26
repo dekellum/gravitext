@@ -48,6 +48,11 @@ public final class ByteArrayInputStream
                buffer.remaining() );
     }
 
+    public ByteArrayInputStream( byte[] input )
+    {
+        this( input, 0, input.length );
+    }
+
     public ByteArrayInputStream( byte[] input, int offset, int length )
     {
         _b = input;
