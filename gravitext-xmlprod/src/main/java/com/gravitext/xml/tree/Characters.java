@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2010 David Kellum
+ * Copyright (c) 2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
  * may not use this file except in compliance with the License.  You may
@@ -25,6 +25,10 @@ public final class Characters extends Node
 
     public Characters( CharSequence chars )
     {
+        if( chars == null ) {
+            throw new NullPointerException( getClass().getName() );
+        }
+
         _chars = chars;
     }
 
@@ -50,7 +54,7 @@ public final class Characters extends Node
     {
         if( key == CONTENT ) {
             CharSequence old = characters();
-            setCharacters("");
+            setCharacters( EMPTY_CHARS );
             return key.valueType().cast( old );
         }
         return super.remove( key );
@@ -66,6 +70,7 @@ public final class Characters extends Node
         return super.set( key, value );
     }
 
-    private CharSequence _chars = null;
+    private CharSequence _chars;
 
+    private static final String EMPTY_CHARS = "";
 }

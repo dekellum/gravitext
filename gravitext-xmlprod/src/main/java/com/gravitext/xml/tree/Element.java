@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2010 David Kellum
+ * Copyright (c) 2010 David Kellum
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
  * may not use this file except in compliance with the License.  You may
@@ -20,31 +20,56 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.gravitext.xml.producer.Attribute;
 import com.gravitext.xml.producer.Namespace;
 import com.gravitext.xml.producer.Tag;
 
 public final class Element extends Node
 {
-
     public Element( Tag tag )
     {
+        if( tag == null ) {
+            throw new NullPointerException( getClass().getName() );
+        }
+
         _tag = tag;
     }
 
+    public Element( String name, Namespace ns )
+    {
+        this( new Tag( name, ns ) );
+    }
+
+    public Element( String name )
+    {
+        this( name, null );
+    }
+
+    @Override
+    public boolean isElement()
+    {
+        return true;
+    }
+
+    @Override
     public Element asElement()
     {
         return this;
     }
 
-    //FIXME:
-    public static Element newElement( String name )
+    public Tag tag()
     {
-        return newElement( name, null );
+        return _tag;
     }
 
-    public static Element newElement( String name, Namespace ns )
+    public String name()
     {
-        return new Element( new Tag( name, ns ) );
+        return _tag.name();
+    }
+
+    public Namespace namespace()
+    {
+        return _tag.namespace();
     }
 
     public void addAttribute( AttributeValue avalue )
@@ -54,6 +79,16 @@ public final class Element extends Node
         }
 
         _attributes.add( avalue );
+    }
+
+    public void addAttribute( Attribute attribute, CharSequence value )
+    {
+        addAttribute( new AttributeValue( attribute, value ) );
+    }
+
+    public void addAttribute( String name, CharSequence value )
+    {
+        addAttribute( new AttributeValue( new Attribute( name ), value ) );
     }
 
     public void addChild( Node node )
@@ -69,7 +104,7 @@ public final class Element extends Node
 
     /**
      * Additional namespace declarations rooted at this element. Should not
-     * include the elements namespace.
+     * include this elements namespace.
      */
     public void addNamespace( Namespace ns )
     {
@@ -101,16 +136,6 @@ public final class Element extends Node
         node.setParent( this );
     }
 
-    public String name()
-    {
-        return _tag.name();
-    }
-
-    public Namespace namespace()
-    {
-        return _tag.namespace();
-    }
-
     public List<Namespace> namespaceDeclarations()
     {
         return _spaces;
@@ -119,11 +144,6 @@ public final class Element extends Node
     public void setAttributes( List<AttributeValue> attributes )
     {
         _attributes = attributes;
-    }
-
-    public Tag tag()
-    {
-        return _tag;
     }
 
     void removeChild( Node node )
@@ -139,6 +159,6 @@ public final class Element extends Node
 
     private Tag _tag;
     private List<AttributeValue> _attributes = EMPTY_ATTS;
-    private List<Node> _children = EMPTY_CHILDREN;
     private List<Namespace> _spaces = EMPTY_NAMESPACES;
+    private List<Node> _children = EMPTY_CHILDREN;
 }
