@@ -1,6 +1,7 @@
 === 1.4.1 (TBD)
 * Add Metric.format(long) and formatInteger(double) with
   no-fractions output.
+* Add ByteArrayInputStream( byte[] ) constructor.
 
 === 1.4.0 (2010-5-8)
 * New generic UniMap (Java) with ruby dynamic accessor extension.
