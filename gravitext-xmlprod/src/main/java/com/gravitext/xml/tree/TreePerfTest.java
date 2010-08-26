@@ -37,7 +37,7 @@ public class TreePerfTest implements TestFactory
         TREE_NODE_STAX
     };
 
-    public TreePerfTest( byte[] xml, Impl impl, boolean doWrite )
+    public TreePerfTest( byte[][] xml, Impl impl, boolean doWrite )
     {
         _xml = xml;
         _impl = impl;
@@ -57,8 +57,8 @@ public class TreePerfTest implements TestFactory
                 public int runIteration( int run )
                     throws SAXException, IOException
                 {
-                    Element element =
-                        SAXUtils.saxParse( SAXUtils.saxInput( _xml ) );
+                    Element element = SAXUtils.saxParse(
+                        SAXUtils.saxInput( _xml[ run % _xml.length ] ) );
                     if( _doWrite ) {
                         StringBuilder buffer =
                             new StringBuilder( _xml.length * 4/3 );
@@ -75,8 +75,8 @@ public class TreePerfTest implements TestFactory
                 public int runIteration( int run )
                     throws XMLStreamException, IOException
                 {
-                    Element element =
-                        StAXUtils.staxParse( StAXUtils.staxInput( _xml ) );
+                    Element element = StAXUtils.staxParse(
+                        StAXUtils.staxInput( _xml[ run % _xml.length ] ) );
                     if( _doWrite ) {
                         StringBuilder buffer =
                             new StringBuilder( _xml.length * 4/3 );
@@ -95,7 +95,8 @@ public class TreePerfTest implements TestFactory
                     throws SAXException, IOException,
                         ParserConfigurationException
                 {
-                    Document doc = DOMUtils.domParse( _xml );
+                    Document doc =
+                        DOMUtils.domParse( _xml[ run % _xml.length ] );
                     if( _doWrite ) {
                         StringBuilder buffer =
                             new StringBuilder( _xml.length * 4/3 );
@@ -112,7 +113,7 @@ public class TreePerfTest implements TestFactory
         throw new RuntimeException();
     }
 
-    private final byte[] _xml;
+    private final byte[][] _xml;
     private final Impl _impl;
     private final boolean _doWrite;
 }
