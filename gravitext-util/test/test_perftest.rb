@@ -28,7 +28,7 @@ require 'rubygems'
 require 'rjack-slf4j'
 require 'rjack-logback' #Or, turn off logging: require 'rjack-slf4j/nop'
 
-RJack::Logback.config_console( :level => Logback::DEBUG )
+RJack::Logback.config_console( :level => RJack::Logback::DEBUG )
 
 class TestPerfTest < Test::Unit::TestCase
   include Gravitext::PerfTest
