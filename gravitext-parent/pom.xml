@@ -4,7 +4,7 @@
   <groupId>com.gravitext</groupId>
   <artifactId>gravitext-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.5</version>
+  <version>1.6</version>
   <name>Gravitext Parent POM</name>
 
   <description>Gravitext OSS project parent.</description>
