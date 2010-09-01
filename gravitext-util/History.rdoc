@@ -1,4 +1,4 @@
-=== 1.4.1 (TBD)
+=== 1.5.0 (TBD)
 * Add Metric.format(long) and formatInteger(double) with
   no-fractions output.
 * Add ByteArrayInputStream( byte[] ) constructor.
