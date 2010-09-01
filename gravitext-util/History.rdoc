@@ -2,6 +2,9 @@
 * Add Metric.format(long) and formatInteger(double) with
   no-fractions output.
 * Add ByteArrayInputStream( byte[] ) constructor.
+* Expand slf4j/logback dependency ranges for compatibility with
+  slf4j-1.6.x/logback-1.x
+* Fix one more (Rjack::)Logback reference in test
 
 === 1.4.0 (2010-5-8)
 * New generic UniMap (Java) with ruby dynamic accessor extension.
