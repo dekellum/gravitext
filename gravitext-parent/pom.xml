@@ -48,7 +48,7 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>1.5.10</version>
+        <version>[1.5.8,1.7)</version>
         <scope>compile</scope>
       </dependency>
 
@@ -62,7 +62,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>0.9.18</version>
+        <version>[0.9.18,1.0)</version>
         <scope>runtime</scope>
         <optional>true</optional>
       </dependency>
