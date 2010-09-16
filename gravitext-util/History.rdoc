@@ -2,6 +2,7 @@
 * Add Metric.format(long) and formatInteger(double) with
   no-fractions output.
 * Add ByteArrayInputStream( byte[] ) constructor.
+* Add Charsets.lookup utility.
 * PerfTest runs min one rep per set, even for very slow tests.
 * Expand slf4j/logback dependency ranges for compatibility with
   slf4j-1.6.x/logback-1.x
