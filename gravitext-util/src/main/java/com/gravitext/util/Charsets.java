@@ -17,9 +17,11 @@
 package com.gravitext.util;
 
 import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnsupportedCharsetException;
 
 /**
- * Convenient constants for character sets.
+ * Convenient constants and utilities for character sets.
  * @author David Kellum
  */
 public class Charsets
@@ -28,4 +30,18 @@ public class Charsets
     public static final Charset UTF_8 = Charset.forName( "UTF-8" );
     public static final Charset ASCII = Charset.forName( "US-ASCII" );
     public static final Charset UTF_16 = Charset.forName( "UTF-16" );
+
+    /**
+     * Return Charset matching name or null if not found, or illegal name.
+     */
+    public static Charset lookup( String name )
+    {
+        Charset found = null;
+        try {
+            found = Charset.forName( name );
+        }
+        catch( IllegalCharsetNameException x ) {}
+        catch( UnsupportedCharsetException x ) {}
+        return found;
+    }
 }
