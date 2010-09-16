@@ -94,7 +94,7 @@ public final class Tag
     }
 
     /**
-     * Return string repreesentation of the tag.
+     * Return string representation of the tag.
      */
     @Override
     public String toString()
