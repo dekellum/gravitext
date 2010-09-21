@@ -20,7 +20,7 @@ package com.gravitext.xml.producer;
  * Immutable XML tag identifier.
  * @author David Kellum
  */
-public final class Tag
+public class Tag
 {
     /**
      * Construct with name and default namespace.
@@ -53,7 +53,7 @@ public final class Tag
     }
 
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         int h = _name.hashCode();
         if( _namespace != null ) {
@@ -63,7 +63,7 @@ public final class Tag
     }
 
     @Override
-    public boolean equals( Object o )
+    public final boolean equals( Object o )
     {
         if( ( o != null ) && ( o instanceof Tag ) ) {
             Tag ot = (Tag) o;
@@ -79,7 +79,7 @@ public final class Tag
     /**
      * Return the local name of the tag.
      */
-    public String name()
+    public final String name()
     {
         return _name;
     }
@@ -88,7 +88,7 @@ public final class Tag
      * Return the Namespace of this Tag or null if no namespace was
      * specified on construction.
      */
-    public Namespace namespace()
+    public final Namespace namespace()
     {
         return _namespace;
     }
@@ -102,12 +102,12 @@ public final class Tag
         return ( beginTag() + '>' );
     }
 
-    String beginTag()
+    final String beginTag()
     {
         return _beginTag;
     }
 
-    String endTag()
+    final String endTag()
     {
         return _endTag;
     }
