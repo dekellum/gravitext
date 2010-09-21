@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Internal implemetation of the XMLProducer.
+ * Internal implementation of the XMLProducer.
  *
  * @author  David Kellum
  */
@@ -123,6 +123,13 @@ final class XMLProducerImpl
         if( encode ) _encoder.encodeAttrValue( value );
         else _out.append( value );
         _out.append( '"' );
+    }
+
+    public void implyNamespace( final Namespace ns ) throws IOException
+    {
+        if( !ns.isXML() ) {
+            _nScopes.add( new NScope( ns, _openTags.size() - 1 ) );
+        }
     }
 
     public void addNamespace( final Namespace ns ) throws IOException
