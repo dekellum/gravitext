@@ -307,6 +307,24 @@ public final class XMLProducer
     }
 
     /**
+     * Imply Namespace within the scope of the previous start tag, or if called
+     * before any start tag, the entire document.  Any subsequent attributes
+     * or tags of this namespace within the same scope will not
+     * make this declaration.  This is useful to testing with markup fragments
+     * and/or default namespaces where it is undesirable to explicitly declare
+     * a namespace on output.
+     * @throws CharacterEncodeException (an IOException) from the
+     *         underlying CharacterEncoder.
+     * @throws IOException from the underlying Appendable.
+     */
+    public XMLProducer implyNamespace( final Namespace ns )
+        throws IOException
+    {
+        _impl.implyNamespace( ns );
+        return this;
+    }
+
+    /**
      * Put character data into previously started element. The text
      * will be encoded as necessary.  The putChars() methods may be
      * called repeatedly.
