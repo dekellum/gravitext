@@ -51,7 +51,7 @@ public class Node
         }
 
         if( value != null ) {
-            return set( key, value );
+            return _props.set( key, value );
         }
         return remove( key );
     }

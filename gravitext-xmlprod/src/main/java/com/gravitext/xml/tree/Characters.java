@@ -39,6 +39,10 @@ public final class Characters extends Node
 
     public void setCharacters( CharSequence chars )
     {
+        if( chars == null ) {
+            throw new NullPointerException( "setCharacters" );
+        }
+
         _chars = chars;
     }
 
