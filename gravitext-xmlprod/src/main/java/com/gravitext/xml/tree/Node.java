@@ -39,6 +39,11 @@ public class Node
         return false;
     }
 
+    public boolean isCharacters()
+    {
+        return false;
+    }
+
     public Element asElement()
     {
         return null;
@@ -51,7 +56,7 @@ public class Node
         }
 
         if( value != null ) {
-            return set( key, value );
+            return _props.set( key, value );
         }
         return remove( key );
     }
@@ -68,9 +73,18 @@ public class Node
 
     /**
      * Return characters if this is a Characters node.
-     * @throws UnsupportedOperationException if isElement().
+     * @throws UnsupportedOperationException unless isCharacters().
      */
     public CharSequence characters()
+    {
+        throw new UnsupportedOperationException( "Not a Characters node" );
+    }
+
+    /**
+     * Set characters if this is a Characters node.
+     * @throws UnsupportedOperationException unless isCharacters().
+     */
+    public void setCharacters( CharSequence characters )
     {
         throw new UnsupportedOperationException( "Not a Characters node" );
     }

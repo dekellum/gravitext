@@ -32,13 +32,24 @@ public final class Characters extends Node
         _chars = chars;
     }
 
+    @Override
+    public boolean isCharacters()
+    {
+        return true;
+    }
+
     public CharSequence characters()
     {
         return _chars;
     }
 
+    @Override
     public void setCharacters( CharSequence chars )
     {
+        if( chars == null ) {
+            throw new NullPointerException( "setCharacters" );
+        }
+
         _chars = chars;
     }
 
