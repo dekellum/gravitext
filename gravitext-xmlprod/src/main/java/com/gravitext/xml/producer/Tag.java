@@ -65,13 +65,13 @@ public class Tag
     @Override
     public final boolean equals( Object o )
     {
+        if( this == o ) return true;
         if( ( o != null ) && ( o instanceof Tag ) ) {
             Tag ot = (Tag) o;
-            if( ( namespace() == ot.namespace() ) ||
-                ( ( namespace() != null ) &&
-                    namespace().equals( ot.namespace() ) ) ) {
-                return name().equals( ot.name() );
-            }
+            return ( name().equals( ot.name() ) &&
+                ( ( namespace() == ot.namespace() ) ||
+                  ( ( namespace() != null ) &&
+                    namespace().equals( ot.namespace() ) ) ) );
         }
         return false;
     }
