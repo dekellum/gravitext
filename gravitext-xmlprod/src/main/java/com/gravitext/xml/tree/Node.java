@@ -24,29 +24,69 @@ import com.gravitext.htmap.KeySpace;
 /**
  * Generic XML Tree Node.
  */
-public class Node
+public abstract class Node
     implements HTAccess
 {
     public static final KeySpace KEY_SPACE = new KeySpace();
 
+    /**
+     * Return this nodes parent, or null if there is no parent (root
+     * element.)
+     */
     public final Element parent()
     {
         return _parent;
     }
 
+    /**
+     * Detach this node from its parent, if attached.
+     */
+    public final void detach()
+    {
+        if( _parent != null ) {
+            _parent.removeChild( this );
+            _parent = null;
+        }
+    }
+
+    /**
+     * Return true if this is an element.
+     */
     public boolean isElement()
     {
         return false;
     }
 
+    /**
+     * Return this Node cast as Element, or null if this is not an Element.
+     */
+    public Element asElement()
+    {
+        return null;
+    }
+
+    /**
+     * Return true if this node is Characters.
+     */
     public boolean isCharacters()
     {
         return false;
     }
 
-    public Element asElement()
+    /**
+     * Return characters if this is Characters, or all contained
+     * character data if this is an Element. Null may be returned in
+     * the later case.
+     */
+    public abstract CharSequence characters();
+
+    /**
+     * Set characters if this is a Characters node.
+     * @throws UnsupportedOperationException unless isCharacters().
+     */
+    public void setCharacters( CharSequence characters )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not a Characters node" );
     }
 
     public <T, V extends T> T set( Key<T> key, V value )
@@ -69,35 +109,6 @@ public class Node
     public <T> T remove( Key<T> key )
     {
         return _props.remove( key );
-    }
-
-    /**
-     * Return characters if this is a Characters node.
-     * @throws UnsupportedOperationException unless isCharacters().
-     */
-    public CharSequence characters()
-    {
-        throw new UnsupportedOperationException( "Not a Characters node" );
-    }
-
-    /**
-     * Set characters if this is a Characters node.
-     * @throws UnsupportedOperationException unless isCharacters().
-     */
-    public void setCharacters( CharSequence characters )
-    {
-        throw new UnsupportedOperationException( "Not a Characters node" );
-    }
-
-    /**
-     * Detach this node from its parent, if attached.
-     */
-    public final void detach()
-    {
-        if( _parent != null ) {
-            _parent.removeChild( this );
-            _parent = null;
-        }
     }
 
     protected final void setParent( Element parent )

@@ -29,6 +29,7 @@ class TestTree < Test::Unit::TestCase
   import 'com.gravitext.xml.tree.SAXUtils'
   import 'com.gravitext.xml.tree.StAXUtils'
   import 'com.gravitext.xml.producer.Indentor'
+  import 'com.gravitext.xml.producer.Tag'
 
   TEST_XML = {}
 
@@ -99,6 +100,36 @@ XML
     assert_equal( xml.rstrip,
                   TreeUtils::produceString( root, Indentor::COMPRESSED ),
                   show_node( root ) )
+  end
+
+  def test_find
+    xml = <<XML
+<doc>
+ <o1>
+  <i1>text</i1>
+  <i2>next</i2>
+ </o1>
+ <o1/>
+ <o2>
+  <o2>
+   <i3/>
+  </o2>
+ </o2>
+</doc>
+XML
+    root = StAXUtils::staxParse( StAXUtils::staxInput( xml ) )
+    assert_equal( 'text', first( root, :o1, :i1 ).characters )
+    assert_equal( 'next', first( root, :o1, :i2 ).characters )
+
+    assert(     first( root, :o2 ) )
+    assert(     first( root, :o2, :o2, :i3 ) )
+
+    assert_nil( first( root, :o2, :i1 ) )
+    assert_nil( first( root, :o3 ) )
+  end
+
+  def first( root, *tags )
+    root.first_element( *( tags.map { |s| Tag.new( s.to_s ) } ) )
   end
 
   def show_node( n, d = 0, out = "" )
