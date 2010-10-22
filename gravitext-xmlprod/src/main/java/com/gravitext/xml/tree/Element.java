@@ -95,8 +95,8 @@ public final class Element extends Node
     }
 
     /**
-     * Return the attribute value with the given name and default Namespace, or
-     * null if no matching AttributeValue is found.
+     * Return the attribute value with the given name and default
+     * Namespace, or null if no matching AttributeValue is found.
      */
     public CharSequence attribute( String name )
     {
@@ -110,16 +110,78 @@ public final class Element extends Node
     }
 
     /**
-     * Additional namespace declarations rooted at this element
+     * Return any additional Namespace declarations rooted at this
+     * element.  May be empty, may not null.
      */
     public List<Namespace> namespaceDeclarations()
     {
         return _spaces;
     }
 
+    /**
+     * Return children nodes (may be empty, may not null.)
+     */
     public List<Node> children()
     {
         return _children;
+    }
+
+    /**
+     * Return the first child element with matching tag, or null if
+     * not found.
+     */
+    public Element firstElement( Tag tag )
+    {
+        for( Node child : _children ) {
+            Element celm = child.asElement();
+            if( ( celm != null ) && celm.tag().equals( tag ) ) {
+                return celm;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return the first descendant by consecutively matching elements
+     * with tags, or null if the path of tags is not found.
+     */
+    public Element firstElement( Tag... tags )
+    {
+        Element pos = this;
+
+        for( Tag t : tags ) {
+            pos = pos.firstElement( t );
+            if( pos == null ) break;
+        }
+        return pos;
+    }
+
+    /**
+     * Return all contained character data in the children of this
+     * element, or null if there is no character data.
+     */
+    @Override
+    public CharSequence characters()
+    {
+        CharSequence first = null;
+        StringBuilder buffer = null;
+
+        for( Node node : _children ) {
+            CharSequence cc = node.characters();
+            if( cc != null ) {
+                if( buffer != null ) buffer.append( cc );
+                else if( first == null ) first = cc;
+                else {
+                    buffer = new StringBuilder( first.length() +
+                                                cc.length() +
+                                                32 );
+                    buffer.append( first );
+                    buffer.append( cc );
+                }
+            }
+        }
+
+        return ( ( buffer != null ) ? buffer : first );
     }
 
     /**
@@ -131,9 +193,9 @@ public final class Element extends Node
     }
 
     /**
-     * Replace all attributes on this Element with the specified list. Note
-     * that no attempt is made to validate that AttributeValue's have unique
-     * Attribute names.
+     * Replace all attributes on this Element with the specified
+     * list. Note that no attempt is made to validate that
+     * AttributeValue's have unique Attribute names.
      */
     public void setAttributes( List<AttributeValue> attributes )
     {
@@ -141,8 +203,8 @@ public final class Element extends Node
     }
 
     /**
-     * Set the specified attribute value, replacing any existing attribute if
-     * found.
+     * Set the specified attribute value, replacing any existing
+     * attribute if found.
      * @return previous attribute value or null if not found.
      */
     public CharSequence setAttribute( AttributeValue avalue )
@@ -158,8 +220,8 @@ public final class Element extends Node
     }
 
     /**
-     * Set the specified attribute value, replacing any existing attribute if
-     * found.
+     * Set the specified attribute value, replacing any existing
+     * attribute if found.
      * @return previous attribute value or null if not found.
      */
     public void setAttribute( Attribute attr, CharSequence value )
@@ -168,8 +230,8 @@ public final class Element extends Node
     }
 
     /**
-     * Set the specified attribute value, replacing any existing attribute if
-     * found.
+     * Set the specified attribute value, replacing any existing
+     * attribute if found.
      * @return previous attribute value or null if not found.
      */
     public void setAttribute( String name, CharSequence value )
@@ -178,8 +240,8 @@ public final class Element extends Node
     }
 
     /**
-     * Add the specified attribute value, making no attempt to check if the
-     * same attribute already exists.
+     * Add the specified attribute value, making no attempt to check
+     * if the same attribute already exists.
      */
     public void addAttribute( AttributeValue avalue )
     {
@@ -191,8 +253,8 @@ public final class Element extends Node
     }
 
     /**
-     * Add the specified attribute value, making no attempt to check if the
-     * same attribute already exists.
+     * Add the specified attribute value, making no attempt to check
+     * if the same attribute already exists.
      */
     public void addAttribute( Attribute attr, CharSequence value )
     {
