@@ -20,18 +20,51 @@ import static org.junit.Assert.*;
 import static com.gravitext.util.Charsets.ISO_8859_1;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.junit.Test;
 
-public class ByteBufferInputStreamTest
+public class ByteInputStreamTest
 {
+    @Test
+    public void testOneByteRead() throws IOException
+    {
+        assertOneByteRead( INPUT, arrayInput( INPUT ) );
+    }
 
     @Test
-    public void testOneByteRead()
+    public void testBlockRead() throws IOException
     {
-        String chars = "large möose on fire";
-        ByteBufferInputStream in = source( chars );
+        assertBlockRead( INPUT, arrayInput( INPUT ) );
+    }
 
+    @Test
+    public void testMark() throws IOException
+    {
+        assertMark( INPUT, arrayInput( INPUT ) );
+    }
+
+    @Test
+    public void testOneByteReadBuffer() throws IOException
+    {
+        assertOneByteRead( INPUT, bufferInput( INPUT ) );
+    }
+
+    @Test
+    public void testBlockReadBuffer() throws IOException
+    {
+        assertBlockRead( INPUT, bufferInput( INPUT ) );
+    }
+
+    @Test
+    public void testMarkBuffer() throws IOException
+    {
+        assertMark( INPUT, bufferInput( INPUT ) );
+    }
+
+    private void assertOneByteRead( String chars, InputStream in )
+        throws IOException
+    {
         int i = 0;
         while( true ) {
             int b = in.read();
@@ -44,11 +77,9 @@ public class ByteBufferInputStreamTest
         in.close();
     }
 
-    @Test
-    public void testBlockRead()
+    private void assertBlockRead( String chars, InputStream in )
+        throws IOException
     {
-        String chars = "large möose on fire";
-        ByteBufferInputStream in = source( chars );
         assertEquals( in.available(), chars.length() );
 
         byte buff[] = new byte[ chars.length() * 2 ];
@@ -59,12 +90,9 @@ public class ByteBufferInputStreamTest
         in.close();
     }
 
-    @Test
-    public void testMark() throws IOException
+    private void assertMark( String chars, InputStream in )
+        throws IOException
     {
-        String chars = "large möose on fire";
-        ByteBufferInputStream in = source( chars );
-
         assertEquals( 5, in.read( new byte[5] ) );
 
         assertTrue( in.markSupported() );
@@ -86,8 +114,15 @@ public class ByteBufferInputStreamTest
         in.close();
     }
 
-    private ByteBufferInputStream source( String chars )
+    private InputStream arrayInput( String chars )
+    {
+        return new ByteArrayInputStream( ISO_8859_1.encode( chars ) );
+    }
+
+    private InputStream bufferInput( String chars )
     {
         return new ByteBufferInputStream( ISO_8859_1.encode( chars ) );
     }
+
+    private static final String INPUT = "large möose on fire";
 }

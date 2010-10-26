@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 /**
- * Utility methods for streams and readers/writers.
+ * Utility methods for input/output streams.
  * @author David Kellum
  */
 public final class Streams
