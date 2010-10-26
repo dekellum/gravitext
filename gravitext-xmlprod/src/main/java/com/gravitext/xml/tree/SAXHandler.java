@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.gravitext.util.ResizableCharBuffer;
 import com.gravitext.xml.NamespaceCache;
 import com.gravitext.xml.producer.Attribute;
 import com.gravitext.xml.producer.Namespace;
@@ -89,15 +90,15 @@ public final class SAXHandler
     public void characters( char[] ch, int start, int length )
     {
         if( _buffer == null ) {
-            _buffer = new StringBuilder( length + 16 );
+            _buffer = new ResizableCharBuffer( length + 16 );
         }
-        _buffer.append( ch, start, length );
+        _buffer.put( ch, start, length );
     }
 
     private void bufferToChars()
     {
         if( _buffer != null ) {
-            _current.addChild( new Characters( _buffer ) );
+            _current.addChild( new Characters( _buffer.flipAsCharBuffer() ) );
             _buffer = null;
         }
     }
@@ -156,5 +157,5 @@ public final class SAXHandler
     private Element _current = null;
     private final NamespaceCache _cache = new NamespaceCache();
     private final ArrayList<Namespace> _nextNS = new ArrayList<Namespace>( 8 );
-    private StringBuilder _buffer = null;
+    private ResizableCharBuffer _buffer = null;
 }
