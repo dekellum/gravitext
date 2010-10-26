@@ -55,6 +55,23 @@ public final class CharSequences
     }
 
     /**
+     * Return true if t1 equals t2, character wise.
+     */
+    public static boolean equals( CharSequence t1, CharSequence t2 )
+    {
+        if( t1 == t2 ) return true;
+        if( ( t1 == null ) || ( t2 == null ) ) return false;
+
+        final int len1 = t1.length();
+        if( len1 != t2.length() ) return false;
+
+        for( int i = 0; i < len1; ++i ) {
+            if( t1.charAt( i ) != t2.charAt( i ) ) return false;
+        }
+        return true;
+    }
+
+    /**
      * Return an optimal Reader over the specified CharSequence.
      * The returned Reader is not internally synchronized.
      */
