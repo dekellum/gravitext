@@ -18,6 +18,7 @@ module Gravitext
 
   module HTMap
 
+    import 'com.gravitext.htmap.Key'
     import 'com.gravitext.htmap.UniMap'
 
     # Extension to com.gravitext.htmap.UniMap providing convenience
