@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.gravitext.util.ResizableCharBuffer;
 import com.gravitext.xml.producer.Attribute;
 import com.gravitext.xml.producer.Namespace;
 import com.gravitext.xml.producer.Tag;
@@ -164,24 +165,24 @@ public final class Element extends Node
     public CharSequence characters()
     {
         CharSequence first = null;
-        StringBuilder buffer = null;
+        ResizableCharBuffer buffer = null;
 
         for( Node node : _children ) {
             CharSequence cc = node.characters();
             if( cc != null ) {
-                if( buffer != null ) buffer.append( cc );
+                if( buffer != null ) buffer.put( cc );
                 else if( first == null ) first = cc;
                 else {
-                    buffer = new StringBuilder( first.length() +
-                                                cc.length() +
-                                                32 );
-                    buffer.append( first );
-                    buffer.append( cc );
+                    buffer = new ResizableCharBuffer( first.length() +
+                                                      cc.length() +
+                                                      32 );
+                    buffer.put( first );
+                    buffer.put( cc );
                 }
             }
         }
 
-        return ( ( buffer != null ) ? buffer : first );
+        return ( ( buffer != null ) ? buffer.flipAsCharBuffer() : first );
     }
 
     /**
