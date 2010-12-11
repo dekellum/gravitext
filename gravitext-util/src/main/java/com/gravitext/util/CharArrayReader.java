@@ -17,43 +17,42 @@
 package com.gravitext.util;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
+import java.io.Reader;
+import java.nio.CharBuffer;
 import java.nio.InvalidMarkException;
 import java.nio.ReadOnlyBufferException;
 
 /**
- * An InputStream reading from a byte array. A faster replacement for
- * {@link java.io.ByteArrayInputStream}. This implementation is
+ * A Reader over a char array. A faster replacement for
+ * {@link java.io.CharArrayReader}. This implementation is
  * unsynchronized and unsafe in the presence of concurrent reads on a
  * single instance.
  *
  * @author David Kellum
  */
-public final class ByteArrayInputStream
-    extends InputStream
+public final class CharArrayReader
+    extends Reader
     implements Closeable
 {
-
     /**
-     * Construct from array backed ByteBuffer. The buffer position will not
+     * Construct from array backed CharBuffer. The buffer position will not
      * be altered as part of read operations.
      * @throws UnsupportedOperationException if buffer isn't backed by an array.
      * @throws ReadOnlyBufferException if buffer is is read-only.
      */
-    public ByteArrayInputStream( ByteBuffer buffer )
+    public CharArrayReader( CharBuffer buffer )
     {
          this( buffer.array(),
                buffer.arrayOffset() + buffer.position(),
                buffer.remaining() );
     }
 
-    public ByteArrayInputStream( byte[] input )
+    public CharArrayReader( char[] input )
     {
         this( input, 0, input.length );
     }
 
-    public ByteArrayInputStream( byte[] input, int offset, int length )
+    public CharArrayReader( char[] input, int offset, int length )
     {
         _b = input;
         _pos = offset;
@@ -65,7 +64,9 @@ public final class ByteArrayInputStream
         }
     }
 
-    @Override
+    /**
+     * Return the remaining number of characters that may be read.
+     */
     public int available()
     {
         return ( _end - _pos );
@@ -95,7 +96,7 @@ public final class ByteArrayInputStream
     }
 
     @Override
-    public int read( final byte[] out, final int offset, int length )
+    public int read( final char[] out, final int offset, int length )
     {
        length = constrain( length );
        if( length > 0 ) {
@@ -107,7 +108,7 @@ public final class ByteArrayInputStream
     }
 
     @Override
-    public int read( final byte[] b )
+    public int read( final char[] b )
     {
         return read( b, 0, b.length );
     }
@@ -132,7 +133,7 @@ public final class ByteArrayInputStream
     @Override
     public int read()
     {
-        return ( _pos < _end ) ? ( _b[_pos++] & 0xFF ) : -1;
+        return ( _pos < _end ) ? _b[_pos++] : -1;
     }
 
     private int constrain( int length )
@@ -140,7 +141,7 @@ public final class ByteArrayInputStream
         return Math.min( length, available() );
     }
 
-    private final byte[] _b;
+    private final char[] _b;
     private int _pos;
     private final int _end;
     private int _mark = -1;

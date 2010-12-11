@@ -117,7 +117,8 @@ module Gravitext
                      else
                        counts = @factories.map do |factory|
                          exec = finals.detect { |e| e.factory == factory }
-                         ( exec.mean_throughput * @final_exec_target ).to_i
+                         [ ( exec.mean_throughput * @final_exec_target ).to_i,
+                           1 ].max
                        end
                        align_counts( counts )
                      end
@@ -154,8 +155,8 @@ module Gravitext
             Java::java.lang.Thread::yield
 
             runs = if s.prior
-                     ( @warmup_exec_target * s.prior.runs_executed ) /
-                       s.prior.duration.seconds
+                     [ ( @warmup_exec_target * s.prior.runs_executed ) /
+                       s.prior.duration.seconds, 1 ].max
                    else
                      1
                    end
@@ -359,7 +360,7 @@ module Gravitext
       def print_result( exec, prior = nil, out = @out )
         out << ( "%7s %6s %6s/r %6sr/s (%6s) %7s/r (%6s)" %
                  [ exec.duration,
-                   Metric::format( exec.result_sum.to_f ),
+                   Metric::format( exec.result_sum ),
                    Metric::format( exec.result_sum.to_f /
                                    exec.runs_executed ),
                    Metric::format( exec.mean_throughput ),

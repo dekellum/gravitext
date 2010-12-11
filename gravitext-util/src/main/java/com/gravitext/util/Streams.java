@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 /**
- * Utility methods for streams and readers/writers.
+ * Utility methods for input/output streams.
  * @author David Kellum
  */
 public final class Streams
@@ -35,7 +35,7 @@ public final class Streams
     public static InputStream inputStream( final ByteBuffer b )
     {
         return ( ( b.hasArray() && ! b.isReadOnly() ) ?
-                    new com.gravitext.util.ByteArrayInputStream( b ) :
+                    new ByteArrayInputStream( b ) :
                     new ByteBufferInputStream( b.duplicate() ) );
     }
 
