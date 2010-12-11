@@ -20,7 +20,7 @@ package com.gravitext.xml.producer;
  * Immutable XML namespace identifier.
  * @author David Kellum
  */
-public final class Namespace
+public class Namespace
 {
     /**
      * The default (empty) namespace prefix.
@@ -48,10 +48,13 @@ public final class Namespace
             ( "Illegal attempt to construct Namespace with empty nameIRI." );
         }
         //FIXME: Other nameIRI and prefix validity tests
-        //FIXME: exclude prefix: "xml" and "xmlns"
 
         _nameIRI = nameIRI;
-        _prefix = prefix;
+        _prefix  = prefix;
+
+        // Flag all prefixes starting with xml, i.e xml:lang, xml:base, "xmlns"
+        // Should not declare these.
+        _isXML   = prefix.startsWith( "xml" );
 
         StringBuilder qName = new StringBuilder(64);
         qName.append( " xmlns" ); //Note leading space.
@@ -64,13 +67,13 @@ public final class Namespace
     }
 
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         return _nameIRI.hashCode();
     }
 
     @Override
-    public boolean equals( Object o )
+    public final boolean equals( Object o )
     {
         if( ( o != null ) && ( o instanceof Namespace ) ) {
             return _nameIRI.equals( ((Namespace) o)._nameIRI );
@@ -81,7 +84,7 @@ public final class Namespace
     /**
      * Return the prefix as constructed or the default (empty) prefix.
      */
-    public String prefix()
+    public final String prefix()
     {
         return _prefix;
     }
@@ -89,7 +92,7 @@ public final class Namespace
     /**
      * Return the non-empty IRI as constructed.
      */
-    public String nameIRI()
+    public final String nameIRI()
     {
         return _nameIRI;
     }
@@ -98,12 +101,17 @@ public final class Namespace
      * Return true if this is the default Namespace declaration with a
      * DEFAULT (empty) prefix.
      */
-    public boolean isDefault()
+    public final boolean isDefault()
     {
         return ( _prefix == DEFAULT );
     }
 
-    String beginDecl()
+    public final boolean isXML()
+    {
+        return _isXML;
+    }
+
+    final String beginDecl()
     {
         return _beginDecl;
     }
@@ -111,4 +119,5 @@ public final class Namespace
     private final String _prefix;
     private final String _nameIRI;
     private final String _beginDecl;
+    private final boolean _isXML;
 }

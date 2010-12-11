@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Internal implemetation of the XMLProducer.
+ * Internal implementation of the XMLProducer.
  *
  * @author  David Kellum
  */
@@ -125,17 +125,26 @@ final class XMLProducerImpl
         _out.append( '"' );
     }
 
+    public void implyNamespace( final Namespace ns ) throws IOException
+    {
+        if( !ns.isXML() ) {
+            _nScopes.add( new NScope( ns, _openTags.size() - 1 ) );
+        }
+    }
+
     public void addNamespace( final Namespace ns ) throws IOException
     {
         if( _state != State.START_TAG_OPEN ) {
             throw new IllegalStateException(
                 "XMLProducer: Can only addNamespace() after startTag()." );
         }
-        _out.append( ns.beginDecl() );
-        _encoder.encodeAttrValue( ns.nameIRI() );
-        _out.append( '"' );
+        if( !ns.isXML() ) {
+            _out.append( ns.beginDecl() );
+            _encoder.encodeAttrValue( ns.nameIRI() );
+            _out.append( '"' );
 
-        _nScopes.add( new NScope( ns, _openTags.size() - 1 ) );
+            _nScopes.add( new NScope( ns, _openTags.size() - 1 ) );
+        }
     }
 
     public void putChars( final CharSequence data,
@@ -256,7 +265,7 @@ final class XMLProducerImpl
     private void putNamespaceIfNotInScope( final Namespace ns )
         throws IOException
     {
-        if( ns != null ) {
+        if( ns != null && !ns.isXML() ) {
             int i = _nScopes.size();
             while( i-- > 0 ) {
                 if( _nScopes.get( i ).namespace == ns ) return;

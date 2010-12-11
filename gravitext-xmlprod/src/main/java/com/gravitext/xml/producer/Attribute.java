@@ -20,7 +20,7 @@ package com.gravitext.xml.producer;
  * Immutable XML attribute identifier.
  * @author David Kellum
  */
-public final class Attribute
+public class Attribute
 {
     /**
      * Construct with name in default namespace.
@@ -56,7 +56,7 @@ public final class Attribute
         _beginAttribute = qName.toString();
     }
 
-    public String name()
+    public final String name()
     {
         return _name;
     }
@@ -65,12 +65,12 @@ public final class Attribute
      * Returns the Namespace associated with this Tag or null if no
      * Namespace was specified on construction.
      */
-    public Namespace namespace()
+    public final Namespace namespace()
     {
         return _namespace;
     }
 
-    String beginAttribute()
+    final String beginAttribute()
     {
         return _beginAttribute;
     }
