@@ -104,7 +104,7 @@ public class ArrayHTMapTest
 
         Key<Double> dkey = ks.create( "DKEY", Double.class );
         try {
-            kmap.set( dkey, null );
+            kmap.set( dkey, (Double) null );
             fail( "set( key, null ) succeeded!" );
         }
         catch( NullPointerException x ) {
