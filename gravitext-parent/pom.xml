@@ -9,6 +9,10 @@
 
   <description>Gravitext OSS project parent.</description>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <developers>
     <developer>
       <id>david</id>
@@ -76,6 +80,7 @@
 
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.3.2</version>
           <configuration>
             <source>1.5</source>
             <target>1.5</target>
@@ -89,6 +94,7 @@
 
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
+          <version>2.1.2</version>
           <executions>
             <execution>
               <goals>
@@ -101,6 +107,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>cobertura-maven-plugin</artifactId>
+          <version>2.2</version>
           <executions>
             <execution>
               <goals>
