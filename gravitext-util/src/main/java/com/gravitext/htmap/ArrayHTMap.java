@@ -18,6 +18,7 @@ package com.gravitext.htmap;
 
 import java.util.AbstractMap;
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -168,6 +169,14 @@ public class ArrayHTMap
     }
 
     @Override
+    public String toString()
+    {
+        final StringBuilder out = new StringBuilder( 256 );
+        render( new ArrayList<ArrayHTMap>(3), out );
+        return out.toString();
+    }
+
+    @Override
     public Set<Entry<Key, Object>> entrySet()
     {
         return new EntrySet();
@@ -212,6 +221,52 @@ public class ArrayHTMap
                 value.getClass().getName(),
                 key.name(),
                 key.valueType().getName() ) );
+        }
+    }
+
+    private void render( List<ArrayHTMap> visited, StringBuilder out )
+    {
+        out.append( getClass().getSimpleName() );
+        out.append( '@' );
+        out.append( Integer.toHexString( System.identityHashCode( this ) ) );
+
+        // Check if this is in visited already, by identity.
+        boolean found = false;
+        for( ArrayHTMap v : visited ) {
+            if( v == this ) {
+                found = true;
+                break;
+            }
+        }
+
+        if( !found ) {
+            visited.add( this );
+            out.append( '{' );
+            final List<Key> keys = _space.keySequence();
+            final int end = _values.length;
+            boolean first = true;
+            for( int i = 0; i < end; ++i ) {
+                Object value = _values[ i ];
+                if( value != null ) {
+
+                    if( first ) {
+                        out.append( ' ' );
+                        first = false;
+                    }
+                    else out.append( ", " );
+
+                    out.append( keys.get( i ).name() ).append( '=' );
+
+                    if( value instanceof ArrayHTMap ) {
+                        ( (ArrayHTMap) value ).render( visited, out );
+                    }
+                    else {
+                        out.append( value.toString() );
+                    }
+                }
+            }
+            if( !first ) out.append( ' ' );
+            out.append( '}' );
         }
     }
 
