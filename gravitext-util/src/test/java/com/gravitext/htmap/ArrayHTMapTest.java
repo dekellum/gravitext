@@ -213,5 +213,30 @@ public class ArrayHTMapTest
         assertEquals( icopy, copy );
     }
 
+    @Test
+    public void testToString()
+    {
+        KeySpace ks = new KeySpace();
+        Key<ArrayHTMap> akey = ks.create( "AKEY", ArrayHTMap.class );
+        Key<String> skey = ks.create( "SKEY", String.class );
+
+        ArrayHTMap kmap1 = new ArrayHTMap( ks );
+
+        assertTrue( kmap1.toString().matches( "^ArrayHTMap@\\w+\\{\\}$" ) );
+
+        ArrayHTMap kmap2 = new ArrayHTMap( ks );
+
+        kmap1.set( skey, "kmap1" );
+        kmap1.set( akey, kmap2 );
+
+        kmap2.set( skey, "kmap2" );
+        kmap2.set( akey, kmap1 );
+
+        assertTrue( kmap1.toString().matches(
+            "^ArrayHTMap@\\w+\\{ AKEY=ArrayHTMap@\\w+" +
+            "\\{ AKEY=ArrayHTMap@\\w+, SKEY=kmap2 \\}, " +
+            "SKEY=kmap1 \\}$" ) );
+    }
+
     private Logger _log = LoggerFactory.getLogger( getClass() );
 }
