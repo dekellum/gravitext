@@ -1,3 +1,5 @@
+=== 1.4.1 (TBD)
+
 === 1.4.0 (2010-12-11)
 * New extensible XML tree package.
 * Tag, Attribute, Namespace final methods instead of final classes.

@@ -10,4 +10,4 @@ lib/gravitext-xmlprod.rb
 test/test_dom.rb
 test/test_tree.rb
 test/xml/huffingtonpost.full.atom.xml
-lib/gravitext-xmlprod/gravitext-xmlprod-1.4.0.jar
+lib/gravitext-xmlprod/gravitext-xmlprod-1.4.1.jar
