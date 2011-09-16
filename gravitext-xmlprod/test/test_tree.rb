@@ -135,7 +135,7 @@ XML
   def show_node( n, d = 0, out = "" )
     if n.asElement
       out << ( ' ' * d + '<' + n.name + ' ' +
-               n.namespace_declarations.to_a.map { |ns|
+               Array( n.namespace_declarations ).map { |ns|
                  'ns:%s=%s' % [ ns.prefix.to_s, ns.nameIRI ] }.join( ' ' ) +
                ' ' + n.attributes.map { |av| av.attribute.name }.join( ' ' ) )
       n.children.each { |c| show_node( c, d+1, out ) }
