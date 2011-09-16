@@ -17,14 +17,14 @@
 
 $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
 
-require 'test/unit'
+require 'minitest/unit'
 
 require 'gravitext-util'
 
 require 'java'
 require 'thread'
 
-class TestConcurrent < Test::Unit::TestCase
+class TestConcurrent < MiniTest::Unit::TestCase
   include Gravitext
 
   class RTestFactory
@@ -52,7 +52,7 @@ class TestConcurrent < Test::Unit::TestCase
 
   class AssertTestRunnable
     include Gravitext::Concurrent::TestRunnable
-    include Test::Unit::Assertions
+    include MiniTest::Assertions
 
     def initialize( random )
       @random = random
@@ -60,22 +60,22 @@ class TestConcurrent < Test::Unit::TestCase
 
     def run_iteration( run )
       Thread.pass if @random.next_int(3).zero?
-      assert_not_equal( 101, run, "run == #{run}" )
+      refute_equal( 101, run, "run == #{run}" )
       1
     end
   end
 
   def test_assert_runnable
-    assert_raise( Test::Unit::AssertionFailedError ) do
+    assert_raises( MiniTest::Assertion ) do
       Concurrent.execute_runnable( AssertTestRunnable, 1000, 7 )
     end
   end
 
   def test_assert_block
-    assert_raise( Test::Unit::AssertionFailedError ) do
+    assert_raises( MiniTest::Assertion ) do
       Concurrent.execute_test( 1000, 7 ) do |run, random|
         Thread.pass if random.next_int(3).zero?
-        assert_not_equal( 101, run, "run == #{run}" )
+        refute_equal( 101, run, "run == #{run}" )
         1
       end
     end

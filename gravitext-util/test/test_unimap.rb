@@ -19,7 +19,7 @@
 
 require 'rubygems'
 
-require 'test/unit'
+require 'minitest/unit'
 
 require 'rjack-logback'
 RJack::Logback.config_console
@@ -28,7 +28,7 @@ $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
 
 require 'gravitext-util'
 
-class TestUniMap < Test::Unit::TestCase
+class TestUniMap < MiniTest::Unit::TestCase
   include Gravitext::HTMap
 
   TEST_KEYS = [ [ 'int_key',  Java::java.lang.Integer,      33 ],
@@ -59,7 +59,7 @@ class TestUniMap < Test::Unit::TestCase
     assert_equal( 7, c.int_key )
     c.int_key = nil
     assert_nil( c.int_key )
-    assert_raise NameError, NativeException do
+    assert_raises NameError, NativeException do
       c.int_key = WRONG_TYPE_VALUE
     end
   end
@@ -85,7 +85,7 @@ class TestUniMap < Test::Unit::TestCase
         assert_equal( test_value, c.get( key ) )
         assert_equal( test_value, c.send( set, nil ) )
         assert_nil( c.send( get ) )
-        assert_raise NameError, NativeException do
+        assert_raises NameError, NativeException do
           c.send( set, WRONG_TYPE_VALUE )
         end
         assert_nil( c.send( get ) )
