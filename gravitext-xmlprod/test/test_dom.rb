@@ -18,13 +18,13 @@
 #++
 
 require 'rubygems'
-require 'test/unit'
+require 'minitest/unit'
 
 $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
 
 require 'gravitext-xmlprod'
 
-class TestDOM < Test::Unit::TestCase
+class TestDOM < MiniTest::Unit::TestCase
   import 'com.gravitext.xml.tree.TreeUtils'
   import 'com.gravitext.xml.tree.DOMUtils'
   import 'com.gravitext.xml.tree.Node'

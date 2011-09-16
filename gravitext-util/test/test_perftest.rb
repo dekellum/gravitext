@@ -17,7 +17,7 @@
 
 $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
 
-require 'test/unit'
+require 'minitest/unit'
 
 require 'gravitext-util/perftest'
 
@@ -30,7 +30,7 @@ require 'rjack-logback' #Or, turn off logging: require 'rjack-slf4j/nop'
 
 RJack::Logback.config_console( :level => RJack::Logback::DEBUG )
 
-class TestPerfTest < Test::Unit::TestCase
+class TestPerfTest < MiniTest::Unit::TestCase
   include Gravitext::PerfTest
 
   def test_listener

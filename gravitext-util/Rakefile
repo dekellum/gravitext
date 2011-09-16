@@ -13,8 +13,12 @@ t = RJack::TarPit.new( 'gravitext-util',
 
 t.specify do |h|
   h.developer( "David Kellum", "dek-oss@gravitext.com" )
+
+  h.testlib = :minitest
   h.extra_dev_deps += [ [ 'rjack-slf4j',   '>= 1.5.8',  '< 1.7' ],
-                        [ 'rjack-logback', '>= 0.9.18', '< 2.0' ] ]
+                        [ 'rjack-logback', '>= 0.9.18', '< 2.0' ],
+                        [ 'minitest',      '~> 2.3'             ] ]
+
   h.rubyforge_name = "gravitext"
 end
 
