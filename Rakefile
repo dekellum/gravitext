@@ -2,7 +2,7 @@
 
 gems = %w[ gravitext-util gravitext-xmlprod ]
 
-subtasks = %w[ clean install_deps test gem docs tag install push ]
+subtasks = %w[ clean install_deps test gem docs tag install publish_docs push ]
 
 task :default => :test
 

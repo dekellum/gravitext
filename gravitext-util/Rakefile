@@ -19,7 +19,7 @@ t.specify do |h|
                         [ 'rjack-logback', '>= 0.9.18', '< 2.0' ],
                         [ 'minitest',      '~> 2.3'             ] ]
 
-  h.rubyforge_name = "gravitext"
+  h.rdoc_locations << "dekellum@rubyforge.org:/var/www/gforge-projects/gravitext/gravitext-util"
 end
 
 file 'Manifest.txt' => [ 'lib/gravitext-util/version.rb' ]
