@@ -17,14 +17,7 @@
 # permissions and limitations under the License.
 #++
 
-require 'rubygems'
-
-require 'minitest/unit'
-
-require 'rjack-logback'
-RJack::Logback.config_console
-
-$LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
+require File.join( File.dirname( __FILE__ ), "setup" )
 
 require 'gravitext-util'
 

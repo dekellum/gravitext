@@ -1,4 +1,6 @@
 #!/usr/bin/env jruby
+#.hashdot.profile += jruby-shortlived
+
 #--
 # Copyright (c) 2007-2011 David Kellum
 #
@@ -15,20 +17,10 @@
 # permissions and limitations under the License.
 #++
 
-$LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
-
-require 'minitest/unit'
+require File.join( File.dirname( __FILE__ ), "setup" )
 
 require 'gravitext-util/perftest'
-
 require 'java'
-
-require 'rubygems'
-
-require 'rjack-slf4j'
-require 'rjack-logback' #Or, turn off logging: require 'rjack-slf4j/nop'
-
-RJack::Logback.config_console( :level => RJack::Logback::DEBUG )
 
 class TestPerfTest < MiniTest::Unit::TestCase
   include Gravitext::PerfTest

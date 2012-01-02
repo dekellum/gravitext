@@ -10,6 +10,7 @@ lib/gravitext-util.rb
 lib/gravitext-util/concurrent.rb
 lib/gravitext-util/perftest.rb
 lib/gravitext-util/unimap.rb
+test/setup.rb
 test/test_concurrent.rb
 test/test_perftest.rb
 test/test_unimap.rb
