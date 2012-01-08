@@ -1,13 +1,10 @@
 # -*- ruby -*- encoding: utf-8 -*-
 
-gem 'rjack-tarpit', '~> 2.0.a'
+gem 'rjack-tarpit', '~> 2.0'
 require 'rjack-tarpit/spec'
 
-$LOAD_PATH.unshift( File.join( File.dirname( __FILE__ ), 'lib' ) )
-
-require 'gravitext-util/version'
-
 RJack::TarPit.specify do |s|
+  require 'gravitext-util/version'
 
   s.version  = Gravitext::Util::VERSION
 
@@ -19,5 +16,4 @@ RJack::TarPit.specify do |s|
   s.depend 'minitest',              '~> 2.3',       :dev
 
   s.maven_strategy = :no_assembly
-
 end
