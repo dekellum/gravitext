@@ -7,6 +7,7 @@ pom.xml
 bin/gravitext-xmlprod-perftest
 lib/gravitext-xmlprod/version.rb
 lib/gravitext-xmlprod.rb
+test/setup.rb
 test/test_dom.rb
 test/test_tree.rb
 test/xml/huffingtonpost.full.atom.xml

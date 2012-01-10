@@ -21,6 +21,17 @@ subtasks.each do |sdt|
   task sdt => :distribute
 end
 
+# Install parent pom first on install
+if sel_subtasks.include?( 'install' )
+  task :distribute => :install_parent_pom
+end
+
+desc "Install maven parent pom only"
+task :install_parent_pom do
+  sh( "cd gravitext-parent && mvn -N install" )
+  #FIXME: Use rmvn or load gem for this
+end
+
 desc "Run multi['task1 tasks2'] tasks over all sub gems"
 task( :multi, :subtasks ) do |t,args|
   stasks = args.subtasks.split
