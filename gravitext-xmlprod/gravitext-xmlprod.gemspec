@@ -6,7 +6,7 @@ require 'rjack-tarpit/spec'
 RJack::TarPit.specify do |s|
   require 'gravitext-xmlprod/version'
 
-  s.version  = Gravitext::XMLProd::VERSION
+  s.version = Gravitext::XMLProd::VERSION
 
   s.add_developer( 'David Kellum', 'dek-oss@gravitext.com' )
 
