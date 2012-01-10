@@ -6,7 +6,7 @@ Gravitext::DevTools.configure do |c|
     h.holder = "David Kellum"
     h.inception = 2007
     h.license = :apache
-    h.exclusions += [ '**/*.html' ]
+    h.exclusions += %w[ **/*.html test/setup.rb ]
   end
 
 end
