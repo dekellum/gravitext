@@ -28,7 +28,7 @@ public class Tag
      */
     public static Namespace WILDCARD_NS =
         new Namespace( Namespace.DEFAULT,
-                       "http://gravitext.com/xml/producer/tag/wildcard" );
+                       "http://gravitext.com/xml/producer/namespace/wildcard" );
 
     /**
      * Construct with name and default namespace.
