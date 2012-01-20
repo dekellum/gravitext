@@ -56,6 +56,20 @@ public class Attribute
         _beginAttribute = qName.toString();
     }
 
+    @Override
+    public final boolean equals( Object o )
+    {
+        if( this == o ) return true;
+        if( ( o != null ) && ( o instanceof Attribute ) ) {
+            Attribute oa = (Attribute) o;
+            return ( name().equals( oa.name() ) &&
+                ( ( namespace() == oa.namespace() ) ||
+                  ( ( namespace() != null ) &&
+                    namespace().equals( oa.namespace() ) ) ) );
+        }
+        return false;
+    }
+
     public final String name()
     {
         return _name;
