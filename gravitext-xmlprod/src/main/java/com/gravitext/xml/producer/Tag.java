@@ -23,6 +23,14 @@ package com.gravitext.xml.producer;
 public class Tag
 {
     /**
+     * A privileged default Namespace allowing wildcard i.e. any namespace,
+     * only consider (local) name for matching purposes.
+     */
+    public static Namespace WILDCARD_NS =
+        new Namespace( Namespace.DEFAULT,
+                       "http://gravitext.com/xml/producer/tag/wildcard" );
+
+    /**
      * Construct with name and default namespace.
      */
     public Tag( final String name )
@@ -70,6 +78,8 @@ public class Tag
             Tag ot = (Tag) o;
             return ( name().equals( ot.name() ) &&
                 ( ( namespace() == ot.namespace() ) ||
+                  ( namespace() == WILDCARD_NS ) ||
+                  ( ot.namespace() == WILDCARD_NS ) ||
                   ( ( namespace() != null ) &&
                     namespace().equals( ot.namespace() ) ) ) );
         }
