@@ -355,6 +355,17 @@ public final class Element extends Node
         node.setParent( this );
     }
 
+    /**
+     * Detaches all children, leaving this element with none.
+     */
+    public void detachAllChildren()
+    {
+        for( Node node : _children ) {
+            node.setParent( null );
+        }
+        _children = EMPTY_CHILDREN;
+    }
+
     void removeChild( Node node )
     {
         _children.remove( node );
