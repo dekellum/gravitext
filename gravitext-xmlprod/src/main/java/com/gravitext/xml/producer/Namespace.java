@@ -63,7 +63,14 @@ public class Namespace
         }
         qName.append( "=\"" );
         _beginDecl = qName.toString();
+    }
 
+    /**
+     * Shorthand for new Namespace( DEFAULT, iri ).
+     */
+    public Namespace( final String nameIRI )
+    {
+        this( DEFAULT, nameIRI );
     }
 
     @Override

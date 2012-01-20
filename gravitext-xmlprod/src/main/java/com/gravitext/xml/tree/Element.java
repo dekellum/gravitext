@@ -112,7 +112,7 @@ public final class Element extends Node
 
     /**
      * Return any additional Namespace declarations rooted at this
-     * element.  May be empty, may not null.
+     * element.  May be empty, but not null.
      */
     public List<Namespace> namespaceDeclarations()
     {
@@ -353,6 +353,17 @@ public final class Element extends Node
         node.detach();
         _children.add( index, node );
         node.setParent( this );
+    }
+
+    /**
+     * Detaches all children, leaving this element with none.
+     */
+    public void detachAllChildren()
+    {
+        for( Node node : _children ) {
+            node.setParent( null );
+        }
+        _children = EMPTY_CHILDREN;
     }
 
     void removeChild( Node node )
