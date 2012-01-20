@@ -112,7 +112,7 @@ public final class Element extends Node
 
     /**
      * Return any additional Namespace declarations rooted at this
-     * element.  May be empty, may not null.
+     * element.  May be empty, but not null.
      */
     public List<Namespace> namespaceDeclarations()
     {
