@@ -20,13 +20,14 @@
 require File.join( File.dirname( __FILE__ ), "setup" )
 
 require 'gravitext-xmlprod'
+require 'gravitext-xmlprod/extensions'
 
 class TestTree < MiniTest::Unit::TestCase
+  include Gravitext::XMLProd
+
   import 'com.gravitext.xml.tree.TreeUtils'
   import 'com.gravitext.xml.tree.SAXUtils'
   import 'com.gravitext.xml.tree.StAXUtils'
-  import 'com.gravitext.xml.producer.Indentor'
-  import 'com.gravitext.xml.producer.Tag'
 
   TEST_XML = {}
 
@@ -39,9 +40,10 @@ class TestTree < MiniTest::Unit::TestCase
 XML
 
   TEST_XML[ :atts ] = <<XML
-<doc>
+<doc xmlns="foo">
  <a att1="a1value"/>
  <b att2="a2value"/>
+ <b att2="a2value.1"/>
 </doc>
 XML
 
@@ -94,9 +96,7 @@ XML
   end
 
   def assert_xml( xml, root )
-    assert_equal( xml.rstrip,
-                  TreeUtils::produceString( root, Indentor::COMPRESSED ),
-                  show_node( root ) )
+    assert_equal( xml.rstrip, root.to_xml, show_node( root ) )
   end
 
   def test_find
@@ -127,9 +127,23 @@ XML
 
   def test_find_namespace
     root = SAXUtils::saxParse( SAXUtils::saxInput( TEST_XML[ :namespace_1 ] ) )
-    aelm = root.first_element( Tag.new( 'a', Tag.WILDCARD_NS ) )
+    aelm = root.find( 'a' )
     assert( aelm, "found using WILDCARD_NS" )
     assert_equal( "bar", aelm.tag.namespace.nameIRI, "found the right s:a tag" )
+  end
+
+  def test_select_attribute
+    root = StAXUtils::staxParse( StAXUtils::staxInput( TEST_XML[ :atts ] ) )
+    # Note: Default NS (foo) is here irrelevent
+    avals = root.select( 'b' ) { |e| e['att2'] }.map { |e| e['att2'] }
+    assert_equal( %w[ a2value a2value.1 ], avals )
+  end
+
+  def test_select_attribute_ns
+    root = StAXUtils::staxParse( StAXUtils::staxInput( TEST_XML[ :namespace_2 ] ) )
+    att = Attribute.new( 'att2', Namespace.new( 'bar' ) )
+    # Note: NS prefix is irrelevant
+    assert_equal( 1, root.select { |e| e[ att ] == 'a2value' }.length )
   end
 
   def first( root, *tags )
