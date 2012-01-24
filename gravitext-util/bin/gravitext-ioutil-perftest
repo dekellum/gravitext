@@ -55,13 +55,7 @@ class IOUtilsPerfTest
   def create_tests( length, extras = false )
     tests = []
 
-    reps = if length < 100
-             10000
-           elsif length < 1000
-             1000
-           else
-             100
-           end
+    reps = 1000
 
     tests << perf_test_raw( length, 'string' ) do |ts|
       i = 0
@@ -99,17 +93,17 @@ class IOUtilsPerfTest
       i
     end if extras
 
-    tests << perf_test_raw( length, 'char_buffer-byte_list' ) do |ts|
-      i = 0
-      reps.times { i += ts.byte_list.to_s.length }
-      i
-    end
-
     tests << perf_test_ext( length, 'char_buffer' ) do |ts|
       i = 0
       reps.times { i += ts.char_buffer_to_ruby.to_s.length }
       i
     end
+
+    tests << perf_test_raw( length, 'byte_list' ) do |ts|
+      i = 0
+      reps.times { i += ts.byte_list.to_s.length }
+      i
+    end if extras
 
     tests << perf_test_raw( length, 'control' ) do |ts|
       i = 0
