@@ -21,7 +21,8 @@ module Gravitext::XMLProd
   class Element
     java_import 'com.gravitext.xml.tree.TreeUtils'
 
-    # Shorthand for attribute( name )
+    # Shorthand for attribute accessed either by name (default
+    # Namespace) or Attribute object.
     def []( name )
       attribute( name )
     end

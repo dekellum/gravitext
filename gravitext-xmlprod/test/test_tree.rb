@@ -135,8 +135,13 @@ XML
   def test_select_attribute
     root = StAXUtils::staxParse( StAXUtils::staxInput( TEST_XML[ :atts ] ) )
     # Note: Default NS (foo) is here irrelevent
-    avals = root.select( 'b' ) { |e| e['att2'] }.map { |e| e['att2'] }
-    assert_equal( %w[ a2value a2value.1 ], avals )
+    avals = root.select( 'b' ) { |e| e['att2'] }
+    assert_equal( 2, avals.length, "element with att2 found" )
+
+    att = Attribute.new( 'att2' )
+    assert_equal( %w[ a2value a2value.1 ],
+                  avals.map { |e| e[ att ] },
+                  "Matching default NS attribute" )
   end
 
   def test_select_attribute_ns
