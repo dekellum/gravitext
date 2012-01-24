@@ -1,0 +1,137 @@
+#!/usr/bin/env jruby
+# -*- ruby -*-
+#--
+# Copyright (c) 2012 David Kellum
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you
+# may not use this file except in compliance with the License.  You may
+# obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.  See the License for the specific language governing
+# permissions and limitations under the License.
+#++
+
+$LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
+
+require 'gravitext-util'
+require 'gravitext-util/perftest'
+
+require 'java'
+
+# Magic loader hook -> IOTestService
+require 'com/gravitext/jruby/IOTest'
+
+class IOUtilsPerfTest
+  include Gravitext
+  include Gravitext::Util
+  include Gravitext::Concurrent
+
+  import 'com.gravitext.jruby.TextSampler'
+
+  def run( length = 0 )
+    #FIXME: passed length not used
+
+    puts "(1) Full set of tests, length 103 characters"
+    PerfTest::Harness.new( create_tests( 103, true ) ).execute
+
+    puts
+    puts "(2) Main tests, varied lengths"
+    tests = [ 8, 79, 271, 997, 3413, 9833 ].map { |l| create_tests( l ) }.flatten
+    h2 = PerfTest::Harness.new( tests )
+
+    # Relax warmup, as we ran it all already
+    h2.warmup_exec_target = 1.0
+    h2.warmup_total_target = 5.0
+    h2.warmup_tolerance = 0.2
+    h2.execute
+
+  end
+
+  def create_tests( length, extras = false )
+    tests = []
+
+    reps = if length < 100
+             10000
+           elsif length < 1000
+             1000
+           else
+             100
+           end
+
+    tests << perf_test_raw( length, 'string' ) do |ts|
+      i = 0
+      reps.times { i += ts.string.to_s.length }
+      i
+    end
+
+    tests << perf_test_raw( length, 'string_sequence' ) do |ts|
+      i = 0
+      reps.times { i += ts.string_sequence.to_s.length }
+      i
+    end if extras
+
+    tests << perf_test_ext( length, 'string' ) do |ts|
+      i = 0
+      reps.times { i += ts.string_to_ruby.to_s.length }
+      i
+    end
+
+    tests << perf_test_raw( length, 'bytes' ) do |ts|
+      i = 0
+      reps.times { i += String.from_java_bytes( ts.bytes ).length }
+      i
+    end if extras
+
+    tests << perf_test_raw( length, 'char_buffer' ) do |ts|
+      i = 0
+      reps.times { i += ts.char_buffer.to_s.length }
+      i
+    end
+
+    tests << perf_test_raw( length, 'char_buffer_sequence' ) do |ts|
+      i = 0
+      reps.times { i += ts.char_buffer_sequence.to_s.length }
+      i
+    end if extras
+
+    tests << perf_test_raw( length, 'char_buffer-byte_list' ) do |ts|
+      i = 0
+      reps.times { i += ts.byte_list.to_s.length }
+      i
+    end
+
+    tests << perf_test_ext( length, 'char_buffer' ) do |ts|
+      i = 0
+      reps.times { i += ts.char_buffer_to_ruby.to_s.length }
+      i
+    end
+
+    tests << perf_test_raw( length, 'control' ) do |ts|
+      i = 0
+      reps.times { i += ts.length }
+      i
+    end if extras
+
+    tests
+  end
+
+  def perf_test_raw( length, name )
+    BlockTestFactory.new( "#{length}-#{name}" ) do |run,random|
+      yield TextSampler.new( length, random.next_int )
+    end
+  end
+
+  def perf_test_ext( length, name )
+    BlockTestFactory.new( "#{length}-#{name}-ext" ) do |run,random|
+      yield RubySampler.new( length, random.next_int )
+    end
+  end
+
+end
+
+IOUtilsPerfTest.new.run( ( ARGV.shift || 0 ).to_i )
