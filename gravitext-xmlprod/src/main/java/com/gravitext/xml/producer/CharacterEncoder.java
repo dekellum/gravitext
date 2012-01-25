@@ -52,6 +52,24 @@ public class CharacterEncoder
     }
 
     /**
+     * The quote to use for, and thus to escape within, attribute values.
+     */
+    public static enum QuoteMark
+    {
+        SINGLE('\'', "&apos;" ),
+        DOUBLE( '"', "&quot;" );
+
+        public final char literal;
+        public final String entity;
+
+        QuoteMark(char literal, String entity )
+        {
+            this.literal = literal;
+            this.entity  = entity;
+        }
+    }
+
+    /**
      * Construct with defaults for XML 1.0
      */
     public CharacterEncoder( Appendable out )
@@ -69,6 +87,15 @@ public class CharacterEncoder
 
         _outW = (out instanceof Writer) ? (Writer) out : null;
         _outA = out;
+    }
+
+    /**
+     * Set the quote to use for, and thus to escape within, attribute values.
+     * The default is {@link QuoteMark.DOUBLE}.
+     */
+    public final void setQuoteMark( QuoteMark quote )
+    {
+        _quoteMark = quote;
     }
 
     /**
@@ -110,6 +137,11 @@ public class CharacterEncoder
     public final void setModeC1( Mode mode )
     {
         _modeC1 = mode;
+    }
+
+    public final QuoteMark quoteMark()
+    {
+        return _quoteMark;
     }
 
     public final Mode modeNUL()
@@ -245,9 +277,9 @@ public class CharacterEncoder
                 // ignore
                 ++i;
             }
-            else if( doEncodeQuote && c == '"' ) {
+            else if( doEncodeQuote && c == _quoteMark.literal ) {
                 _outA.append( in, last, i );
-                _outA.append( "&quot;" );
+                _outA.append( _quoteMark.entity );
                 last = ++i;
             }
             else if( c == '<' ) {
@@ -305,9 +337,9 @@ public class CharacterEncoder
                 // ignore
                 ++i;
             }
-            else if( doEncodeQuote && c == '"' ) {
+            else if( doEncodeQuote && c == _quoteMark.literal ) {
                 _outW.write( in, last, i - last );
-                _outW.write( "&quot;" );
+                _outW.write( _quoteMark.entity );
                 last = ++i;
             }
             else if( c == '<' ) {
@@ -367,9 +399,9 @@ public class CharacterEncoder
                 // ignore
                 ++i;
             }
-            else if( doEncodeQuote && c == '"' ) {
+            else if( doEncodeQuote && c == _quoteMark.literal ) {
                 _outW.write( in, last, i - last );
-                _outW.write( "&quot;" );
+                _outW.write( _quoteMark.entity );
                 last = ++i;
             }
             else if( c == '<' ) {
@@ -461,6 +493,8 @@ public class CharacterEncoder
     private final Version _version;
     private final Writer _outW;
     private final Appendable _outA;
+
+    private QuoteMark _quoteMark = QuoteMark.DOUBLE;
 
     private Mode _modeNUL   = Mode.ERROR;
     private Mode _modeNAC   = Mode.ERROR;

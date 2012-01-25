@@ -51,7 +51,7 @@ public class Attribute
         if( ( _namespace != null ) && (! _namespace.isDefault() ) ) {
             qName.append( _namespace.prefix() ).append( ':' );
         }
-        qName.append( _name ).append( "=\"" );
+        qName.append( _name ).append( '=' );
 
         _beginAttribute = qName.toString();
     }
