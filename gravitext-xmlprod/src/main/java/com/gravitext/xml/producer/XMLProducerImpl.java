@@ -101,10 +101,12 @@ final class XMLProducerImpl
 
         _out.append( attr.beginAttribute() );
 
+        _out.append( _encoder.quoteMark().literal );
+
         if( encode ) _encoder.encodeAttrValue( value );
         else _out.append( value );
 
-        _out.append( '"' );
+        _out.append( _encoder.quoteMark().literal );
     }
 
     public void addAttr( final String name,
@@ -119,10 +121,11 @@ final class XMLProducerImpl
 
         _out.append( ' ' );
         _out.append( name );
-        _out.append( "=\"" );
+        _out.append( '=' );
+        _out.append( _encoder.quoteMark().literal );
         if( encode ) _encoder.encodeAttrValue( value );
         else _out.append( value );
-        _out.append( '"' );
+        _out.append( _encoder.quoteMark().literal );
     }
 
     public void implyNamespace( final Namespace ns ) throws IOException
@@ -140,8 +143,9 @@ final class XMLProducerImpl
         }
         if( !ns.isXML() ) {
             _out.append( ns.beginDecl() );
+            _out.append( _encoder.quoteMark().literal );
             _encoder.encodeAttrValue( ns.nameIRI() );
-            _out.append( '"' );
+            _out.append( _encoder.quoteMark().literal );
 
             _nScopes.add( new NScope( ns, _openTags.size() - 1 ) );
         }

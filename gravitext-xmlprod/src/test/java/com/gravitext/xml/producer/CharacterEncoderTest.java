@@ -23,6 +23,8 @@ import java.nio.CharBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gravitext.xml.producer.CharacterEncoder.QuoteMark;
+
 import junit.framework.TestCase;
 
 public class CharacterEncoderTest extends TestCase
@@ -41,8 +43,17 @@ public class CharacterEncoderTest extends TestCase
     {
         StringBuilder out = new StringBuilder();
         CharacterEncoder enc = new CharacterEncoder( out );
-        enc.encodeAttrValue( "<\"" );
-        assertEquals( "&lt;&quot;", out.toString() );
+        enc.encodeAttrValue( "<'\"'" );
+        assertEquals( "&lt;'&quot;'", out.toString() );
+    }
+
+    public void testDefaultAttrValueSingle() throws IOException
+    {
+        StringBuilder out = new StringBuilder();
+        CharacterEncoder enc = new CharacterEncoder( out );
+        enc.setQuoteMark( QuoteMark.SINGLE );
+        enc.encodeAttrValue( "<'\"'" );
+        assertEquals( "&lt;&apos;\"&apos;", out.toString() );
     }
 
     public void testWriterAttrValue() throws IOException

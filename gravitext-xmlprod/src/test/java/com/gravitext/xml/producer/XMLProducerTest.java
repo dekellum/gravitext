@@ -31,6 +31,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.gravitext.util.ResizableCharBufferWriter;
+import com.gravitext.xml.producer.CharacterEncoder.QuoteMark;
 
 import junit.framework.TestCase;
 
@@ -187,7 +188,9 @@ public class XMLProducerTest extends TestCase
     public void testNamespaces() throws IOException
     {
         StringBuilder out = new StringBuilder();
-        XMLProducer p = new XMLProducer( out );
+        CharacterEncoder enc = new CharacterEncoder( out );
+        enc.setQuoteMark( QuoteMark.SINGLE );
+        XMLProducer p = new XMLProducer( enc );
         p.setIndent( Indentor.PRETTY );
 
         p.startTag( DOC ).addNamespace( DEF );
@@ -201,13 +204,13 @@ public class XMLProducerTest extends TestCase
         p.endTag  ( DOC );
 
         assertEquals(
-            "<doc xmlns=\"urn:foo.def\">\n" +
-            " <ns1:sub xmlns:ns1=\"urn:foo.ns1\">\n" +
+            "<doc xmlns='urn:foo.def'>\n" +
+            " <ns1:sub xmlns:ns1='urn:foo.ns1'>\n" +
             "  <ns1:sub>val</ns1:sub>\n" +
-            "  <odf ns1:at1=\"av1\"/>\n" +
+            "  <odf ns1:at1='av1'/>\n" +
             " </ns1:sub>\n" +
-            " <ns1:sub xmlns:ns1=\"urn:foo.ns1\">\n" +
-            "  <odf xmlns:nsa=\"urn:foo.nsa\" nsa:at2=\"av2\"/>\n" +
+            " <ns1:sub xmlns:ns1='urn:foo.ns1'>\n" +
+            "  <odf xmlns:nsa='urn:foo.nsa' nsa:at2='av2'/>\n" +
             " </ns1:sub>\n" +
             "</doc>\n",
             out.toString() );
