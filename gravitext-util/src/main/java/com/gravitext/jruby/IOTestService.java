@@ -33,16 +33,23 @@ public class IOTestService implements BasicLibraryService
 
         RubyClass sclass = util.defineClassUnder( "RubySampler",
                                                   runtime.getObject(),
-                                                  ALLOCATOR );
+                                                  RS_ALLOCATOR );
 
         sclass.defineAnnotatedMethods( RubySampler.class );
+        RubyClass hclass = util.defineClassUnder( "RubySampleHelper",
+                                                  runtime.getObject(),
+                                                  ObjectAllocator.NOT_ALLOCATABLE_ALLOCATOR );
+
+        hclass.defineAnnotatedMethods( RubySampleHelper.class );
+
         return true;
     }
 
-    private static ObjectAllocator ALLOCATOR = new ObjectAllocator() {
+    private static ObjectAllocator RS_ALLOCATOR = new ObjectAllocator() {
         public IRubyObject allocate( Ruby runtime, RubyClass klazz )
         {
             return new RubySampler( runtime, klazz );
         }
     };
+
 }

@@ -75,6 +75,12 @@ class IOUtilsPerfTest
       i
     end
 
+    tests << perf_test_helper( length, 'string' ) do |ts,rs|
+      i = 0
+      reps.times { i += rs.string_to_ruby( ts ).to_s.length }
+      i
+    end
+
     tests << perf_test_raw( length, 'bytes' ) do |ts|
       i = 0
       reps.times { i += String.from_java_bytes( ts.bytes ).length }
@@ -96,6 +102,12 @@ class IOUtilsPerfTest
     tests << perf_test_ext( length, 'char_buffer' ) do |ts|
       i = 0
       reps.times { i += ts.char_buffer_to_ruby.to_s.length }
+      i
+    end
+
+    tests << perf_test_helper( length, 'char_buffer' ) do |ts,rs|
+      i = 0
+      reps.times { i += rs.char_buffer_to_ruby( ts ).to_s.length }
       i
     end
 
@@ -123,6 +135,13 @@ class IOUtilsPerfTest
   def perf_test_ext( length, name )
     BlockTestFactory.new( "#{length}-#{name}-ext" ) do |run,random|
       yield RubySampler.new( length, random.next_int )
+    end
+  end
+
+  def perf_test_helper( length, name )
+    BlockTestFactory.new( "#{length}-#{name}-helper" ) do |run,random|
+      yield( TextSampler.new( length, random.next_int ),
+             RubySampleHelper )
     end
   end
 

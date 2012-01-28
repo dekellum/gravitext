@@ -40,7 +40,19 @@ class TestIOUtils < MiniTest::Unit::TestCase
     assert_instance_of( String, ts.string_sequence )
     assert_operator( ts.string_sequence.length, :>, 300 )
 
+    if JRUBY_VERSION =~ /^1.7/
+      assert_instance_of( String, ts.char_buffer )
+      assert_instance_of( String, ts.char_buffer_sequence )
+    else
+      # In Jruby < 1.7, CharBuffer isn't converted to String until
+      # to_s
+      assert_equal( 'java.nio.HeapCharBuffer',
+                    ts.char_buffer.java_class.name )
+      assert_equal( 'java.nio.HeapCharBuffer',
+                    ts.char_buffer_sequence.java_class.name )
+    end
     assert_operator( ts.char_buffer.to_s.length, :>, 300 )
+    assert_operator( ts.char_buffer_sequence.to_s.length, :>, 300 )
 
     assert_operator( ts.byte_list.to_s.length, :>, 300 )
 
@@ -56,6 +68,17 @@ class TestIOUtils < MiniTest::Unit::TestCase
 
     assert_instance_of( String, rs.string_to_ruby )
     assert_operator( rs.string_to_ruby.length, :>, 300 )
+  end
+
+  def test_ruby_sample_helper
+    ts = TextSampler.new( 300, 2 )
+    rs = RubySampleHelper
+
+    assert_instance_of( String, rs.char_buffer_to_ruby( ts ) )
+    assert_operator( rs.char_buffer_to_ruby( ts ).length, :>, 300 )
+
+    assert_instance_of( String, rs.string_to_ruby( ts ) )
+    assert_operator( rs.string_to_ruby( ts ).length, :>, 300 )
   end
 
 end
