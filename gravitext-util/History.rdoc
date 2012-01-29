@@ -1,4 +1,9 @@
 === 1.6.b.0 (TBD)
+* New jruby IOUtils, sample extension, and perf test for optimizing
+  text-intensive interop.
+* Simplify naming with PerfTest::BlockTestFactory
+* Narrow to slf4j ~> 1.6.1, logback ~> 1.0
+* Upgrade to tarpit ~> 2.0, bundler Gemfile, gemspec (dev)
 
 === 1.5.1 (2011-10-1)
 * Add ArrayHTMap.toString that is cycle aware, avoids stack overflow
