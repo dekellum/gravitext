@@ -125,6 +125,13 @@ XML
     assert_nil( first( root, :o3 ) )
   end
 
+  def test_find_namespace
+    root = SAXUtils::saxParse( SAXUtils::saxInput( TEST_XML[ :namespace_1 ] ) )
+    aelm = root.first_element( Tag.new( 'a', Tag.WILDCARD_NS ) )
+    assert( aelm, "found using WILDCARD_NS" )
+    assert_equal( "bar", aelm.tag.namespace.nameIRI, "found the right s:a tag" )
+  end
+
   def first( root, *tags )
     root.first_element( *( tags.map { |s| Tag.new( s.to_s ) } ) )
   end
