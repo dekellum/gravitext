@@ -2,8 +2,8 @@ PATH
   remote: gravitext-util
   specs:
     gravitext-util (1.6.b.0-java)
-      rjack-logback (>= 0.9.18, < 2.0)
-      rjack-slf4j (>= 1.5.8, < 1.7)
+      rjack-logback (~> 1.0)
+      rjack-slf4j (~> 1.6.1)
 
 PATH
   remote: gravitext-xmlprod
