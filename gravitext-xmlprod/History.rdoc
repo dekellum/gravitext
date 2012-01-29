@@ -1,4 +1,14 @@
 === 1.5.b.0 (TBD)
+* New Element ruby extensions and XMLHelper for IO optimization (with
+  perf tests)
+* Add Element.detachAllChildren for convenience/efficiency
+* Add selectable attribute QuoteMark.DOUBLE (default) or SINGLE mode
+  Encoder and Producer.
+* Add Tag.WILDCARD_NS for wildcard matching of namespaces
+* Add Attribute.equals and hashCode for completeness, matching
+* Add shortcut DEFAULT Namespace constructor
+* Add java_import(s) for jruby
+* Upgrade to tarpit ~> 2.0, bundler Gemfile, gemspec (dev)
 
 === 1.4.1 (2011-10-1)
 * Convert ruby tests to minitest
