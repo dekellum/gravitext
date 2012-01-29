@@ -57,6 +57,16 @@ public class Attribute
     }
 
     @Override
+    public final int hashCode()
+    {
+        int h = _name.hashCode();
+        if( _namespace != null ) {
+            h ^= _namespace.hashCode();
+        }
+        return h;
+    }
+
+    @Override
     public final boolean equals( Object o )
     {
         if( this == o ) return true;
