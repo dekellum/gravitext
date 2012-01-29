@@ -61,7 +61,7 @@ public class Namespace
         if( !isDefault() ) {
             qName.append( ':' ).append( _prefix );
         }
-        qName.append( "=\"" );
+        qName.append( '=' );
         _beginDecl = qName.toString();
     }
 
