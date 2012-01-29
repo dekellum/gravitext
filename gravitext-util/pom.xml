@@ -63,6 +63,20 @@
       <optional>true</optional>
     </dependency>
 
+    <dependency>
+      <groupId>org.jruby.extras</groupId>
+      <artifactId>bytelist</artifactId>
+      <version>1.0.10</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-core</artifactId>
+      <version>1.6.5.1</version>
+      <optional>true</optional>
+    </dependency>
+
   </dependencies>
 
   <build>

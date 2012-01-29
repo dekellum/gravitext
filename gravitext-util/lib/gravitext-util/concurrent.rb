@@ -58,7 +58,7 @@ module Gravitext
     # :call-seq:
     #   execute_test(runs,threads = available_cores) { |run,random| ... } -> Integer
     def self.execute_test( runs, threads = available_cores, &block )
-      TestExecutor::run( BlockTestFactory.new( block ), runs, threads )
+      TestExecutor::run( BlockTestFactory.new( &block ), runs, threads )
     end
 
     class BlockTestFactory
@@ -66,9 +66,9 @@ module Gravitext
 
       attr_accessor :name
 
-      def initialize( proc = nil, &block )
-        @name = 'BlockTestFactory'
-        @block = proc || block
+      def initialize( name = 'BlockTestFactory', &block )
+        @name = name
+        @block = block
       end
 
       def create_test_runnable( seed )

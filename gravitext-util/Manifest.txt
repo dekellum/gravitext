@@ -4,6 +4,7 @@ NOTICE.txt
 README.rdoc
 Rakefile
 pom.xml
+bin/gravitext-ioutil-perftest
 bin/gravitext-perftest
 lib/gravitext-util/version.rb
 lib/gravitext-util.rb
@@ -12,6 +13,7 @@ lib/gravitext-util/perftest.rb
 lib/gravitext-util/unimap.rb
 test/setup.rb
 test/test_concurrent.rb
+test/test_ioutils.rb
 test/test_perftest.rb
 test/test_unimap.rb
 lib/gravitext-util/gravitext-util-1.6.b.0.jar
