@@ -22,6 +22,7 @@ $LOAD_PATH.unshift File.join( File.dirname(__FILE__), "..", "lib" )
 require 'rubygems'
 
 require 'gravitext-xmlprod'
+require 'gravitext-xmlprod/extensions'
 require 'gravitext-util/perftest'
 require 'optparse'
 
@@ -29,11 +30,14 @@ require 'java'
 
 class TestCollection
   include Gravitext
+  include Gravitext::XMLProd
   include Gravitext::Concurrent
 
   import 'com.gravitext.xml.producer.perftests.PerfTestFactory'
   import 'com.gravitext.xml.producer.perftests.StringBufferEncodePerfTest'
   import 'com.gravitext.xml.tree.TreePerfTest'
+  import 'com.gravitext.xml.tree.StAXUtils'
+  import 'com.gravitext.xml.tree.TreeUtils'
 
   def run
     options = {}
@@ -89,6 +93,31 @@ class TestCollection
       TreePerfTest::Impl.values.map do |s|
         TreePerfTest.new( xml, s, ( name == 'tree_write' ) )
       end
+
+    when 'ruby_parse'
+      xfile = File.join( File.dirname(__FILE__), '..',
+                         'test/xml/huffingtonpost.full.atom.xml' )
+      xml = IO.read( xfile )
+      [ BlockTestFactory.new( "parse_tree-ext" ) do
+          parse_tree( xml ).children.length
+        end,
+        BlockTestFactory.new( "stax_parse" ) do
+          StAXUtils::staxParse( StAXUtils::staxInput( xml ) ).children.length
+        end ]
+
+    when 'ruby'
+      xfile = File.join( File.dirname(__FILE__), '..',
+                         'test/xml/huffingtonpost.full.atom.xml' )
+
+      root = parse_tree( IO.read( xfile ) )
+
+      [ BlockTestFactory.new( "write_element-ext" ) do
+          root.to_xml.length
+        end,
+        BlockTestFactory.new( "produce_string" ) do
+          TreeUtils.produce_string( root, Indentor::COMPRESSED ).length
+        end ]
+
     else
       raise "No test named #{name}."
     end
