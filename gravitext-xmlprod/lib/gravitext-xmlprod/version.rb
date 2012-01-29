@@ -16,7 +16,7 @@
 
 module Gravitext
   module XMLProd
-    VERSION = '1.4.1'
+    VERSION = '1.5.b.0'
 
     LIB_DIR = File.dirname(__FILE__) # :nodoc:
   end
