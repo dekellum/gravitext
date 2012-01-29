@@ -19,10 +19,17 @@ require 'java'
 
 require 'gravitext-util'
 
-module Gravitext
+module Gravitext::XMLProd
 
-  module XMLProd
-    require File.join( LIB_DIR, "gravitext-xmlprod-#{ VERSION }.jar" )
-  end
+  require File.join( LIB_DIR, "gravitext-xmlprod-#{ VERSION }.jar" )
+
+  java_import 'com.gravitext.xml.producer.Indentor'
+  java_import 'com.gravitext.xml.producer.Attribute'
+  java_import 'com.gravitext.xml.producer.Namespace'
+  java_import 'com.gravitext.xml.producer.Tag'
+
+  java_import 'com.gravitext.xml.tree.Characters'
+  java_import 'com.gravitext.xml.tree.Element'
+  java_import 'com.gravitext.xml.tree.Node'
 
 end
