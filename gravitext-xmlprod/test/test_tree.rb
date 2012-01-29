@@ -28,6 +28,7 @@ class TestTree < MiniTest::Unit::TestCase
   import 'com.gravitext.xml.tree.TreeUtils'
   import 'com.gravitext.xml.tree.SAXUtils'
   import 'com.gravitext.xml.tree.StAXUtils'
+  import 'javax.xml.stream.XMLStreamException'
 
   TEST_XML = {}
 
@@ -114,7 +115,7 @@ XML
  </o2>
 </doc>
 XML
-    root = StAXUtils::staxParse( StAXUtils::staxInput( xml ) )
+    root = parse_tree( xml )
     assert_equal( 'text', first( root, :o1, :i1 ).characters )
     assert_equal( 'next', first( root, :o1, :i2 ).characters )
 
@@ -133,7 +134,7 @@ XML
   end
 
   def test_select_attribute
-    root = StAXUtils::staxParse( StAXUtils::staxInput( TEST_XML[ :atts ] ) )
+    root = parse_tree( TEST_XML[ :atts ] )
     # Note: Default NS (foo) is here irrelevent
     avals = root.select( 'b' ) { |e| e['att2'] }
     assert_equal( 2, avals.length, "element with att2 found" )
@@ -145,10 +146,16 @@ XML
   end
 
   def test_select_attribute_ns
-    root = StAXUtils::staxParse( StAXUtils::staxInput( TEST_XML[ :namespace_2 ] ) )
+    root = parse_tree( TEST_XML[ :namespace_2 ] )
     att = Attribute.new( 'att2', Namespace.new( 'bar' ) )
     # Note: NS prefix is irrelevant
     assert_equal( 1, root.select { |e| e[ att ] == 'a2value' }.length )
+  end
+
+  def test_invalid_xml_error
+    assert_raises( XMLStreamException ) do
+      parse_tree( "<doc><open></doc>" )
+    end
   end
 
   def first( root, *tags )

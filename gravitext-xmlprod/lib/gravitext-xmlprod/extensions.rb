@@ -16,15 +16,31 @@
 
 require 'gravitext-xmlprod'
 
+# Magic loader hook -> XMLService
+require 'com/gravitext/xml/jruby/XML'
+
 module Gravitext::XMLProd
 
+  import 'com.gravitext.xml.jruby.ReturnElement'
+
+  def parse_tree( input )
+    rval = ReturnElement.new
+    XMLHelper.stax_parse_string( input, rval )
+    rval.value
+  end
+
+  module_function :parse_tree
+
   class Element
-    java_import 'com.gravitext.xml.tree.TreeUtils'
 
     # Shorthand for attribute accessed either by name (default
     # Namespace) or Attribute object.
     def []( name )
       attribute( name )
+    end
+
+    def characters
+      XMLHelper.element_characters( self )
     end
 
     # Return Array of child elements matching tag and/or further
@@ -56,10 +72,10 @@ module Gravitext::XMLProd
       end
     end
 
-    def to_xml( indentor = Indentor::COMPRESSED )
-      # FIXME: Can this be optimized more directly to ruby 8-bit
-      # String?
-      TreeUtils.produce_string( self, indentor )
+    # Serialize self to String of XML, using specified Indentor and
+    # QuoteMark to use for attributes.
+    def to_xml( indentor = Indentor::COMPRESSED, qmark = QuoteMark::DOUBLE )
+      XMLHelper.write_element( self, indentor, qmark )
     end
 
   end

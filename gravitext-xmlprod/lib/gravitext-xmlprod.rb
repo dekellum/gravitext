@@ -23,10 +23,13 @@ module Gravitext::XMLProd
 
   require File.join( LIB_DIR, "gravitext-xmlprod-#{ VERSION }.jar" )
 
+  java_import 'com.gravitext.xml.producer.CharacterEncoder'
   java_import 'com.gravitext.xml.producer.Indentor'
   java_import 'com.gravitext.xml.producer.Attribute'
   java_import 'com.gravitext.xml.producer.Namespace'
   java_import 'com.gravitext.xml.producer.Tag'
+
+  QuoteMark = CharacterEncoder::QuoteMark
 
   java_import 'com.gravitext.xml.tree.Characters'
   java_import 'com.gravitext.xml.tree.Element'
