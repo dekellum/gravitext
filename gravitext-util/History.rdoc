@@ -1,4 +1,4 @@
-=== 1.6.b.0 (TBD)
+=== 1.6.b.0 (2012-1-29)
 * New jruby IOUtils, sample extension, and perf test for optimizing
   text-intensive interop.
 * Simplify naming with PerfTest::BlockTestFactory

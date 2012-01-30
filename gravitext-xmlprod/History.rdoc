@@ -1,4 +1,4 @@
-=== 1.5.b.0 (TBD)
+=== 1.5.b.0 (2012-1-29)
 * New Element ruby extensions and XMLHelper for IO optimization (with
   perf tests)
 * Add Element.detachAllChildren for convenience/efficiency
