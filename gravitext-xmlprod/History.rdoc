@@ -1,4 +1,5 @@
-=== 1.5.b.1 (TBD)
+=== 1.5.b.1 (2012-1-30)
+* Change Element.to_xml( opts ), add implied_ns support
 
 === 1.5.b.0 (2012-1-29)
 * New Element ruby extensions and XMLHelper for IO optimization (with
