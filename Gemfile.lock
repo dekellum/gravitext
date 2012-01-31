@@ -8,7 +8,7 @@ PATH
 PATH
   remote: gravitext-xmlprod
   specs:
-    gravitext-xmlprod (1.5.b.0-java)
+    gravitext-xmlprod (1.5.b.1-java)
       gravitext-util (~> 1.6.b)
 
 GEM
