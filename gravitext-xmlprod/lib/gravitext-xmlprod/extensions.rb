@@ -72,12 +72,13 @@ module Gravitext::XMLProd
       end
     end
 
-    # Serialize self to String of XML, using specified Indentor and
-    # QuoteMark to use for attributes.
-    def to_xml( indentor = Indentor::COMPRESSED, qmark = QuoteMark::DOUBLE )
-      XMLHelper.write_element( self, indentor, qmark )
+    # Serialize self to String of XML, with options.
+    def to_xml( opts = {} )
+      XMLHelper.write_element( self,
+                               opts[ :indentor ]   || Indentor::COMPRESSED,
+                               opts[ :qmark ]      || QuoteMark::DOUBLE,
+                               opts[ :implied_ns ] || [] )
     end
-
   end
 
 end
