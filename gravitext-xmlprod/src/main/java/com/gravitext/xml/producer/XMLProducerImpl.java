@@ -128,7 +128,7 @@ final class XMLProducerImpl
         _out.append( _encoder.quoteMark().literal );
     }
 
-    public void implyNamespace( final Namespace ns ) throws IOException
+    public void implyNamespace( final Namespace ns )
     {
         if( !ns.isXML() ) {
             _nScopes.add( new NScope( ns, _openTags.size() - 1 ) );
