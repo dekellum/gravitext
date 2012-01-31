@@ -19,6 +19,7 @@ package com.gravitext.xml.jruby;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.jruby.RubyArray;
 import org.jruby.RubyString;
 import org.jruby.anno.JRubyClass;
 import org.jruby.anno.JRubyMethod;
@@ -30,6 +31,7 @@ import com.gravitext.util.ResizableCharBuffer;
 import com.gravitext.util.Streams;
 import com.gravitext.xml.producer.CharacterEncoder;
 import com.gravitext.xml.producer.Indentor;
+import com.gravitext.xml.producer.Namespace;
 import com.gravitext.xml.producer.XMLProducer;
 import com.gravitext.xml.producer.CharacterEncoder.QuoteMark;
 import com.gravitext.xml.tree.Element;
@@ -47,24 +49,32 @@ public class XMLHelper
     @JRubyMethod( name = "write_element",
                   meta = true,
                   required = 3,
+                  optional = 1,
                   argTypes = { Element.class,
                                Indentor.class,
                                QuoteMark.class } )
     public static IRubyObject writeElement( ThreadContext tc,
                                             IRubyObject klazz,
-                                            IRubyObject elm,
-                                            IRubyObject ident,
-                                            IRubyObject qmark )
+                                            IRubyObject[] args )
     {
-        Element root = (Element) elm.toJava( Element.class );
+        Element root = (Element) args[0].toJava( Element.class );
 
         ResizableCharBuffer out = new ResizableCharBuffer( 1024 );
 
         CharacterEncoder enc = new CharacterEncoder( out );
-        enc.setQuoteMark( (QuoteMark) qmark.toJava( QuoteMark.class ) );
+        enc.setQuoteMark( (QuoteMark) args[2].toJava( QuoteMark.class ) );
 
         XMLProducer pd = new XMLProducer( enc );
-        pd.setIndent( (Indentor) ident.toJava( Indentor.class ) );
+
+        if ( args.length > 3 ) {
+            RubyArray iNs = args[3].convertToArray();
+            for( Object o : iNs ) {
+                Namespace ns = (Namespace) o;
+                pd.implyNamespace( ns );
+            }
+        }
+
+        pd.setIndent( (Indentor) args[1].toJava( Indentor.class ) );
 
         try {
             new NodeWriter( pd ).putTree( root );
@@ -95,16 +105,16 @@ public class XMLHelper
                                ReturnElement.class } )
     public static IRubyObject staxParse( ThreadContext tc,
                                          IRubyObject klazz,
-                                         IRubyObject inp,
-                                         IRubyObject r )
+                                         IRubyObject input,
+                                         IRubyObject rElem )
         throws FactoryConfigurationError, XMLStreamException
     {
-        ByteBuffer in = IOUtils.toByteBuffer( inp.convertToString() );
+        ByteBuffer in = IOUtils.toByteBuffer( input.convertToString() );
 
         StreamSource source = new StreamSource( Streams.inputStream( in ) );
         XMLStreamReader staxReader = StAXUtils.staxReader( source );
 
-        ReturnElement re = (ReturnElement) r.toJava( ReturnElement.class );
+        ReturnElement re = (ReturnElement) rElem.toJava( ReturnElement.class );
         re.setValue( StAXUtils.readDocument( staxReader ) );
 
         return tc.getRuntime().getNil();

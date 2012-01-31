@@ -315,10 +315,8 @@ public final class XMLProducer
      * a namespace on output.
      * @throws CharacterEncodeException (an IOException) from the
      *         underlying CharacterEncoder.
-     * @throws IOException from the underlying Appendable.
      */
     public XMLProducer implyNamespace( final Namespace ns )
-        throws IOException
     {
         _impl.implyNamespace( ns );
         return this;
