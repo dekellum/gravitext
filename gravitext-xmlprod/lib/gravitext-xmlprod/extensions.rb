@@ -21,8 +21,6 @@ require 'com/gravitext/xml/jruby/XML'
 
 module Gravitext::XMLProd
 
-  import 'com.gravitext.xml.jruby.ReturnElement'
-
   def parse_tree( input )
     XMLHelper.stax_parse_string( input )
   end
