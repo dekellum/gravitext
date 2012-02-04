@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 import org.jruby.RubyString;
 import org.jruby.anno.JRubyClass;
 import org.jruby.anno.JRubyMethod;
+import org.jruby.javasupport.Java;
 import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.builtin.IRubyObject;
 
@@ -90,13 +91,11 @@ public class XMLHelper
 
     @JRubyMethod( name = "stax_parse_string",
                   meta = true,
-                  required = 2,
-                  argTypes = { RubyString.class,
-                               ReturnElement.class } )
+                  required = 1,
+                  argTypes = { RubyString.class } )
     public static IRubyObject staxParse( ThreadContext tc,
                                          IRubyObject klazz,
-                                         IRubyObject inp,
-                                         IRubyObject r )
+                                         IRubyObject inp )
         throws FactoryConfigurationError, XMLStreamException
     {
         ByteBuffer in = IOUtils.toByteBuffer( inp.convertToString() );
@@ -104,10 +103,8 @@ public class XMLHelper
         StreamSource source = new StreamSource( Streams.inputStream( in ) );
         XMLStreamReader staxReader = StAXUtils.staxReader( source );
 
-        ReturnElement re = (ReturnElement) r.toJava( ReturnElement.class );
-        re.setValue( StAXUtils.readDocument( staxReader ) );
+        Element element = StAXUtils.readDocument( staxReader );
 
-        return tc.getRuntime().getNil();
+        return Java.getInstance( tc.getRuntime(), element );
     }
-
 }

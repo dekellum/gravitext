@@ -24,9 +24,7 @@ module Gravitext::XMLProd
   import 'com.gravitext.xml.jruby.ReturnElement'
 
   def parse_tree( input )
-    rval = ReturnElement.new
-    XMLHelper.stax_parse_string( input, rval )
-    rval.value
+    XMLHelper.stax_parse_string( input )
   end
 
   module_function :parse_tree
