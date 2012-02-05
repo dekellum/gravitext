@@ -16,7 +16,6 @@
 
 package com.gravitext.jruby;
 
-import org.jruby.RubyHash;
 import org.jruby.RubyString;
 import org.jruby.anno.JRubyClass;
 import org.jruby.anno.JRubyMethod;
@@ -99,28 +98,6 @@ public class HTMapHelper
         final Key key = (Key) k.toJava( Key.class );
 
         return javaToRuby( tc, map.remove( key ) );
-    }
-
-    @SuppressWarnings("unchecked")
-    @JRubyMethod( name = "unimap_to_hash",
-                  meta = true,
-                  required = 1,
-                  argTypes = { UniMap.class } )
-    public static IRubyObject uniMapToHash( ThreadContext tc,
-                                            IRubyObject klazz,
-                                            IRubyObject m )
-    {
-        final UniMap map = (UniMap) m.toJava( UniMap.class );
-
-        RubyHash rhash = new RubyHash( tc.getRuntime() );
-        for( Key k : UniMap.KEY_SPACE.keys() ) {
-            Object value = map.get( k );
-            if( value != null ) {
-                rhash.put( Java.getInstance( tc.getRuntime(), k ),
-                           javaToRuby( tc, value ) );
-            }
-        }
-        return rhash;
     }
 
     @SuppressWarnings("unchecked")

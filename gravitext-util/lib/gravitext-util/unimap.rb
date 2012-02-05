@@ -26,7 +26,7 @@ module Gravitext::HTMap
 
   # Extension to com.gravitext.htmap.UniMap providing convenience
   # methods, including ruby accessors for keys registered in
-  # UniMap::KEY_SPACE
+  # UniMap::KEY_SPACE, and for ruby Hash and JSON compatibility.
   class UniMap
 
     class << self
@@ -156,9 +156,6 @@ module Gravitext::HTMap
         h[ UniMap.key_to_symbol( key ) ] = val
       end
       h
-
-      # FIXME: Drop? HTMapHelper.unimap_to_hash( self )
-      # Hash[ to_a ]
     end
 
     # Like to_hash but converts all nested UniMaps to hashes as well.
