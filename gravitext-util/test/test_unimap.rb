@@ -119,6 +119,13 @@ class TestUniMap < MiniTest::Unit::TestCase
     assert_equal( Hash[ @sample.to_a ], h, "to_a, to_hash agree" )
   end
 
+  def test_membership
+    assert( @sample.has_key?( :int ) )
+    assert( @sample.include?( 'int' ) )
+    assert( @sample.key?( :str ) )
+    assert( @sample.member?( :str ) )
+  end
+
   def test_brackets
     assert_equal( 33, @sample[ 'int' ] )
     assert_equal( 33, @sample[ :int  ] )

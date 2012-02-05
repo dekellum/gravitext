@@ -103,16 +103,25 @@ module Gravitext::HTMap
 
     end
 
+    # Set key to value, where key may be a Key, String, or Symbol.
+    # Returns prior value or nil.
     def set( key, value )
       key = UniMap.str_to_key( key ) unless key.is_a?( Key )
       HTMapHelper.set_map( self, key, value )
     end
 
+    alias :[]= :set
+
+    # Get key value or nil, where key may be a Key, String, or Symbol
     def get( key )
       key = UniMap.str_to_key( key ) unless key.is_a?( Key )
       HTMapHelper.get_map( self, key )
     end
 
+    alias :[] :get
+
+    # Remove the specified key, where key may be a Key, String, or
+    # Symbol. Returning old value or nil.
     def remove( key )
       key = UniMap.str_to_key( key ) unless key.is_a?( Key )
       HTMapHelper.remove_map( self, key )
@@ -120,15 +129,18 @@ module Gravitext::HTMap
 
     alias :delete :remove
 
-    def [](key)
-      get( key )
+    # Is this key set, not nil, where key may be a Key, String, or
+    # Symbol.
+    def has_key?( key )
+      key = UniMap.str_to_key( key ) unless key.is_a?( Key )
+      contains_key( key )
     end
 
-    def []=(key, val)
-      set( key, val )
-    end
+    alias :include? :has_key?
+    alias :key?     :has_key?
+    alias :member?  :has_key?
 
-    # Calls block with Key,value for each non-nil value
+    # Calls block with (Key, value) for each non-nil value
     def each( &block )
       HTMapHelper.unimap_each( self, &block )
     end
@@ -169,6 +181,8 @@ module Gravitext::HTMap
       self
     end
 
+    # To JSON, in form supported by JSON module. Note that this only
+    # works if you also require 'json' yourself.
     def to_json(*args)
       to_hash.to_json(*args)
     end
