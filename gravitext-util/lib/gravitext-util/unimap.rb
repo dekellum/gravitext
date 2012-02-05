@@ -42,12 +42,14 @@ module Gravitext::HTMap
         KEY_SPACE.create_generic( name, vtype.java_class )
       end
 
-      # Define accessors for each key currently in the KEY_SPACE. To
-      # define accessors for keys defined in java, statically reference
-      # the containing class before calling this method. As Ruby's
-      # define_method is not likely thread safe, invoke during
-      # initialization in advance of starting threaded execution. May
-      # be called multiple times.
+      # Define class constants and accessors for each key currently in
+      # the KEY_SPACE.
+      #
+      # To define accessors for keys defined in java, statically
+      # reference the containing class before calling this method. As
+      # Ruby's define_method is not likely thread safe, invoke during
+      # initialization in advance of starting threaded execution. 
+      # May be called multiple times.
       def define_accessors
 
         klist = []
@@ -59,19 +61,37 @@ module Gravitext::HTMap
           khash[ key.name ] = key
           khash[ key.name.to_sym ] = key
 
+          const = key.name.upcase
+          if const_defined?( const )
+            cval = const_get( const )
+            if cval != key
+              fail "Constant #{key} already set to incompatible value #{cval}"
+            end
+          else
+            const_set( const, key )
+          end
+
           getter = key.name.downcase
           unless method_defined?( getter )
-            define_method( getter ) { get_k( key ) }
+            class_eval <<-RUBY
+              def #{getter}
+                get_k( #{const} )
+              end
+            RUBY
           end
 
           setter = getter + '='
           unless method_defined?( setter )
-            define_method( setter ) { |value| set_k( key, value ) }
+            class_eval <<-RUBY
+              def #{setter}( value )
+                set_k( #{const}, value )
+              end
+            RUBY
           end
 
         end
 
-        @key_list = klist.freeze # key names array indexed by key.id
+        @key_list = klist.freeze # key name symbols array indexed by key.id
         @key_hash = khash.freeze # Hash of symbols,strings to Key
       end
 

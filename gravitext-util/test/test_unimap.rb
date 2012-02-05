@@ -45,6 +45,11 @@ class TestUniMap < MiniTest::Unit::TestCase
 
   LOG = RJack::SLF4J[ name ]
 
+  def test_define_accessors
+    UniMap.define_accessors
+    pass( "define accessors can be called repeatedly." )
+  end
+
   ## Manual tests
 
   # Full integer test for demonstration
