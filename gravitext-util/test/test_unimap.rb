@@ -82,6 +82,7 @@ class TestUniMap < MiniTest::Unit::TestCase
         c = UniMap.new
         assert_nil( c.send( get ) )
         assert_nil( c.send( set, test_value ) )
+        assert_equal( test_value, c.set( key, test_value ) )
         assert_equal( test_value, c.send( get ) )
         assert_equal( test_value, c.get( key ) )
         assert_equal( test_value, c.send( set, nil ) )
