@@ -131,6 +131,7 @@ module Gravitext::HTMap
       set_k( key, value )
     end
 
+    # Set Key to value, returning prior value or nil.
     def set_k( key, value )
       HTMapHelper.set_map( self, key, value )
     end
@@ -143,6 +144,7 @@ module Gravitext::HTMap
       get_k( key )
     end
 
+    # Get Key value or nil
     def get_k( key )
       HTMapHelper.get_map( self, key )
     end
@@ -194,13 +196,14 @@ module Gravitext::HTMap
     end
 
     # Merge other (Hash or UniMap) and return new UniMap. Any nil
-    # values from other will results in removing the associated key.
+    # values from other Hash will result in removing the associated
+    # key.
     def merge( other )
       clone.merge!( other )
     end
 
     # Merge other (Hash or UniMap) values to self. Any nil values from
-    # other will results in removing key from self.
+    # other Hash will result in removing key from self.
     def merge!( other )
       other.each do |k,v|
         set( k, v )
