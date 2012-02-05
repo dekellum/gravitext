@@ -28,6 +28,7 @@ import org.jruby.util.ByteList;
 import com.gravitext.util.Charsets;
 
 import org.jcodings.specific.ASCIIEncoding;
+import org.jcodings.specific.USASCIIEncoding;
 import org.jcodings.specific.UTF8Encoding;
 
 public class IOUtils
@@ -101,8 +102,9 @@ public class IOUtils
     {
         final ByteList blist = str.getByteList();
 
-        if( !( blist.getEncoding() == UTF8Encoding.INSTANCE ||
-            blist.getEncoding() == ASCIIEncoding.INSTANCE ) ) {
+        if( !( blist.getEncoding() == UTF8Encoding.INSTANCE  ||
+               blist.getEncoding() == ASCIIEncoding.INSTANCE ||
+               blist.getEncoding() == USASCIIEncoding.INSTANCE ) ) {
             throw new RuntimeException( "Expecting only UTF-8 or ASCII here: " +
                                         blist.getEncoding().toString() );
         }
@@ -117,8 +119,9 @@ public class IOUtils
     {
         final ByteList blist = str.getByteList();
 
-        if( !( blist.getEncoding() == UTF8Encoding.INSTANCE ||
-            blist.getEncoding() == ASCIIEncoding.INSTANCE ) ) {
+        if( !( blist.getEncoding() == UTF8Encoding.INSTANCE  ||
+               blist.getEncoding() == ASCIIEncoding.INSTANCE ||
+               blist.getEncoding() == USASCIIEncoding.INSTANCE ) ) {
             throw new RuntimeException( "Expecting only UTF-8 or ASCII here: " +
                                         blist.getEncoding().toString() );
         }
