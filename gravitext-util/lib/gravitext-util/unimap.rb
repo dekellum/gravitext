@@ -87,6 +87,7 @@ module Gravitext::HTMap
         @key_hash[ str ]
       end
 
+      # Recursive UniMap#deep_hash implementation
       def deep_hash( m )
         case m
         when UniMap
@@ -145,11 +146,12 @@ module Gravitext::HTMap
       HTMapHelper.unimap_each( self, &block )
     end
 
+    # Return self as array of [ key.to_sym, value ] arrays
     def to_a
       map { |key,val| [ UniMap.key_to_symbol( key ), val ] }
     end
 
-    # Returns self as Hash, with symbol names for keys
+    # Returns self as Hash, with symbols for keys
     def to_hash
       h = {}
       each do |key,val|
