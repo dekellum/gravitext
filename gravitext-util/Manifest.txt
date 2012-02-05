@@ -16,4 +16,4 @@ test/test_concurrent.rb
 test/test_ioutils.rb
 test/test_perftest.rb
 test/test_unimap.rb
-lib/gravitext-util/gravitext-util-1.6.b.0.jar
+lib/gravitext-util/gravitext-util-1.6.b.1.jar
