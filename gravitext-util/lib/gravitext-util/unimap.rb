@@ -61,12 +61,12 @@ module Gravitext::HTMap
 
           getter = key.name.downcase
           unless method_defined?( getter )
-            define_method( getter ) { get( key ) }
+            define_method( getter ) { get_k( key ) }
           end
 
           setter = getter + '='
           unless method_defined?( setter )
-            define_method( setter ) { |value| set( key, value ) }
+            define_method( setter ) { |value| set_k( key, value ) }
           end
 
         end
@@ -108,6 +108,10 @@ module Gravitext::HTMap
     # Returns prior value or nil.
     def set( key, value )
       key = UniMap.str_to_key( key ) unless key.is_a?( Key )
+      set_k( key, value )
+    end
+
+    def set_k( key, value )
       HTMapHelper.set_map( self, key, value )
     end
 
@@ -116,6 +120,10 @@ module Gravitext::HTMap
     # Get key value or nil, where key may be a Key, String, or Symbol
     def get( key )
       key = UniMap.str_to_key( key ) unless key.is_a?( Key )
+      get_k( key )
+    end
+
+    def get_k( key )
       HTMapHelper.get_map( self, key )
     end
 
