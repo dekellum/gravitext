@@ -25,7 +25,6 @@ import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.jruby.util.ByteList;
 
-import com.gravitext.util.CharSequences;
 import com.gravitext.util.Charsets;
 
 import org.jcodings.specific.ASCIIEncoding;
@@ -78,7 +77,8 @@ public class IOUtils
             return toByteList( (String) value );
         }
 
-        final CharBuffer cbuff = CharSequences.asCharBuffer( value );
+        final CharBuffer cbuff = ( value instanceof CharBuffer ) ?
+            ( (CharBuffer) value ).duplicate() : CharBuffer.wrap( value );
 
         final ByteBuffer out = Charsets.UTF_8.encode( cbuff );
 
@@ -111,6 +111,24 @@ public class IOUtils
 
         final ByteBuffer buf = toByteBuffer( blist );
         return Charsets.UTF_8.decode( buf );
+    }
+
+    public static String stringFromRuby( RubyString str )
+    {
+        final ByteList blist = str.getByteList();
+
+        if( !( blist.getEncoding() == UTF8Encoding.INSTANCE ||
+            blist.getEncoding() == ASCIIEncoding.INSTANCE ) ) {
+            throw new RuntimeException( "Expecting only UTF-8 or ASCII here: " +
+                                        blist.getEncoding().toString() );
+        }
+        // FIXME: Is ASCIIEncoding trustworthy, allowing use of faster
+        // ASCII decode?
+
+        return new String( blist.unsafeBytes(),
+                           blist.begin(),
+                           blist.length(),
+                           Charsets.UTF_8 );
     }
 
     public static ByteBuffer toByteBuffer( RubyString str )
