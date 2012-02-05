@@ -119,6 +119,11 @@ class TestUniMap < MiniTest::Unit::TestCase
     assert_equal( Hash[ @sample.to_a ], h, "to_a, to_hash agree" )
   end
 
+  def test_is_a_hash
+    assert_kind_of( Hash, @sample )
+    assert( @sample.is_a?( Hash ) )
+  end
+
   def test_membership
     assert( @sample.has_key?( :int ) )
     assert( @sample.include?( 'int' ) )

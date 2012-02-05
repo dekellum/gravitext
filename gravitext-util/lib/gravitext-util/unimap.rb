@@ -184,6 +184,14 @@ module Gravitext::HTMap
       to_hash.to_json(*args)
     end
 
+    # Override: this is a Hash as well.
+    def kind_of?( klass )
+      ( klass == Hash ) || super
+    end
+
+    # Override: this is a Hash as well.
+    def is_a?( klass )
+      ( klass == Hash ) || super
     end
 
   end
