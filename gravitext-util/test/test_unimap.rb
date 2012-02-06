@@ -137,6 +137,16 @@ class TestUniMap < MiniTest::Unit::TestCase
     assert( @sample.member?( :str ) )
   end
 
+  def test_unmapped_keys
+    refute( @sample.has_key?( :non_existing ) )
+    refute( @sample.has_key?( 'non_existing' ) )
+    assert_nil( @sample.remove( :non_existing ) )
+    assert_nil( @sample.get( :non_existing ) )
+    assert_raises( IndexError ) do
+      @sample.set( :non_existing, 'value' )
+    end
+  end
+
   def test_brackets
     assert_equal( 33, @sample[ 'int' ] )
     assert_equal( 33, @sample[ :int  ] )

@@ -48,7 +48,7 @@ module Gravitext::HTMap
       # To define accessors for keys defined in java, statically
       # reference the containing class before calling this method. As
       # Ruby's define_method is not likely thread safe, invoke during
-      # initialization in advance of starting threaded execution. 
+      # initialization in advance of starting threaded execution.
       # May be called multiple times.
       def define_accessors
 
@@ -127,11 +127,17 @@ module Gravitext::HTMap
     # Set key to value, where key may be a Key, String, or Symbol.
     # Returns prior value or nil.
     def set( key, value )
-      key = UniMap.str_to_key( key ) unless key.is_a?( Key )
+      unless key.is_a?( Key )
+        k = UniMap.str_to_key( key )
+        unless k
+          raise IndexError, "No Key named #{key.inspect} in UniMap.KEY_SPACE"
+        end
+        key = k
+      end
       set_k( key, value )
     end
 
-    # Set Key to value, returning prior value or nil.
+    # Set key<Key> to value, returning prior value or nil.
     def set_k( key, value )
       HTMapHelper.set_map( self, key, value )
     end
@@ -141,7 +147,7 @@ module Gravitext::HTMap
     # Get key value or nil, where key may be a Key, String, or Symbol
     def get( key )
       key = UniMap.str_to_key( key ) unless key.is_a?( Key )
-      get_k( key )
+      key && get_k( key )
     end
 
     # Get Key value or nil
@@ -155,7 +161,7 @@ module Gravitext::HTMap
     # Symbol. Returning old value or nil.
     def remove( key )
       key = UniMap.str_to_key( key ) unless key.is_a?( Key )
-      HTMapHelper.remove_map( self, key )
+      key && HTMapHelper.remove_map( self, key )
     end
 
     alias :delete :remove
@@ -164,7 +170,7 @@ module Gravitext::HTMap
     # Symbol.
     def has_key?( key )
       key = UniMap.str_to_key( key ) unless key.is_a?( Key )
-      contains_key( key )
+      key && contains_key( key )
     end
 
     alias :include? :has_key?
