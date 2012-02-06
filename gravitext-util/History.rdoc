@@ -1,4 +1,8 @@
 === 1.6.b.1 (TBD)
+* Reworked UniMap Ruby extension: UniMap.is_a?( Hash ) with Hash
+  behavior including interop with string or symbol keys, to_json
+  support, improved performance.
+* IOUtils, tests fixes for 1.9 mode
 
 === 1.6.b.0 (2012-1-29)
 * New jruby IOUtils, sample extension, and perf test for optimizing
