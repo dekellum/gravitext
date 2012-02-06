@@ -14,22 +14,22 @@
 # permissions and limitations under the License.
 #++
 
-module Gravitext
+require 'gravitext-util/version'
 
-  module HTMap
+# Magic loader hook -> HTMapService
+require 'com/gravitext/jruby/HTMap'
 
-    import 'com.gravitext.htmap.Key'
-    import 'com.gravitext.htmap.UniMap'
+module Gravitext::HTMap
 
-    # Extension to com.gravitext.htmap.UniMap providing convenience
-    # methods, including ruby accessors for keys registered in
-    # UniMap::KEY_SPACE
-    class UniMap
+  import 'com.gravitext.htmap.Key'
+  import 'com.gravitext.htmap.UniMap'
 
-      # Types requiring explicit construction on set
-      EXPLICIT_CTOR_TYPES = [ Java::java.lang.Integer,
-                              Java::java.lang.Double,
-                              Java::java.lang.Float ]
+  # Extension to com.gravitext.htmap.UniMap providing convenience
+  # methods, including ruby accessors for keys registered in
+  # UniMap::KEY_SPACE, and for ruby Hash and JSON compatibility.
+  class UniMap
+
+    class << self
 
       # Create a new key in UniMap::KEY_SPACE. Useful for ruby-only keys
       # or for keys passed as parameters to Java.
@@ -38,42 +38,199 @@ module Gravitext
       # :vtype<~java_class>:: Java class value type (default: java.lang.Object)
       # ==== Returns
       # com.gravitext.htmap.Key
-      def self.create_key( name, vtype = Java::java.lang.Object )
+      def create_key( name, vtype = Java::java.lang.Object )
         KEY_SPACE.create_generic( name, vtype.java_class )
       end
 
-      # Define accessors for each key currently in the KEY_SPACE. To
-      # define accessors for keys defined in java, statically reference
-      # the containing class before calling this method. As Ruby's
-      # define_method is not likely thread safe, invoke during
-      # initialization in advance of starting threaded execution. May
-      # be called multiple times.
-      def self.define_accessors
+      # Define class constants and accessors for each key currently in
+      # the KEY_SPACE.
+      #
+      # To define accessors for keys defined in java, statically
+      # reference the containing class before calling this method. As
+      # Ruby's define_method is not likely thread safe, invoke during
+      # initialization in advance of starting threaded execution.
+      # May be called multiple times.
+      def define_accessors
+
+        klist = []
+        khash = {}
         KEY_SPACE.keys.each do |key|
+
+          klist[ key.id ] = key.name.to_sym
+
+          khash[ key.name ] = key
+          khash[ key.name.to_sym ] = key
+
+          const = key.name.upcase
+          if const_defined?( const )
+            cval = const_get( const )
+            if cval != key
+              fail "Constant #{key} already set to incompatible value #{cval}"
+            end
+          else
+            const_set( const, key )
+          end
 
           getter = key.name.downcase
           unless method_defined?( getter )
-            define_method( getter ) { get( key ) }
+            class_eval <<-RUBY
+              def #{getter}
+                get_k( #{const} )
+              end
+            RUBY
           end
 
           setter = getter + '='
           unless method_defined?( setter )
-            vtype = key.value_type
-            ctype = EXPLICIT_CTOR_TYPES.find { |ct| vtype == ct.java_class }
-            if ctype
-              define_method( setter ) do |value|
-                set( key, ( ctype.new( value ) if value ) )
+            class_eval <<-RUBY
+              def #{setter}( value )
+                set_k( #{const}, value )
               end
-            else
-              define_method( setter ) do |value|
-                set( key, value )
-              end
-            end
+            RUBY
           end
 
         end
+
+        @key_list = klist.freeze # key name symbols array indexed by key.id
+        @key_hash = khash.freeze # Hash of symbols,strings to Key
       end
 
+      # Return cached symbol for the specified key (8bit optimized).
+      # Must have define_accessors for the key first.
+      def key_to_symbol( key )
+        @key_list.at( key.id )
+      end
+
+      # Return Key for specified string name or symbol (8bit optimized)
+      # Must have define_accessors for the key first.
+      def str_to_key( str )
+        @key_hash[ str ]
+      end
+
+      # Recursive UniMap#deep_hash implementation
+      def deep_hash( m )
+        case m
+        when UniMap
+          m.inject( {} ) do |o, (k, v)|
+            o[ key_to_symbol( k ) ] = deep_hash( v )
+            o
+          end
+        when Array
+          m.map { |v| deep_hash( v ) }
+        else
+          m
+        end
+      end
+
+    end
+
+    # Set key to value, where key may be a Key, String, or Symbol.
+    # Returns prior value or nil.
+    def set( key, value )
+      unless key.is_a?( Key )
+        k = UniMap.str_to_key( key )
+        unless k
+          raise IndexError, "No Key named #{key.inspect} in UniMap.KEY_SPACE"
+        end
+        key = k
+      end
+      set_k( key, value )
+    end
+
+    # Set key<Key> to value, returning prior value or nil.
+    def set_k( key, value )
+      HTMapHelper.set_map( self, key, value )
+    end
+
+    alias :[]= :set
+
+    # Get key value or nil, where key may be a Key, String, or Symbol
+    def get( key )
+      key = UniMap.str_to_key( key ) unless key.is_a?( Key )
+      key && get_k( key )
+    end
+
+    # Get Key value or nil
+    def get_k( key )
+      HTMapHelper.get_map( self, key )
+    end
+
+    alias :[] :get
+
+    # Remove the specified key, where key may be a Key, String, or
+    # Symbol. Returning old value or nil.
+    def remove( key )
+      key = UniMap.str_to_key( key ) unless key.is_a?( Key )
+      key && HTMapHelper.remove_map( self, key )
+    end
+
+    alias :delete :remove
+
+    # Is this key set, not nil, where key may be a Key, String, or
+    # Symbol.
+    def has_key?( key )
+      key = UniMap.str_to_key( key ) unless key.is_a?( Key )
+      key && contains_key( key )
+    end
+
+    alias :include? :has_key?
+    alias :key?     :has_key?
+    alias :member?  :has_key?
+
+    # Calls block with (Key, value) for each non-nil value
+    def each( &block )
+      HTMapHelper.unimap_each( self, &block )
+    end
+
+    # Return self as array of [ key.to_sym, value ] arrays
+    def to_a
+      map { |key,val| [ UniMap.key_to_symbol( key ), val ] }
+    end
+
+    # Returns self as Hash, with symbols for keys
+    def to_hash
+      h = {}
+      each do |key,val|
+        h[ UniMap.key_to_symbol( key ) ] = val
+      end
+      h
+    end
+
+    # Like to_hash but converts all nested UniMaps to hashes as well.
+    def deep_hash
+      UniMap.deep_hash( self )
+    end
+
+    # Merge other (Hash or UniMap) and return new UniMap. Any nil
+    # values from other Hash will result in removing the associated
+    # key.
+    def merge( other )
+      clone.merge!( other )
+    end
+
+    # Merge other (Hash or UniMap) values to self. Any nil values from
+    # other Hash will result in removing key from self.
+    def merge!( other )
+      other.each do |k,v|
+        set( k, v )
+      end
+      self
+    end
+
+    # To JSON, in form supported by JSON module. Note that this only
+    # works if you also require 'json' yourself.
+    def to_json(*args)
+      to_hash.to_json(*args)
+    end
+
+    # Override: this is a Hash as well.
+    def kind_of?( klass )
+      ( klass == Hash ) || super
+    end
+
+    # Override: this is a Hash as well.
+    def is_a?( klass )
+      ( klass == Hash ) || super
     end
 
   end
