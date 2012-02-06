@@ -33,7 +33,7 @@ import static javax.xml.stream.XMLStreamConstants.*;
  *
  * @see StAXUtils
  */
-public final class StAXConsumer
+public class StAXConsumer
 {
     public Element readCurrentElement( XMLStreamReader sr )
         throws XMLStreamException
@@ -86,7 +86,51 @@ public final class StAXConsumer
         return _root;
     }
 
-    private void startElement( XMLStreamReader sr )
+    private final void startElement( XMLStreamReader sr )
+    {
+        Element element = createElement( sr );
+
+        copyAttributes( sr, element );
+
+        if( _root == null ) {
+            _root = _current = element;
+        }
+        else {
+            _current.addChild( element );
+            _current = element;
+        }
+    }
+
+    private final void characters( XMLStreamReader sr )
+    {
+        //FIXME: Check _current set?
+        _current.addChild( new Characters( sr.getText() ) );
+    }
+
+    private final void endElement()
+    {
+        //FIXME: Check _current set?
+        _current = _current.parent();
+    }
+
+    private final void copyAttributes( XMLStreamReader sr, Element element )
+    {
+        final int end = sr.getAttributeCount();
+        if( end > 0 ) {
+
+            final ArrayList<AttributeValue> atts
+                = new ArrayList<AttributeValue>( end );
+
+            for( int i = 0; i < end; ++i ) {
+                final Attribute attr = findAttribute( sr, i );
+                atts.add( new AttributeValue( attr, sr.getAttributeValue(i) ) );
+            }
+
+            element.setAttributes( atts );
+        }
+    }
+
+    protected Element createElement( XMLStreamReader sr )
     {
         Namespace ns = _cache.namespace( sr.getPrefix(),
                                          sr.getNamespaceURI() );
@@ -102,49 +146,16 @@ public final class StAXConsumer
             if( decl != ns ) element.addNamespace( decl );
         }
 
-        copyAttributes( sr, element );
-
-        if( _root == null ) {
-            _root = _current = element;
-        }
-        else {
-            _current.addChild( element );
-            _current = element;
-        }
+        return element;
     }
 
-    private void characters( XMLStreamReader sr )
+    protected Attribute findAttribute( XMLStreamReader sr, int i )
     {
-        //FIXME: Check _current set?
-        _current.addChild( new Characters( sr.getText() ) );
-    }
+        return _cache.attribute( sr.getAttributeLocalName( i ),
+                                 _cache.namespace(
+                                     sr.getAttributePrefix( i ),
+                                     sr.getAttributeNamespace( i ) ) );
 
-    private void endElement()
-    {
-        //FIXME: Check _current set?
-        _current = _current.parent();
-    }
-
-    private void copyAttributes( XMLStreamReader sr, Element element )
-    {
-        final int end = sr.getAttributeCount();
-        if( end > 0 ) {
-
-            final ArrayList<AttributeValue> atts
-                = new ArrayList<AttributeValue>( end );
-
-            for( int i = 0; i < end; ++i ) {
-                final Attribute attr =
-                    _cache.attribute( sr.getAttributeLocalName( i ),
-                                      _cache.namespace(
-                                          sr.getAttributePrefix( i ),
-                                          sr.getAttributeNamespace( i ) ) );
-                atts.add( new AttributeValue( attr,
-                                              sr.getAttributeValue( i ) ) );
-            }
-
-            element.setAttributes( atts );
-        }
     }
 
     private Element _root = null;
