@@ -123,7 +123,10 @@ public class StAXConsumer
 
             for( int i = 0; i < end; ++i ) {
                 final Attribute attr = findAttribute( sr, i );
-                atts.add( new AttributeValue( attr, sr.getAttributeValue(i) ) );
+                if( attr != null ) {
+                    atts.add( new AttributeValue( attr,
+                                                  sr.getAttributeValue( i ) ) );
+                }
             }
 
             element.setAttributes( atts );
