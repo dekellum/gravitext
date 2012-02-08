@@ -1,4 +1,6 @@
 === 1.5.b.2 (TBD)
+* De-final the StAXConsumer; make element/attribute lookup extensible
+* XMLHelper.stax_parse_string supports alt Consumer implementations
 
 === 1.5.b.1 (2012-1-30)
 * Change Element.to_xml( opts ), add implied_ns support
