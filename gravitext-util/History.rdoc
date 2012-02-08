@@ -1,4 +1,4 @@
-=== 1.6.b.1 (TBD)
+=== 1.6.b.1 (2012-2-7)
 * Reworked UniMap Ruby extension: UniMap.is_a?( Hash ) with Hash
   behavior including interop with string or symbol keys, to_json
   support, improved performance.
