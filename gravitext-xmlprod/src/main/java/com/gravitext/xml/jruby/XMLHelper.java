@@ -23,6 +23,7 @@ import org.jruby.RubyArray;
 import org.jruby.RubyString;
 import org.jruby.anno.JRubyClass;
 import org.jruby.anno.JRubyMethod;
+import org.jruby.javasupport.Java;
 import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.builtin.IRubyObject;
 
@@ -36,6 +37,7 @@ import com.gravitext.xml.producer.XMLProducer;
 import com.gravitext.xml.producer.CharacterEncoder.QuoteMark;
 import com.gravitext.xml.tree.Element;
 import com.gravitext.xml.tree.NodeWriter;
+import com.gravitext.xml.tree.StAXConsumer;
 import com.gravitext.xml.tree.StAXUtils;
 
 import javax.xml.stream.FactoryConfigurationError;
@@ -102,11 +104,11 @@ public class XMLHelper
                   meta = true,
                   required = 2,
                   argTypes = { RubyString.class,
-                               ReturnElement.class } )
+                               StAXConsumer.class } )
     public static IRubyObject staxParse( ThreadContext tc,
                                          IRubyObject klazz,
                                          IRubyObject input,
-                                         IRubyObject rElem )
+                                         IRubyObject csmr )
         throws FactoryConfigurationError, XMLStreamException
     {
         ByteBuffer in = IOUtils.toByteBuffer( input.convertToString() );
@@ -114,10 +116,16 @@ public class XMLHelper
         StreamSource source = new StreamSource( Streams.inputStream( in ) );
         XMLStreamReader staxReader = StAXUtils.staxReader( source );
 
-        ReturnElement re = (ReturnElement) rElem.toJava( ReturnElement.class );
-        re.setValue( StAXUtils.readDocument( staxReader ) );
+        StAXConsumer consumer = null;
+        if( csmr.isNil() ) {
+            consumer = new StAXConsumer();
+        }
+        else {
+            consumer = (StAXConsumer) csmr.toJava( StAXConsumer.class );
+        }
 
-        return tc.getRuntime().getNil();
+        Element element = consumer.readDocument( staxReader );
+
+        return Java.getInstance( tc.getRuntime(), element );
     }
-
 }
