@@ -87,6 +87,14 @@ XML
 </doc>
 XML
 
+  TEST_XML[ :namespace_xml_2 ] = <<XML
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <body>
+  <p>hello</p>
+ </body>
+</html>
+XML
+
   TEST_XML.each do | name, xml |
     define_method( "test_sax_#{name}" ) do
       assert_xml( xml, SAXUtils::saxParse( SAXUtils::saxInput( xml ) ) )
