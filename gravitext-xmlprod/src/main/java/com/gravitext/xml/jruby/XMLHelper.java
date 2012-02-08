@@ -37,6 +37,7 @@ import com.gravitext.xml.producer.XMLProducer;
 import com.gravitext.xml.producer.CharacterEncoder.QuoteMark;
 import com.gravitext.xml.tree.Element;
 import com.gravitext.xml.tree.NodeWriter;
+import com.gravitext.xml.tree.StAXConsumer;
 import com.gravitext.xml.tree.StAXUtils;
 
 import javax.xml.stream.FactoryConfigurationError;
@@ -101,11 +102,13 @@ public class XMLHelper
 
     @JRubyMethod( name = "stax_parse_string",
                   meta = true,
-                  required = 1,
-                  argTypes = { RubyString.class } )
+                  required = 2,
+                  argTypes = { RubyString.class,
+                               StAXConsumer.class } )
     public static IRubyObject staxParse( ThreadContext tc,
                                          IRubyObject klazz,
-                                         IRubyObject input )
+                                         IRubyObject input,
+                                         IRubyObject csmr )
         throws FactoryConfigurationError, XMLStreamException
     {
         ByteBuffer in = IOUtils.toByteBuffer( input.convertToString() );
@@ -113,7 +116,15 @@ public class XMLHelper
         StreamSource source = new StreamSource( Streams.inputStream( in ) );
         XMLStreamReader staxReader = StAXUtils.staxReader( source );
 
-        Element element = StAXUtils.readDocument( staxReader );
+        StAXConsumer consumer = null;
+        if( csmr.isNil() ) {
+            consumer = new StAXConsumer();
+        }
+        else {
+            consumer = (StAXConsumer) csmr.toJava( StAXConsumer.class );
+        }
+
+        Element element = consumer.readDocument( staxReader );
 
         return Java.getInstance( tc.getRuntime(), element );
     }

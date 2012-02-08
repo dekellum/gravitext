@@ -22,7 +22,7 @@ require 'com/gravitext/xml/jruby/XML'
 module Gravitext::XMLProd
 
   def parse_tree( input )
-    XMLHelper.stax_parse_string( input )
+    XMLHelper.stax_parse_string( input, nil )
   end
 
   module_function :parse_tree
