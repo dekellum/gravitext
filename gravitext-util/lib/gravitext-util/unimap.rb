@@ -217,6 +217,11 @@ module Gravitext::HTMap
       self
     end
 
+    # Inspect via deep_hash and Hash#inspect
+    def inspect
+      deep_hash.inspect
+    end
+
     # To JSON, in form supported by JSON module. Note that this only
     # works if you also require 'json' yourself.
     def to_json(*args)
