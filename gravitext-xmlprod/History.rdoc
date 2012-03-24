@@ -1,13 +1,14 @@
 === 1.5.1 (TBD)
+* Upgrade to gravitext-util ~> 1.6.1
 
-=== 1.5.b.2 (2012-2-7)
+==== 1.5.b.2 (2012-2-7)
 * De-final the StAXConsumer; make element/attribute lookup extensible
 * XMLHelper.stax_parse_string supports alt Consumer implementations
 
-=== 1.5.b.1 (2012-1-30)
+==== 1.5.b.1 (2012-1-30)
 * Change Element.to_xml( opts ), add implied_ns support
 
-=== 1.5.b.0 (2012-1-29)
+==== 1.5.b.0 (2012-1-29)
 * New Element ruby extensions and XMLHelper for IO optimization (with
   perf tests)
 * Add Element.detachAllChildren for convenience/efficiency
