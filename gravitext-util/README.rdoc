@@ -24,7 +24,7 @@ A collection of core java utilities, many with jruby adaptions:
 
 == Dependencies
 
-* Java 1.5+
+* Java 1.6+
 
 == License
 
