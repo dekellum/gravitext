@@ -1,12 +1,13 @@
 === 1.6.1 (TBD)
+* Add UniMap.inspect based on deep_hash.inspect
 
-=== 1.6.b.1 (2012-2-7)
+==== 1.6.b.1 (2012-2-7)
 * Reworked UniMap Ruby extension: UniMap.is_a?( Hash ) with Hash
   behavior including interop with string or symbol keys, to_json
   support, improved performance.
 * IOUtils, tests fixes for 1.9 mode
 
-=== 1.6.b.0 (2012-1-29)
+==== 1.6.b.0 (2012-1-29)
 * New jruby IOUtils, sample extension, and perf test for optimizing
   text-intensive interop.
 * Simplify naming with PerfTest::BlockTestFactory
