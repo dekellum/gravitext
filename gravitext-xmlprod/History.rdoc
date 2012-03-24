@@ -1,3 +1,5 @@
+=== 1.5.1 (TBD)
+
 === 1.5.b.2 (2012-2-7)
 * De-final the StAXConsumer; make element/attribute lookup extensible
 * XMLHelper.stax_parse_string supports alt Consumer implementations

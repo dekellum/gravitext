@@ -164,6 +164,10 @@ XML
     assert_raises( XMLStreamException ) do
       parse_tree( "<doc><open></doc>" )
     end
+
+    assert_raises( XMLStreamException ) do
+      parse_tree( "" )
+    end
   end
 
   def first( root, *tags )
