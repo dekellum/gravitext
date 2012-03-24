@@ -12,7 +12,7 @@ extensible XML tree representation in Java.
 
 == Dependencies
 
-* Java 1.5+
+* Java 1.6+
 
 == License
 
