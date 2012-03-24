@@ -4,7 +4,7 @@
   <groupId>com.gravitext</groupId>
   <artifactId>gravitext-util</artifactId>
   <packaging>jar</packaging>
-  <version>1.6.b.1</version>
+  <version>1.6.1</version>
   <name>Gravitext Utilities</name>
   <url>http://gravitext.com/oss/gravitext-util</url>
 
