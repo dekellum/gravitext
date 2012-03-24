@@ -125,6 +125,12 @@ class TestUniMap < MiniTest::Unit::TestCase
     assert_equal( Hash[ @sample.to_a ], h, "to_a, to_hash agree" )
   end
 
+  def test_inspect
+    i = @sample.inspect
+    refute_match( /::Key/, i )
+    assert_match( /:int=>33/, i )
+  end
+
   def test_is_a_hash
     assert_kind_of( Hash, @sample )
     assert( @sample.is_a?( Hash ) )
