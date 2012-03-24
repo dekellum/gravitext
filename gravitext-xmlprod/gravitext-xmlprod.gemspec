@@ -10,7 +10,7 @@ RJack::TarPit.specify do |s|
 
   s.add_developer( 'David Kellum', 'dek-oss@gravitext.com' )
 
-  s.depend 'gravitext-util',        '~> 1.6.b'
+  s.depend 'gravitext-util',        '~> 1.6.1'
 
   s.depend 'rjack-jdom',            '~> 1.1.0.0',   :dev
   s.depend 'minitest',              '~> 2.3',       :dev

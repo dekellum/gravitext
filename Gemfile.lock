@@ -9,7 +9,7 @@ PATH
   remote: gravitext-xmlprod
   specs:
     gravitext-xmlprod (1.5.1-java)
-      gravitext-util (~> 1.6.b)
+      gravitext-util (~> 1.6.1)
 
 GEM
   remote: http://rubygems.org/
