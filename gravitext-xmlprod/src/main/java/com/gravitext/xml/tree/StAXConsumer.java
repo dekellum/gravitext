@@ -58,7 +58,7 @@ public class StAXConsumer
         return root;
     }
 
-    private Element consume( XMLStreamReader sr ) throws XMLStreamException
+    protected Element consume( XMLStreamReader sr ) throws XMLStreamException
     {
         int depth = ( sr.getEventType() == START_ELEMENT ) ? 1 : 0;
         loop: while( true ) {
@@ -86,7 +86,7 @@ public class StAXConsumer
         return _root;
     }
 
-    private final void startElement( XMLStreamReader sr )
+    protected void startElement( XMLStreamReader sr )
     {
         Element element = createElement( sr );
 
@@ -101,19 +101,19 @@ public class StAXConsumer
         }
     }
 
-    private final void characters( XMLStreamReader sr )
+    protected void characters( XMLStreamReader sr )
     {
         //FIXME: Check _current set?
         _current.addChild( new Characters( sr.getText() ) );
     }
 
-    private final void endElement()
+    protected void endElement()
     {
         //FIXME: Check _current set?
         _current = _current.parent();
     }
 
-    private final void copyAttributes( XMLStreamReader sr, Element element )
+    protected void copyAttributes( XMLStreamReader sr, Element element )
     {
         final int end = sr.getAttributeCount();
         if( end > 0 ) {
@@ -161,8 +161,8 @@ public class StAXConsumer
 
     }
 
-    private Element _root = null;
-    private Element _current = null;
+    protected Element _root = null;
+    protected Element _current = null;
 
-    private final NamespaceCache _cache = new NamespaceCache();
+    protected final NamespaceCache _cache = new NamespaceCache();
 }
