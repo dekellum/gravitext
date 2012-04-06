@@ -1,4 +1,4 @@
-=== 1.6.1 (TBD)
+=== 1.6.1 (2012-4-5)
 * Add UniMap.inspect based on deep_hash.inspect
 
 ==== 1.6.b.1 (2012-2-7)
