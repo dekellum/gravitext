@@ -1,3 +1,5 @@
+=== 1.6.0 (TBD)
+
 === 1.5.1 (2012-4-5)
 * Upgrade to gravitext-util ~> 1.6.1
 * StAXConsumer: fully non-private, non-final
