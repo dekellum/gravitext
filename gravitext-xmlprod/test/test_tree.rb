@@ -160,6 +160,33 @@ XML
     assert_equal( 1, root.select { |e| e[ att ] == 'a2value' }.length )
   end
 
+  def test_recurse
+    xml = <<XML
+<doc>
+ <o1 a='1'>
+  <i1>text</i1>
+  <i2>next</i2>
+ </o1>
+ <o1 a='2'/>
+ <o1>
+  <o2>
+   <i1 a='3'>other</i1>
+   <i3/>
+  </o2>
+ </o1>
+</doc>
+XML
+    root = parse_tree( xml )
+
+    assert_equal( 'text', root.find_r( 'i1' ).characters )
+    assert_equal( 'next', root.find_r( 'i2' ).characters )
+    assert_equal( 'other',
+                  root.find_r( 'i1' ) { |e| e['a'] == '3' }.characters )
+
+    assert_equal( %w[ 1 2 3 ],
+                  root.select_r { |e| e['a'] }.map { |e| e['a'] } )
+  end
+
   def test_invalid_xml_error
     assert_raises( XMLStreamException ) do
       parse_tree( "<doc><open></doc>" )
