@@ -54,6 +54,14 @@ module Gravitext::XMLProd
       end
     end
 
+    # Return Array of descendant elements matching tag and/or where
+    # yielding to block returns true.  Elements failing the tag/block
+    # test will be recursed into, in search of more matches.
+    def select_r( tag = nil, &block )
+      tag = Tag.new( tag, Tag.WILDCARD_NS ) unless tag.nil? || tag.is_a?( Tag )
+      _select_r( [], tag, block || TRUTH )
+    end
+
     # Return first child element matching tag and/or where yielding to
     # block returns true. Without a block is equivalent to
     # first_element.
@@ -68,6 +76,15 @@ module Gravitext::XMLProd
       end
     end
 
+    # Return first descendant element matching the specified tag
+    # and/or where yielding to block returns true.  Elements failing
+    # the tag/block test will be recursed into, in search of the first
+    # match.
+    def find_r( tag = nil, &block )
+      tag = Tag.new( tag, Tag.WILDCARD_NS ) unless tag.nil? || tag.is_a?( Tag )
+      _find_r( tag, block || TRUTH )
+    end
+
     # Serialize self to String of XML, with options.
     def to_xml( opts = {} )
       XMLHelper.write_element( self,
@@ -75,6 +92,33 @@ module Gravitext::XMLProd
                                opts[ :qmark ]      || QuoteMark::DOUBLE,
                                opts[ :implied_ns ] || [] )
     end
+
+    def _find_r( tag, pred )
+      children.each do |c|
+        if c.element?
+          found = c if ( tag.nil? || c.tag == tag ) && pred.call( c )
+          found ||= c._find_r( tag, pred )
+          return found if found
+        end
+      end
+      nil
+    end
+
+    def _select_r( matches, tag, pred )
+      children.each do |c|
+        if c.element?
+          if ( tag.nil? || c.tag == tag ) && pred.call( c )
+            matches << c
+          else
+            c._select_r( matches, tag, pred )
+          end
+        end
+      end
+      matches
+    end
+
+    TRUTH = lambda { |e| true }
+
   end
 
 end
