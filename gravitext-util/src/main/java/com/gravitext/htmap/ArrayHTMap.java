@@ -208,7 +208,7 @@ public class ArrayHTMap
         if( key == null ) throw new NullPointerException( "key" );
         if( key.space() != _space ) {
             throw new IllegalArgumentException(
-                "Key is not from KeySpace of this KeyMap." );
+                "Key is not from KeySpace of this ArrayHTMap." );
         }
     }
 
