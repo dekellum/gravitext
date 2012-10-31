@@ -166,7 +166,7 @@ public final class KeySpace
      */
     public List<Key> keys()
     {
-        return Collections.unmodifiableList( _state.get().keySequence );
+        return _state.get().keysUnmod;
     }
 
     private final static class State
@@ -191,11 +191,13 @@ public final class KeySpace
         {
             length = seq.size();
             keySequence = seq;
+            keysUnmod = Collections.unmodifiableList( seq );
             keyNames = names;
         }
 
         final int length;
         final List<Key> keySequence;    //unmodified after construction
+        final List<Key> keysUnmod;
         final Map<String,Key> keyNames; //unmodified after construction
     }
 
