@@ -201,18 +201,21 @@ module Gravitext::HTMap
       UniMap.deep_hash( self )
     end
 
-    # Merge other (Hash or UniMap) and return new UniMap. Any nil
-    # values from other Hash will result in removing the associated
-    # key.
+    # Merge other (Hash or UniMap) and return new UniMap. Nil values
+    # in other Hash are ignored.
     def merge( other )
       clone.merge!( other )
     end
 
-    # Merge other (Hash or UniMap) values to self. Any nil values from
-    # other Hash will result in removing key from self.
+    # Merge other (Hash or UniMap) values to self. Nil values in other
+    # Hash are ignored.
     def merge!( other )
-      other.each do |k,v|
-        set( k, v )
+      if other.is_a?( UniMap )
+        put_all( other )
+      else
+        other.each do |k,v|
+          set( k, v ) unless v.nil?
+        end
       end
       self
     end

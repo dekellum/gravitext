@@ -101,6 +101,47 @@ public class ArrayHTMap
     }
 
     /**
+     * Copies all values from other to this Map.
+     */
+    public void putAll( ArrayHTMap other )
+    {
+        if( other._space != _space ) {
+            throw new IllegalArgumentException(
+                "Other is not using same KeySpace as this ArrayHTMap." );
+        }
+        final int end = other._values.length;
+        expand( end - 1 );
+        for( int i = 0; i < end; ++i ) {
+            Object value = other._values[ i ];
+            if( value != null ) {
+                if( _values[ i ] == null ) ++_size;
+                _values[ i ] = value;
+            }
+        }
+    }
+
+    /**
+     * Like putAll but only copies values from other when a value for the
+     * same key is not already present in this Map.
+     */
+    public void augment( ArrayHTMap other )
+    {
+        if( other._space != _space ) {
+            throw new IllegalArgumentException(
+                "Other is not using same KeySpace as this ArrayHTMap." );
+        }
+        final int end = other._values.length;
+        expand( end - 1 );
+        for( int i = 0; i < end; ++i ) {
+            Object value = other._values[ i ];
+            if( ( value != null ) && ( _values[ i ] == null ) ) {
+                _values[ i ] = value;
+                ++_size;
+            }
+        }
+    }
+
+    /**
      * {@inheritDoc}
      * @throws IllegalArgumentException if key is not from the same
      * KeySpace assigned on creation of the map.
@@ -208,7 +249,7 @@ public class ArrayHTMap
         if( key == null ) throw new NullPointerException( "key" );
         if( key.space() != _space ) {
             throw new IllegalArgumentException(
-                "Key is not from KeySpace of this KeyMap." );
+                "Key is not from KeySpace of this ArrayHTMap." );
         }
     }
 
