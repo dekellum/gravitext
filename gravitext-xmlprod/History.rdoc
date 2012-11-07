@@ -1,4 +1,4 @@
-=== 1.6.1 (TBD)
+=== 1.7.0 (TBD)
 
 === 1.6.0 (2012-6-23)
 * Add Element.find_r, select_r recursive variants
