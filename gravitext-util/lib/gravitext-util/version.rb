@@ -16,7 +16,7 @@
 
 module Gravitext
   module Util
-    VERSION = '1.6.2'
+    VERSION = '1.7.0'
 
     LIB_DIR = File.dirname(__FILE__) # :nodoc:
   end
