@@ -1,4 +1,10 @@
 === 1.7.0 (TBD)
+* Add Gravitext::DateSupport module, TimeDelta, JDate extension for
+  ruby core Time style basic math operations with java.util.Date
+* Add ArrayHTMap.putAll() (optimized), augment(); Use put_all for ruby
+  UniMap.merge( UniMap )
+* Optimize KeySpace.keys() array public access
+* Fix error message in ArrayHTMap same KeySpace check
 
 === 1.6.2 (2012-9-15)
 * Upgrade/broaden to slf4j [1.6.5,1.8), logback ~> 1.2 (now dev)
