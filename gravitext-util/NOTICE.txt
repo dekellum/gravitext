@@ -1,2 +1,2 @@
 gravitext-util
-Copyright (c) 2007-2012 David Kellum
+Copyright (c) 2007-2013 David Kellum
