@@ -1,7 +1,7 @@
 PATH
   remote: gravitext-util
   specs:
-    gravitext-util (1.7.0-java)
+    gravitext-util (1.7.1-java)
       rjack-slf4j (>= 1.6.5, < 1.8)
 
 PATH

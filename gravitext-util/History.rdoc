@@ -1,3 +1,5 @@
+=== 1.7.1 (TBD)
+
 === 1.7.0 (2012-11-8)
 * Add Gravitext::DateSupport module, TimeDelta, JDate extension for
   ruby core Time style basic math operations with java.util.Date
