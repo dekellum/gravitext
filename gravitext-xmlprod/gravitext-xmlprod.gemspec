@@ -13,7 +13,7 @@ RJack::TarPit.specify do |s|
   s.depend 'gravitext-util',        '~> 1.7.0'
 
   s.depend 'rjack-jdom',            '~> 1.1.0.0',   :dev
-  s.depend 'minitest',              '~> 2.3',       :dev
+  s.depend 'minitest',              '~> 4.7.4',     :dev
 
   s.maven_strategy = :no_assembly
 end
